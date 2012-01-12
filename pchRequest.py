@@ -3,6 +3,7 @@ from string import split
 #from yamjParse import *
 from os import listdir
 from urllib import urlopen
+from utilities import Debug
 
 pathYAMJ='/media/raid5/Video/Yamj/Jukebox/'
 
@@ -52,7 +53,7 @@ class PchRequest:
 	
 			dirList=listdir(pathYAMJ)
 
-			print filter(isRelatedXml, dirList)[0]
+			Debug(filter(isRelatedXml, dirList)[0])
 			
 			#reqYamj = yamjParse(pathYAMJ+filter(isRelatedXml, dirList)[0])
 			#self.year = reqYamj.year
