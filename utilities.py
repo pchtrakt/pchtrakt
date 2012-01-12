@@ -125,7 +125,7 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
         if method == 'POST':
             if not anon:
                 args['username'] = username
-                args['password'] = pwd
+                args['password'] = pwdsha1
             if passVersions:
                 args['plugin_version'] = 0 #__settings__.getAddonInfo("version")
                 args['media_center'] = 'popcorn hour'
