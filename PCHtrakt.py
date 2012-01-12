@@ -5,11 +5,12 @@ from config import *
 from time import sleep
 from utilities import *
 import getopt
+import parser
 global stop
 stop = 0
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "qfdp::", ['']) #@UnusedVariable
+	opts, args = getopt.getopt(sys.argv[1:], "d::", ['']) #@UnusedVariable
 except getopt.GetoptError:
 	print "Available options: No option for now sry :P"
 	sys.exit()
