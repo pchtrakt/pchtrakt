@@ -26,7 +26,7 @@ __email__ = "ralph-gordon.paul@uni-duesseldorf.de"
 __status__ = "Production"
 
 apikey = 'def6943c09e19dccb4df715bd4c9c6c74bc3b6d7'
-#pwd = sha1('pass').hexdigest()
+pwdsha1 = sha1(pwd).hexdigest()
 
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 

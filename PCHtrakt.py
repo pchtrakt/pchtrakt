@@ -24,9 +24,10 @@ from config import *
 from time import sleep
 from utilities import *
 import getopt
-global stop
 stop = 0
-
+currentPath=''
+currentTime=0
+watched=0
 try:
 	opts, args = getopt.getopt(sys.argv[1:], "d::", ['']) #@UnusedVariable
 except getopt.GetoptError:
@@ -39,8 +40,23 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	global currentPath
+	global currentTime
+	global watched
 	oPchRequestor = PchRequestor(ipPch)
-	oStatus = oPchRequestor.getPchStatus()	
+	oStatus = oPchRequestor.getPchStatus()
+	if currentPath != oStatus.fullPath:
+		currentPath = oStatus.fullPath
+		if currentPath != '':
+			VideoStarted()
+		else:
+			VideoStopped()
+	elif oStatus.percent > 90:
+		#if wacthed == 0:
+		VideoIsEnding()
+	elif oStatus.currentTime > currentTime + refreshTime*60:
+		currentTime = oStatus.currentTime
+		VideoStillRunning()
 	if oStatus.status != EnumStatus.NOPLAY:
 		oStatus.fileName=oStatus.fileName.replace(" ",".")
 		oStatus.fileName=oStatus.fileName.replace("-",".")
@@ -50,9 +66,26 @@ def main():
 		#Debug(reqPch.name + '-' + reqPch.SxE + '-' + reqPch.title)
 	else:
 		Debug(oStatus.status)
+		
+		
+def VideoStarted():
+	Debug('Video started!')
+	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+
+def VideoStopped():
+	cancelWatchingEpisodeOnTrakt()
+	Debug('Video stopped!')
 	
 
+def VideoStillRunning():
+	Debug('Video still running!')
 	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+
+def VideoIsEnding():
+	Debug('Video is ending')
+	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
+		
+#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
 #cancelWatchingEpisodeOnTrakt()
 	
 while not stop:
