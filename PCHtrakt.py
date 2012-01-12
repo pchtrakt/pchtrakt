@@ -18,7 +18,7 @@
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys 
-
+from MediaParser import *
 from pch import *
 from config import *
 from time import sleep
@@ -58,12 +58,9 @@ def main():
 		currentTime = oStatus.currentTime
 		VideoStillRunning()
 	if oStatus.status != EnumStatus.NOPLAY:
-		oStatus.fileName=oStatus.fileName.replace(" ",".")
-		oStatus.fileName=oStatus.fileName.replace("-",".")
+		oParser = MediaParser()
+		Debug(oParser.parseFileName(oStatus.fileName))
 		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName + "] | Watching=" + str(oStatus.currentTime) + " on " + str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
-		p=re.compile('(?P<show>[\w\s.,_-]+?)\.[Ss]?(?P<season>[\d]{1,2})[XxEe]?(?P<episode>[\d]{2})')
-		Debug(p.findall(oStatus.fileName))
-		#Debug(reqPch.name + '-' + reqPch.SxE + '-' + reqPch.title)
 	else:
 		Debug(oStatus.status)
 		
@@ -75,7 +72,6 @@ def VideoStarted():
 def VideoStopped():
 	cancelWatchingEpisodeOnTrakt()
 	Debug('Video stopped!')
-	
 
 def VideoStillRunning():
 	Debug('Video still running!')
@@ -85,8 +81,6 @@ def VideoIsEnding():
 	Debug('Video is ending')
 	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
 		
-#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
-#cancelWatchingEpisodeOnTrakt()
 	
 while not stop:
 	main()
