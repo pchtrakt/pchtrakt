@@ -1,11 +1,27 @@
+# -*- coding: utf-8 -*-
+# Authors: Jonathan Lauwers / Frederic Haumont
+# URL: http://github.com/PCHtrakt/PCHtrakt
+#
+# This file is part of PCHtrakt.
+#
+# PCHtrakt is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# PCHtrakt is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
+
 from xml.etree import ElementTree 
 from string import split
-#from yamjParse import *
 from os import listdir
 from urllib import urlopen
 from utilities import Debug
-
-pathYAMJ='/media/raid5/Video/Yamj/Jukebox/'
 
 class EnumStatus:
 	NOPLAY='noplay'
@@ -14,7 +30,7 @@ class EnumStatus:
 	LOAD='buffering'
 	STOP='stop'
 	UNKNOWN='unknown'
-
+	
 class PchStatus:
 	def __init__(self):
 		self.status=EnumStatus.NOPLAY
@@ -47,32 +63,33 @@ class PchRequest:
 			else:
 				oPchStatus.percent = 0			
 		return oPchStatus
-
-		#nameSplited = self.path.split('/')[::-1][0].strip()
-		#if tvserie
-		#si seriexepisode  !!! double episode???
-		#	self.name = nameSplited.split('-')[0].strip()
-		#	self.title = nameSplited.split('-')[::-1][0].replace('.mkv','').strip()
-		#si SxE!!! S01E01!!!
-		#	self.SxE = nameSplited.split('-')[1].strip()
-		#	self.season = self.SxE.split('x')[0].strip()
-			
-		#	if len(self.SxE.split('x'))==2:
-		#		self.episode = self.SxE.split('x')[::-1][0].strip()
-		#	else:
-		#		self.episode = self.SxE.split('x')[::-1][0].strip()
-		#		self.episode2 = self.SxE.split('x')[::-1][1].strip()
-		#	if self.totalTime!=0:
-		#		self.percent = int((float(self.currentTime) / float(self.totalTime)) * 100)
-		#	else:
-		#		self.percent = 0
-		#	def isRelatedXml(n):
-		#		return n.count('.xml')>=1 and n.count(self.name)>=1 and n.count(self.season + 'x')>=1 
-                #
-		#	dirList=listdir(pathYAMJ)
-                #
-		#Debug(filter(isRelatedXml, dirList)[0])
-		#			#reqYamj = yamjParse(pathYAMJ+filter(isRelatedXml, dirList)[0])
-		#	#self.year = reqYamj.year
-		#	#self.theTvDb = reqYamj.theTvDb
-		#
+		
+		"""
+		nameSplited = self.path.split('/')[::-1][0].strip()
+		if tvserie
+		si seriexepisode  !!! double episode???
+			self.name = nameSplited.split('-')[0].strip()
+			self.title = nameSplited.split('-')[::-1][0].replace('.mkv','').strip()
+		si SxE!!! S01E01!!!
+			self.SxE = nameSplited.split('-')[1].strip()
+			self.season = self.SxE.split('x')[0].strip()
+		
+			if len(self.SxE.split('x'))==2:
+				self.episode = self.SxE.split('x')[::-1][0].strip()
+			else:
+				self.episode = self.SxE.split('x')[::-1][0].strip()
+				self.episode2 = self.SxE.split('x')[::-1][1].strip()
+			if self.totalTime!=0:
+				self.percent = int((float(self.currentTime) / float(self.totalTime)) * 100)
+			else:
+				self.percent = 0
+			def isRelatedXml(n):
+				return n.count('.xml')>=1 and n.count(self.name)>=1 and n.count(self.season + 'x')>=1 
+        
+			dirList=listdir(pathYAMJ)
+        
+		Debug(filter(isRelatedXml, dirList)[0])
+					#reqYamj = yamjParse(pathYAMJ+filter(isRelatedXml, dirList)[0])
+			#self.year = reqYamj.year
+			#self.theTvDb = reqYamj.theTvDb
+		"""
