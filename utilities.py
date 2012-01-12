@@ -26,11 +26,7 @@ __email__ = "ralph-gordon.paul@uni-duesseldorf.de"
 __status__ = "Production"
 
 apikey = 'def6943c09e19dccb4df715bd4c9c6c74bc3b6d7'
-#username = 'kedalel'
-#username = __settings__.getSetting("username")
-#pwd = '7d268b05478e05cfd0cd1f1cce2906ad0cdea524'
 #pwd = sha1('pass').hexdigest()
-#debug = __settings__.getSetting( "debug" )
 
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
