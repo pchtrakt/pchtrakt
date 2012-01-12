@@ -21,6 +21,8 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	np = parser.NameParser(True)
+	parse_result = np.parse('test - 1x06 - toto.mkv')
 	reqPch = PchRequest(ipPch)
 	oStatus = reqPch.getPchStatus()	
 	if oStatus.status != EnumStatus.NOPLAY:
