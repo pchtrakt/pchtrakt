@@ -19,7 +19,7 @@
 
 import sys 
 
-from pchRequest import *
+from pch import *
 from config import *
 from time import sleep
 from utilities import *
@@ -39,8 +39,8 @@ def printHelp():
 	print 'TODO'
 
 def main():
-	reqPch = PchRequest(ipPch)
-	oStatus = reqPch.getPchStatus()	
+	oPchRequestor = PchRequestor(ipPch)
+	oStatus = oPchRequestor.getPchStatus()	
 	if oStatus.status != EnumStatus.NOPLAY:
 		oStatus.fileName=oStatus.fileName.replace(" ",".")
 		oStatus.fileName=oStatus.fileName.replace("-",".")
