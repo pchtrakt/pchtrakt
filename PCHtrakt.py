@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
+# PCHtrakt - Connect your PCH 200 Series to trakt.tv :)
+
 import sys 
 from MediaParser import *
 from pch import *
@@ -42,12 +44,15 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	"""
+	Gni? => use a unittest please :D
 	a = 16
 	b = 36
 	print (float(a)/float(b))*100
-	oPchRequestor = PchRequestor(ipPch)
-	oStatus = oPchRequestor.getPchStatus()
-	if oStatus.status != EnumStatus.NOPLAY:
+	"""
+	oPchRequestor = PchRequestor()
+	oStatus = oPchRequestor.getStatus(ipPch)
+	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 		oParser = MediaParser()
 		parsedInfo = oParser.parseFileName(oStatus.fileName)
 		Debug(parsedInfo)
@@ -56,9 +61,12 @@ def main():
 			+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
 		videoStatusHandle(oStatus,parsedInfo)
 	else:
-		Debug(oStatus.status)
+		Debug("PCH status = " + oStatus.status)
 		
 		
+"""
+this methods should be in another class
+"""
 def videoStatusHandle(oStatus,parsedInfo):
 	#TODO(jlauwers) replace global by an object
 	global watched

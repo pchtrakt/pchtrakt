@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.etree import ElementTree 
+from xml.etree import ElementTree
 from string import split
-from os import listdir
-from urllib import urlopen
+from urllib2 import Request, urlopen, URLError, HTTPError
 from utilities import Debug
 
 class EnumStatus:
@@ -33,35 +32,53 @@ class EnumStatus:
 	
 class PchStatus:
 	def __init__(self):
-		self.status=EnumStatus.NOPLAY
-		self.fullPath=""
+		self.status=EnumStatus.UNKNOWN
+		self.fullPath = ""
+		self.fileName = ""
 		self.currentTime = 0
 		self.totalTime = 0
+		self.percent = 0
+		self.error = None 
 		
 class PchRequestor:
-	def __init__(self,ipPch):
+	"""def __init__(self):
 		self.ip = ipPch
-		
-	def getPchStatus(self):
+	"""
+	
+	def parseResponse(self, response):
 		oPchStatus = PchStatus()
-		oPchStatus.status = EnumStatus.NOPLAY
-		oPchStatus.fullPath = ""
-		oPchStatus.fileName = ""
-		oPchStatus.currentTime = 0
-		oPchStatus.totalTime = 0
-		oPchStatus.percent = 0
-		oStream = urlopen("http://" + self.ip + ":8008/playback?arg0=get_current_vod_info")
-		oXml = ElementTree.parse(oStream).getroot()
-		if oXml.findall('returnValue')[0].text == '0':
-			oPchStatus.status = oXml.findall('response/currentStatus')[0].text
-			oPchStatus.fullPath = oXml.findall('response/fullPath')[0].text
-			oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][0].strip()
-			oPchStatus.currentTime = float(oXml.findall('response/currentTime')[0].text)
-			oPchStatus.totalTime = float(oXml.findall('response/totalTime')[0].text)
-			if oPchStatus.totalTime!=0:
-				oPchStatus.percent = int(oPchStatus.currentTime / oPchStatus.totalTime * 100)
+		try:
+			oXml = ElementTree.parse(response).getroot()		
+			if oXml.findall('returnValue')[0].text == '0':
+				oPchStatus.status = oXml.findall('response/currentStatus')[0].text
+				oPchStatus.fullPath = oXml.findall('response/fullPath')[0].text
+				oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][0].strip()
+				oPchStatus.currentTime = float(oXml.findall('response/currentTime')[0].text)
+				oPchStatus.totalTime = float(oXml.findall('response/totalTime')[0].text)
+				if oPchStatus.totalTime!=0:
+					oPchStatus.percent = int(oPchStatus.currentTime / oPchStatus.totalTime * 100)
+				else:
+					oPchStatus.percent = 0	
 			else:
-				oPchStatus.percent = 0			
+				self.status=EnumStatus.NOPLAY
+		except ElementTree.XMLSyntaxError, e:
+			oPchStatus.error = e
+			oPchStatus.status = EnumStatus.UNKNOWN		
+		return oPchStatus
+		
+	def getStatus(self,ip):
+		oPchStatus = PchStatus()
+		try:
+			oResponse = urlopen("http://" + ip + ":8008/playback?arg0=get_current_vod_info",None,5)
+			oPchStatus = parseResponse(oResponse)
+		except HTTPError, e:
+			oPchStatus.error = e
+			oPchStatus.status = EnumStatus.UNKNOWN
+			Debug("Fail to contact server : " + str(e.reason))		
+		except URLError, e:
+			oPchStatus.error = e
+			oPchStatus.status = EnumStatus.UNKNOWN
+			Debug("Fail to contact server : " + str(e.reason))			
 		return oPchStatus
 		
 	
