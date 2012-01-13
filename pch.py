@@ -58,7 +58,7 @@ class PchRequestor:
 				if oPchStatus.totalTime!=0:
 					oPchStatus.percent = int(oPchStatus.currentTime / oPchStatus.totalTime * 100)
 				else:
-					oPchStatus.percent = 0	
+					oPchStatus.percent = 0
 			else:
 				self.status=EnumStatus.NOPLAY
 		except ElementTree.XMLSyntaxError, e:
