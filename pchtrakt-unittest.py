@@ -22,15 +22,20 @@ from pch import *
 from urllib2 import Request, urlopen, URLError, HTTPError
 from xml.etree import ElementTree 
 from lib import tvdb_api 
+from lib import parser
+from lib import regexes
+import re
+
 
 class TestPchRequestor(unittest.TestCase):
 
 	def setUp(self):
 		self.oPchRequestor = PchRequestor()
 
-	def test_getStatus(self):
+	"""def test_getStatus(self):
 		self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1").status, EnumStatus.UNKNOWN,
                          'Should be UNKNOWN')
+	"""
 						 
 	def test_tvdbapi(self):
 		t = tvdb_api.Tvdb()
@@ -39,8 +44,14 @@ class TestPchRequestor(unittest.TestCase):
 		print t['Dexter']['id'] # Print seadon name
 		"""self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1").status, EnumStatus.UNKNOWN,
                          'Should be UNKNOWN')
-		"""ha 
-
+		""" 
+		
+	def test_me(self):
+		o = parser.NameParser()
+		Debug(o.parse("Breaking Bad - 2x03 - Bit by a Dead Bee.mkv"))
+		Debug(o.parse("Breaking Bad - 2x03 - Bit by a Dead Bee.mkv").series_name)
+		Debug(o.parse("Terra Nova - 1x11x12 - Occupation & Resistance.mkv").episode_numbers)
+		Debug(o.parse("Terra Nova - 1x11x12 - Occupation & Resistance.mkv").series_name)
 						 
 	"""def test_parseResponse(self):
 		self.assertEqual(self.oPchRequestor.parseResponse("<root><returnValue>0</returnValue></root>"), EnumStatus.NOPLAY,
