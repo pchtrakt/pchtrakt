@@ -52,8 +52,9 @@ def main():
 		else:
 			VideoStopped()
 	elif oStatus.percent > 90:
-		#if wacthed == 0:
-		VideoIsEnding()
+		if wacthed == 0:
+			watched = 1
+			VideoIsEnding()
 	elif oStatus.currentTime > currentTime + refreshTime*60:
 		currentTime = oStatus.currentTime
 		VideoStillRunning()
