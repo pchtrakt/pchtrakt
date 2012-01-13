@@ -80,7 +80,7 @@ def videoStatusHandle(oStatus,parsedInfo):
 def videoStarted(oStatus,parsedInfo):
 	#add theTvDb ID
 	#watchingEpisodeOnTrakt(theTvDbId,oParser.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
-	Debug('Video started!')
+	Debug('Video playing!')
 	
 
 def videoStopped():
