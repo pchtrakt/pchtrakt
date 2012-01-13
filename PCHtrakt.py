@@ -42,21 +42,21 @@ def printHelp():
 	print 'TODO'
 
 def main():
-	Debug(currentPath + " " + str(currentTime))
 	oPchRequestor = PchRequestor(ipPch)
 	oStatus = oPchRequestor.getPchStatus()
-	videoStatusHandle(oStatus)
 	if oStatus.status != EnumStatus.NOPLAY:
 		oParser = MediaParser()
-		Debug(oParser.parseFileName(oStatus.fileName))
+		parsedInfo = oParser.parseFileName(oStatus.fileName)
+		Debug(parsedInfo)
 		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
-		+ "] | Watching=" + str(oStatus.currentTime) + " on " 
-		+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
+			+ "] | Watching=" + str(oStatus.currentTime) + " on " 
+			+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
+		videoStatusHandle(oStatus,parsedInfo)
 	else:
 		Debug(oStatus.status)
 		
 		
-def videoStatusHandle(oStatus):
+def videoStatusHandle(oStatus,parsedInfo):
 	#TODO(jlauwers) replace global by an object
 	global watched
 	global currentPath
@@ -64,19 +64,20 @@ def videoStatusHandle(oStatus):
 	if currentPath != oStatus.fullPath:
 		currentPath = oStatus.fullPath
 		if currentPath != '':
-			videoStarted()
+			videoStarted(oStatus,parsedInfo)
 		else:
 			videoStopped()
 	elif oStatus.percent > 90:
 		if watched == 0:
 			watched = 1
-			videoIsEnding()
+			videoIsEnding(oStatus,parsedInfo)
 	elif oStatus.currentTime > currentTime + refreshTime*60:
 		currentTime = oStatus.currentTime
-		videoStillRunning()
+		videoStillRunning(oStatus,parsedInfo)
 		
-def videoStarted():
-	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+def videoStarted(oStatus,parsedInfo):
+	#add theTvDb ID
+	#watchingEpisodeOnTrakt(theTvDbId,oParser.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
 	Debug('Video started!')
 	
 
@@ -84,12 +85,12 @@ def videoStopped():
 	cancelWatchingEpisodeOnTrakt()
 	Debug('Video stopped!')
 
-def videoStillRunning():
-	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+def videoStillRunning(oStatus,parsedInfo):
+	videoStarted(oStatus,parsedInfo)
 	Debug('Video still running!')
 	
 
-def videoIsEnding():
+def videoIsEnding(oStatus,parsedInfo):
 	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
 	Debug('Video is ending')
 	
