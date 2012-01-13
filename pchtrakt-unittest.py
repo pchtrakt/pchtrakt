@@ -21,6 +21,8 @@ import unittest
 from pch import *
 from urllib2 import Request, urlopen, URLError, HTTPError
 from xml.etree import ElementTree 
+import lib.tvdb_api 
+
 
 class TestPchRequestor(unittest.TestCase):
 
@@ -30,6 +32,16 @@ class TestPchRequestor(unittest.TestCase):
 	def test_getStatus(self):
 		self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1").status, EnumStatus.UNKNOWN,
                          'Should be UNKNOWN')
+						 
+	def test_tvdbapi(self):
+		t = lib.tvdb_api.Tvdb()
+		episode = t['Dexter'][6][9] # get season 1, episode 3 of show
+		print episode['id'] # Print episode name
+		print t['Dexter']['id'] # Print seadon name
+		"""self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1").status, EnumStatus.UNKNOWN,
+                         'Should be UNKNOWN')
+		"""
+
 						 
 	"""def test_parseResponse(self):
 		self.assertEqual(self.oPchRequestor.parseResponse("<root><returnValue>0</returnValue></root>"), EnumStatus.NOPLAY,

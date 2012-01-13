@@ -65,7 +65,7 @@ def main():
 		
 		
 """
-this methods should be in another class
+these methods should be in another class
 """
 def videoStatusHandle(oStatus,parsedInfo):
 	#TODO(jlauwers) replace global by an object
