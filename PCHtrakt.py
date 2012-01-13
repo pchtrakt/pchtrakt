@@ -44,17 +44,12 @@ def printHelp():
 	print 'TODO'
 
 def main():
-	"""
-	Gni? => use a unittest please :D
-	a = 16
-	b = 36
-	print (float(a)/float(b))*100
-	"""
 	oPchRequestor = PchRequestor()
 	oStatus = oPchRequestor.getStatus(ipPch)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 		oParser = MediaParser()
 		parsedInfo = oParser.parseFileName(oStatus.fileName)
+		#Debug(parsedInfo)
 		Debug(parsedInfo)
 		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
 			+ "] | Watching=" + str(oStatus.currentTime) + " on " 
@@ -66,6 +61,7 @@ def main():
 		
 """
 these methods should be in another class
+... but these are not the methods you are looking for :D
 """
 def videoStatusHandle(oStatus,parsedInfo):
 	#TODO(jlauwers) replace global by an object
@@ -88,8 +84,8 @@ def videoStatusHandle(oStatus,parsedInfo):
 		
 def videoStarted(oStatus,parsedInfo):
 	#add theTvDb ID
-	#watchingEpisodeOnTrakt(theTvDbId,oParser.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
-	Debug('Video started!')
+	#watchingEpisodeOnTrakt(theTvDbId,name,year,season,episode,str(reqPch.totalTime),str(reqPch.percent))
+	Debug('Video playing!')
 	
 
 def videoStopped():
