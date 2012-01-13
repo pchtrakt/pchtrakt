@@ -103,6 +103,7 @@ def videoStillRunning(oStatus,parsedInfo):
 
 def videoIsEnding(oStatus,parsedInfo):
 	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
+	#TODO(jlauwers) Create the .watched file if yamjpath is not empty?
 	Debug('Video is ending')
 	
 		
