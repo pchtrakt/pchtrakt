@@ -56,10 +56,10 @@ class PchRequestor:
 			oPchStatus.status = oXml.findall('response/currentStatus')[0].text
 			oPchStatus.fullPath = oXml.findall('response/fullPath')[0].text
 			oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][0].strip()
-			oPchStatus.currentTime = int(oXml.findall('response/currentTime')[0].text)
-			oPchStatus.totalTime = int(oXml.findall('response/totalTime')[0].text)
+			oPchStatus.currentTime = float(oXml.findall('response/currentTime')[0].text)
+			oPchStatus.totalTime = float(oXml.findall('response/totalTime')[0].text)
 			if oPchStatus.totalTime!=0:
-				oPchStatus.percent = int((float(oPchStatus.currentTime) / float(oPchStatus.totalTime)) * 100)
+				oPchStatus.percent = int(oPchStatus.currentTime / oPchStatus.totalTime * 100)
 			else:
 				oPchStatus.percent = 0			
 		return oPchStatus

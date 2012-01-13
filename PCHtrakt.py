@@ -42,6 +42,9 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	a = 16
+	b = 36
+	print (float(a)/float(b))*100
 	oPchRequestor = PchRequestor(ipPch)
 	oStatus = oPchRequestor.getPchStatus()
 	if oStatus.status != EnumStatus.NOPLAY:

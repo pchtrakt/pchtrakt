@@ -1,4 +1,4 @@
-from elementtree.ElementTree import parse
+from xml.etree import ElementTree 
 
 class yamjParse:
 	def __init__(self,xml):
