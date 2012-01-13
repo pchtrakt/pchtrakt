@@ -20,7 +20,7 @@
 from xml.etree import ElementTree
 from string import split
 from urllib2 import Request, urlopen, URLError, HTTPError
-from utilities import Debug
+from lib.utilities import Debug
 
 class EnumStatus:
 	NOPLAY='noplay'

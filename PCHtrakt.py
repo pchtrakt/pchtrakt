@@ -20,11 +20,11 @@
 # PCHtrakt - Connect your PCH 200 Series to trakt.tv :)
 
 import sys 
-from MediaParser import *
+from mediaparser import *
 from pch import *
 from config import *
 from time import sleep
-from utilities import *
+from lib.utilities import *
 import getopt
 
 stop = 0
