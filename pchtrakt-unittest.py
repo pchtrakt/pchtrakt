@@ -23,7 +23,6 @@ from urllib2 import Request, urlopen, URLError, HTTPError
 from xml.etree import ElementTree 
 import lib.tvdb_api 
 
-
 class TestPchRequestor(unittest.TestCase):
 
 	def setUp(self):
