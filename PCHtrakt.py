@@ -42,9 +42,6 @@ def printHelp():
 	print 'TODO'
 
 def main():
-	a = 16
-	b = 36
-	print (float(a)/float(b))*100
 	oPchRequestor = PchRequestor(ipPch)
 	oStatus = oPchRequestor.getPchStatus()
 	if oStatus.status != EnumStatus.NOPLAY:
@@ -66,17 +63,19 @@ def videoStatusHandle(oStatus,parsedInfo):
 	global currentTime
 	if currentPath != oStatus.fullPath:
 		currentPath = oStatus.fullPath
+		watched = 0
 		if currentPath != '':
 			videoStarted(oStatus,parsedInfo)
 		else:
 			videoStopped()
-	elif oStatus.percent > 90:
+	else:
 		if watched == 0:
-			watched = 1
-			videoIsEnding(oStatus,parsedInfo)
-	elif oStatus.currentTime > currentTime + refreshTime*60:
-		currentTime = oStatus.currentTime
-		videoStillRunning(oStatus,parsedInfo)
+			if oStatus.percent > 90:
+				watched = 1
+				videoIsEnding(oStatus,parsedInfo)
+			elif oStatus.currentTime > currentTime + refreshTime*60:
+				currentTime = oStatus.currentTime
+				videoStillRunning(oStatus,parsedInfo)
 		
 def videoStarted(oStatus,parsedInfo):
 	#add theTvDb ID
