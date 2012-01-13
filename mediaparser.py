@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
-from lib.utilities import *
-from lib.regexes import *
+from utilities import *
+from regexes import *
 import datetime
 import os.path
 import re

@@ -49,7 +49,6 @@ def main():
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 		oParser = MediaParser()
 		parsedInfo = oParser.parseFileName(oStatus.fileName)
-		#Debug(parsedInfo)
 		Debug(parsedInfo)
 		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
 			+ "] | Watching=" + str(oStatus.currentTime) + " on " 
