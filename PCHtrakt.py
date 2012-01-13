@@ -24,10 +24,12 @@ from config import *
 from time import sleep
 from utilities import *
 import getopt
+
 stop = 0
-currentPath=''
-currentTime=0
-watched=0
+currentPath = ''
+currentTime = 0
+watched = 0
+
 try:
 	opts, args = getopt.getopt(sys.argv[1:], "d::", ['']) #@UnusedVariable
 except getopt.GetoptError:
@@ -40,9 +42,10 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	global watched
 	global currentPath
 	global currentTime
-	global watched
+	Debug(currentPath + " " + str(currentTime))
 	oPchRequestor = PchRequestor(ipPch)
 	oStatus = oPchRequestor.getPchStatus()
 	if currentPath != oStatus.fullPath:
@@ -52,7 +55,7 @@ def main():
 		else:
 			VideoStopped()
 	elif oStatus.percent > 90:
-		if wacthed == 0:
+		if watched == 0:
 			watched = 1
 			VideoIsEnding()
 	elif oStatus.currentTime > currentTime + refreshTime*60:
