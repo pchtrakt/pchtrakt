@@ -42,48 +42,57 @@ def printHelp():
 	print 'TODO'
 
 def main():
-	global watched
-	global currentPath
-	global currentTime
 	Debug(currentPath + " " + str(currentTime))
 	oPchRequestor = PchRequestor(ipPch)
 	oStatus = oPchRequestor.getPchStatus()
-	if currentPath != oStatus.fullPath:
-		currentPath = oStatus.fullPath
-		if currentPath != '':
-			VideoStarted()
-		else:
-			VideoStopped()
-	elif oStatus.percent > 90:
-		if watched == 0:
-			watched = 1
-			VideoIsEnding()
-	elif oStatus.currentTime > currentTime + refreshTime*60:
-		currentTime = oStatus.currentTime
-		VideoStillRunning()
+	videoStatusHandle(oStatus)
 	if oStatus.status != EnumStatus.NOPLAY:
 		oParser = MediaParser()
 		Debug(oParser.parseFileName(oStatus.fileName))
-		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName + "] | Watching=" + str(oStatus.currentTime) + " on " + str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
+		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
+		+ "] | Watching=" + str(oStatus.currentTime) + " on " 
+		+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
 	else:
 		Debug(oStatus.status)
 		
 		
-def VideoStarted():
-	Debug('Video started!')
+def videoStatusHandle(oStatus):
+	#TODO(jlauwers) replace global by an object
+	global watched
+	global currentPath
+	global currentTime
+	if currentPath != oStatus.fullPath:
+		currentPath = oStatus.fullPath
+		if currentPath != '':
+			videoStarted()
+		else:
+			videoStopped()
+	elif oStatus.percent > 90:
+		if watched == 0:
+			watched = 1
+			videoIsEnding()
+	elif oStatus.currentTime > currentTime + refreshTime*60:
+		currentTime = oStatus.currentTime
+		videoStillRunning()
+		
+def videoStarted():
 	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+	Debug('Video started!')
+	
 
-def VideoStopped():
+def videoStopped():
 	cancelWatchingEpisodeOnTrakt()
 	Debug('Video stopped!')
 
-def VideoStillRunning():
-	Debug('Video still running!')
+def videoStillRunning():
 	#watchingEpisodeOnTrakt(reqPch.theTvDb,reqPch.name,str(reqPch.year),reqPch.season,reqPch.episode,str(reqPch.totalTime),str(reqPch.percent))
+	Debug('Video still running!')
+	
 
-def VideoIsEnding():
-	Debug('Video is ending')
+def videoIsEnding():
 	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
+	Debug('Video is ending')
+	
 		
 	
 while not stop:
