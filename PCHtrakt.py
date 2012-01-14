@@ -20,12 +20,14 @@
 # PCHtrakt - Connect your PCH 200 Series to trakt.tv :)
 
 import sys 
-from mediaparser import *
 from pch import *
 from config import *
 from time import sleep
 from lib.utilities import *
 import getopt
+from lib import tvdb_api 
+from lib import parser
+from lib import regexes
 
 stop = 0
 currentPath = ''
@@ -47,12 +49,18 @@ def main():
 	oPchRequestor = PchRequestor()
 	oStatus = oPchRequestor.getStatus(ipPch)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
-		oParser = MediaParser()
-		parsedInfo = oParser.parseFileName(oStatus.fileName)
-		Debug(parsedInfo)
-		Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
-			+ "] | Watching=" + str(oStatus.currentTime) + " on " 
-			+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
+		oNameParser =  parser.NameParser()
+		parsedInfo = oNameParser.parse(oStatus.fileName)
+		Debug(u"PCH current status = [" + oStatus.status + "] - TV Show : " + parsedInfo.series_name + " - Season:" + str(parsedInfo.season_number) + " - Episode:" + str(parsedInfo.episode_numbers)	)
+		#Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
+		#	+ "] | Watching=" + str(oStatus.currentTime) + " on " 
+		#	+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
+		tvdb = tvdb_api.Tvdb()
+		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
+		print "Season ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id'])	
+		print "Year= " + str(tvdb[parsedInfo.series_name]['firstaired']) 
+		print "Episode ID on tvdb = " + str(episodeinfo['id']) 
+		print tvdb['Dexter']['id'] # Print seadon name
 		videoStatusHandle(oStatus,parsedInfo)
 	else:
 		Debug("PCH status = " + oStatus.status)
