@@ -48,7 +48,7 @@ def printHelp():
 def main():
 	global currentPath
 	oPchRequestor = PchRequestor()
-	oStatus = oPchRequestor.getStatus(ipPch)
+	oStatus = oPchRequestor.getStatus(ipPch,5)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 		oNameParser =  parser.NameParser()
 		parsedInfo = oNameParser.parse(oStatus.fileName)
@@ -59,7 +59,7 @@ def main():
 		tvdb = tvdb_api.Tvdb()
 		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
 		Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-		Debug("Year= " + str(tvdb[parsedInfo.series_name]['firstaired']))
+		Debug("FirstAired= " + str(tvdb[parsedInfo.series_name]['firstaired']))
 		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
 		videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
