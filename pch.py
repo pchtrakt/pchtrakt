@@ -70,7 +70,7 @@ class PchRequestor:
 		oPchStatus = PchStatus()
 		try:
 			oResponse = urlopen("http://" + ip + ":8008/playback?arg0=get_current_vod_info",None,timeout)
-			oPchStatus = self.parseResponse(oResponse)
+			oPchStatus = self.parseResponse(oResponse.readlines()[0])
 		except HTTPError, e:
 			oPchStatus.error = e
 			oPchStatus.status = EnumStatus.UNKNOWN

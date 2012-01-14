@@ -20,13 +20,36 @@
 import unittest
 from pch import *
 from mediaparser import *
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib2 import URLError, HTTPError
 from xml.etree import ElementTree 
 from lib import tvdb_api 
 from lib import parser
 from lib import regexes
 import re
+import ConfigParser
 
+TVShows = [ 
+			# FileName , TV Show, #Seasion, #Episode(s) 
+			("Dexter - 6x09.mkv","Dexter",6,[9]),
+			("Terra Nova - 1x11x12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
+			("Dexter - S06E09.mkv","Dexter",6,[9]),
+			("Terra Nova - S01E11-12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
+			("Dexter.6x09.mkv","Dexter",6,[9]),
+			("Terra.Nova.1x11x12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
+			("Breaking.Bad.S02E03.Bit.by.a.Dead.Bee.mkv","Breaking Bad",2,[3]),
+			("Dexter.S06E09.mkv","Dexter",6,[9]),
+			("Terra.Nova.S01E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
+			("Terra.Nova.S1E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
+			("Dexter.S6E9.mkv","Dexter",6,[9])
+		]
+
+Movies = [
+			# FileName ,Movie, Year 
+			("Home.(2009).1080p","Home",2009),
+			("Home (2009) 1080p","Home",2009),
+			("Home_(2009)_1080p","Home",2009)	
+		]				
+				
 class TestPchRequestor(unittest.TestCase):
 
 	def setUp(self):
@@ -55,52 +78,54 @@ class TestMediaParser(unittest.TestCase):
 
 	def setUp(self):
 		self.mediaparser = MediaParser()
-		self.TVShows = [ 
-					("Dexter - 6x09.mkv","Dexter",6,[9]),
-					("Terra Nova - 1x11x12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
-					("Dexter - S06E09.mkv","Dexter",6,[9]),
-					("Terra Nova - S01E11-12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
-					("Dexter.6x09.mkv","Dexter",6,[9]),
-					("Terra.Nova.1x11x12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-					("Breaking.Bad.S02E03.Bit.by.a.Dead.Bee.mkv","Breaking Bad",2,[3]),
-					("Dexter.S06E09.mkv","Dexter",6,[9]),
-					("Terra.Nova.S01E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-					("Terra.Nova.S1E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-					("Dexter.S6E9.mkv","Dexter",6,[9])
-				]
-		self.Movies = [
-				("Home.(2009).1080p","Home",2009),
-				("Home (2009) 1080p","Home",2009),
-				("Home_(2009)_1080p","Home",2009)	
-				]
 
 	def test_TVShows(self):
-		for (fileName,SerieName,Season,Episode) in  self.TVShows:
+		for (fileName,SerieName,Season,Episode) in  TVShows:
 			self.assertEqual(self.mediaparser.parse(fileName).series_name,SerieName)
 			self.assertEqual(self.mediaparser.parse(fileName).season_number,Season)
 			self.assertEqual(self.mediaparser.parse(fileName).episode_numbers,Episode)
 			self.assertEqual(isinstance(self.mediaparser.parse(fileName),parser.ParseResult),True)
 		
-class TestTVShowParsing(unittest.TestCase):
-		
-	def test_parseTVShow(self):
-		o = parser.NameParser()
-		self.assertEqual(o.parse("Breaking Bad - 2x03 - Bit by a Dead Bee.mkv").series_name,"Breaking Bad")
-		self.assertEqual(o.parse("Breaking Bad - 2x03 - Bit by a Dead Bee.mkv").episode_numbers[0], 3)
-		self.assertEqual(o.parse("Breaking Bad - 2x03 - Bit by a Dead Bee.mkv").series_name,"Breaking Bad")
-		self.assertEqual(o.parse("Terra Nova - 1x11x12 - Occupation & Resistance.mkv").episode_numbers,[11,12])
+		"""
+		config = ConfigParser.RawConfigParser()
+		# When adding sections or items, add them in the reverse order of
+		# how you want them to be displayed in the actual file.
+		# In addition, please note that using RawConfigParser's and the raw
+		# mode of ConfigParser's respective set functions, you can assign
+		# non-string values to keys internally, but will receive an error
+		# when attempting to write to a file or when you get it in non-raw
+		# mode. SafeConfigParser does not allow such assignments to take place.
+		config.add_section('PCHtrakt')
+		config.set('PCHtrakt', 'pch_ip', '192.168.1.4')
+		config.set('PCHtrakt', 'tratk.tv_login', 'put_your_trakt.tv_login_here')
+		config.set('PCHtrakt', 'tratk.tv_pwd', 'put_your_trakt.tv_pwd_here')
+		config.set('PCHtrakt', 'enable_movie_scrobbling', 'true')
+		config.set('PCHtrakt', 'enable_tvshow_scrobbling', 'true')
 
+		config.add_section('YAMJ')
+		config.set('YAMJ', 'path', '/media/raid5/Video/Yamj/Jukebox/')
+		config.set('YAMJ', 'enable_watched_status', 'false')
+		
+		# Writing our configuration file to 'example.cfg'
+		with open('pchtrakt.cfg', 'wb') as configfile:
+			config.write(configfile)	
+			
+		config = ConfigParser.SafeConfigParser({'pch_ip2': 'Life', 'baz': 'hard'})
+		config.read('pchtrakt.cfg')
+		print config.get('PCHtrakt', 'pch_ip2') # -> "Python is fun!"
+		"""	
+		
+class TestTVDBAPIUsage(unittest.TestCase):
+	
+	def test_tvdb_api(self):
+		tvdb = tvdb_api.Tvdb()
+		for (fileName,SerieName,Season,Episode) in  TVShows:
+			serieinfo = tvdb[SerieName]
+			seasoninfo = tvdb[SerieName][Season]
+			episodeinfo = tvdb[SerieName][Season][Episode[0]]
+			#Debug("TvShow ID on tvdb = " + str(serieinfo['id']))
+			#Debug("FirstAired= " + str(serieinfo['firstaired']))
+			#Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
+		
 if __name__ == '__main__':
     unittest.main()
-	
-	
-"""def test_tvdbapi(self):
-		t = tvdb_api.Tvdb()
-		count = 0
-		while (count < 100):
-			
-			episode = t['Dexter'][6][9] # get season 1, episode 3 of show
-			print episode['id'] # Print episode name
-			print t['Dexter']['id'] # Print seadon name
-			count = count + 1
-"""	

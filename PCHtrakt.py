@@ -18,6 +18,10 @@
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
 # PCHtrakt - Connect your PCH 200 Series to trakt.tv :)
+# PCHtrakt uses some pyhton lib :
+#	- tvdb_api ()
+#	- nbrhttpconnection ()
+# 	- some classes from Sick Beard () 
 
 import sys 
 from pch import *
@@ -105,15 +109,13 @@ def videoStopped():
 def videoStillRunning(oStatus,id,year,parsedInfo):
 	videoStarted(oStatus,id,year,parsedInfo)
 	Debug('Video still running!')
-	
 
 def videoIsEnding(oStatus,id,year,parsedInfo):
 	scrobbleEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[0]),str(oStatus.totalTime),str(oStatus.percent))
 	#TODO(jlauwers) Create the .watched file if yamjpath is not empty?
-	Debug('Video is ending')
+	Debug('Video is ending')	
 	
-		
-	
-while not stop:
-	main()
-	sleep(sleepTime)
+if __name__ == '__main__':
+	while not stop:
+		main()
+		sleep(sleepTime)
