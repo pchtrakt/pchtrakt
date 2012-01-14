@@ -45,7 +45,7 @@ install_defaults()
    chmod 777 /share/Apps/PCHtrakt
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b dvp git://github.com/PCHtrakt/PCHtrakt.git
+   git clone -b release-0.1 git://github.com/PCHtrakt/PCHtrakt.git
   #git clone git://github.com/PCHtrakt/PCHtrakt.git PCHtrakt
    cp -R PCHtrakt/* /share/Apps/PCHtrakt
    chmod 777 /share/Apps/PCHtrakt
@@ -81,12 +81,12 @@ cd /share/Apps/PCHtrakt/
 start_PCHtrakt()
 {
 # start PCHtrakt
-ps | grep "PCHtrakt.py" > /dev/null
-if [ $? -ne 0 ];
-then
-echo "PCHtrakt.py is not running, Starting processes"
+#ps | grep "PCHtrakt.py" > /dev/null
+#if [ $? -ne 0 ];
+#then
+#echo "PCHtrakt.py is not running, Starting processes"
 python2.7 /share/Apps/PCHtrakt/PCHtrakt.py --daemon
-fi
+#fi
 }
 
 stop_PCHtrakt()
@@ -100,6 +100,8 @@ kill $(ps -ef |grep "PCHtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 case "$1" in
     start)
     install_defaults;
+	stop_PCHtrakt;
+	start_PCHtrakt;
     ;;
 
 
