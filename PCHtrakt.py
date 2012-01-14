@@ -28,7 +28,7 @@ import getopt
 from lib import tvdb_api 
 from lib import parser
 from lib import regexes
-
+from datetime import date
 stop = 0
 currentPath = ''
 currentTime = 0
@@ -57,11 +57,10 @@ def main():
 		#	+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
 		tvdb = tvdb_api.Tvdb()
 		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
-		print "Season ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id'])	
-		print "Year= " + str(tvdb[parsedInfo.series_name]['firstaired']) 
-		print "Episode ID on tvdb = " + str(episodeinfo['id']) 
-		print tvdb['Dexter']['id'] # Print seadon name
-		videoStatusHandle(oStatus,parsedInfo)
+		Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
+		Debug("Year= " + str(tvdb[parsedInfo.series_name]['firstaired']))
+		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
+		videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
 		Debug("PCH status = " + oStatus.status)
 		
@@ -70,7 +69,7 @@ def main():
 these methods should be in another class
 ... but these are not the methods you are looking for :D
 """
-def videoStatusHandle(oStatus,parsedInfo):
+def videoStatusHandle(oStatus,id,year,parsedInfo):
 	#TODO(jlauwers) replace global by an object
 	global watched
 	global currentPath
@@ -78,20 +77,20 @@ def videoStatusHandle(oStatus,parsedInfo):
 	if currentPath != oStatus.fullPath:
 		currentPath = oStatus.fullPath
 		if currentPath != '':
-			videoStarted(oStatus,parsedInfo)
+			videoStarted(oStatus,id,year,parsedInfo)
 		else:
 			videoStopped()
 	elif oStatus.percent > 90:
 		if watched == 0:
 			watched = 1
-			videoIsEnding(oStatus,parsedInfo)
+			videoIsEnding(oStatus,id,year,parsedInfo)
 	elif oStatus.currentTime > currentTime + refreshTime*60:
 		currentTime = oStatus.currentTime
-		videoStillRunning(oStatus,parsedInfo)
+		videoStillRunning(oStatus,id,year,parsedInfo)
 		
-def videoStarted(oStatus,parsedInfo):
+def videoStarted(oStatus,id,year,parsedInfo):
 	#add theTvDb ID
-	#watchingEpisodeOnTrakt(theTvDbId,name,year,season,episode,str(reqPch.totalTime),str(reqPch.percent))
+	watchingEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[0]),str(oStatus.totalTime),str(oStatus.percent))
 	Debug('Video playing!')
 	
 
@@ -99,12 +98,12 @@ def videoStopped():
 	cancelWatchingEpisodeOnTrakt()
 	Debug('Video stopped!')
 
-def videoStillRunning(oStatus,parsedInfo):
+def videoStillRunning(oStatus,id,year,parsedInfo):
 	videoStarted(oStatus,parsedInfo)
 	Debug('Video still running!')
 	
 
-def videoIsEnding(oStatus,parsedInfo):
+def videoIsEnding(oStatus,id,year,parsedInfo):
 	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
 	#TODO(jlauwers) Create the .watched file if yamjpath is not empty?
 	Debug('Video is ending')
