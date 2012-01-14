@@ -46,6 +46,7 @@ def printHelp():
 	print 'TODO'
 
 def main():
+	global currentPath
 	oPchRequestor = PchRequestor()
 	oStatus = oPchRequestor.getStatus(ipPch)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
@@ -62,6 +63,9 @@ def main():
 		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
 		videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
+		if currentPath != '':
+			videoStopped()
+			currentPath = ''
 		Debug("PCH status = " + oStatus.status)
 		
 		
@@ -99,12 +103,12 @@ def videoStopped():
 	Debug('Video stopped!')
 
 def videoStillRunning(oStatus,id,year,parsedInfo):
-	videoStarted(oStatus,parsedInfo)
+	videoStarted(oStatus,id,year,parsedInfo)
 	Debug('Video still running!')
 	
 
 def videoIsEnding(oStatus,id,year,parsedInfo):
-	#scrobbleEpisodeOnTrakt(tvdb_id, title, year, season, episode, duration, percent):
+	scrobbleEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[0]),str(oStatus.totalTime),str(oStatus.percent))
 	#TODO(jlauwers) Create the .watched file if yamjpath is not empty?
 	Debug('Video is ending')
 	
