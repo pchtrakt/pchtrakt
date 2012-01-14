@@ -70,9 +70,18 @@ class TestPchRequestor(unittest.TestCase):
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).totalTime, 5620,"Should be 5620 seconds")
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).currentTime, 2341,"Should be 2341 seconds")
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).fileName, "Home.(2009).1080p.mkv","Should be [Home.(2009).1080p.mkv]")
-					 						 					 
+									
 	def test_getStatus(self):
 		self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1",0.1).status, EnumStatus.UNKNOWN, "Should be UNKNOWN (cannot connect to pch)")
+		
+	def test_getStatusRemote(self):
+		oStatus = self.oPchRequestor.getStatus("83.134.24.223",0.1)
+		if(oStatus.status != EnumStatus.UNKNOWN):
+			Debug(u"Remote PCH is [" + oStatus.status + "]")
+			Debug(u"	FileName=" + oStatus.fileName)
+			Debug(u"	CurrentTime=" + str(oStatus.currentTime) + "s")
+			Debug(u"	TotalTime=" + str(oStatus.totalTime) + "s")
+			Debug(u"	PercentTime=" + str(oStatus.percent) + "%")
 
 class TestMediaParser(unittest.TestCase):
 
