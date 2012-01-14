@@ -37,6 +37,7 @@ stop = 0
 currentPath = ''
 currentTime = 0
 watched = 0
+tvdb = tvdb_api.Tvdb()
 
 try:
 	opts, args = getopt.getopt(sys.argv[1:], "d::", ['']) #@UnusedVariable
@@ -60,7 +61,6 @@ def main():
 		#Debug("PCH is : " + oStatus.status + " - [" + oStatus.fileName 
 		#	+ "] | Watching=" + str(oStatus.currentTime) + " on " 
 		#	+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
-		tvdb = tvdb_api.Tvdb()
 		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
 		Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
 		Debug("FirstAired= " + str(tvdb[parsedInfo.series_name]['firstaired']))
