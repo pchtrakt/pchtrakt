@@ -32,7 +32,7 @@ class EnumStatus:
 	
 class PchStatus:
 	def __init__(self):
-		self.status=EnumStatus.UNKNOWN
+		self.status=EnumStatus.NOPLAY
 		self.fullPath = ""
 		self.fileName = ""
 		self.currentTime = 0

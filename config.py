@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
-ipPch = "83.134.28.214"
+ipPch = "192.168.1.4"
 pathYAMJ='/media/raid5/Video/Yamj/Jukebox/'
 username = 'kedalel'
-pwd = 'toto'
+pwd = 'pchtrakt6180'
 debug = 'true'
 sleepTime = 5 #sec
 refreshTime = 15 #min
