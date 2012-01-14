@@ -45,7 +45,7 @@ install_defaults()
    chmod 777 /share/Apps/PCHtrakt
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b dvp git://github.com/PCHtrakt/PCHtrakt.git
+   git clone -b release-0.1 git://github.com/PCHtrakt/PCHtrakt.git
   #git clone git://github.com/PCHtrakt/PCHtrakt.git PCHtrakt
    cp -R PCHtrakt/* /share/Apps/PCHtrakt
    chmod 777 /share/Apps/PCHtrakt
