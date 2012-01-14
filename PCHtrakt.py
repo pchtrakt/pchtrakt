@@ -57,10 +57,9 @@ def main():
 		#	+ str(oStatus.totalTime) + " (" + str(oStatus.percent) + "%)")
 		tvdb = tvdb_api.Tvdb()
 		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
-		print "Season ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id'])	
+		print "TVShow ID on tvdb=" + str(tvdb[parsedInfo.series_name]['id'])	
 		print "Year= " + str(tvdb[parsedInfo.series_name]['firstaired']) 
 		print "Episode ID on tvdb = " + str(episodeinfo['id']) 
-		print tvdb['Dexter']['id'] # Print seadon name
 		videoStatusHandle(oStatus,parsedInfo)
 	else:
 		Debug("PCH status = " + oStatus.status)
