@@ -60,7 +60,7 @@ class PchRequestor:
 				else:
 					oPchStatus.percent = 0
 			else:
-				self.status=EnumStatus.NOPLAY
+				oPchStatus.status=EnumStatus.NOPLAY
 		except ElementTree.XMLSyntaxError, e:
 			oPchStatus.error = e
 			oPchStatus.status = EnumStatus.UNKNOWN		
