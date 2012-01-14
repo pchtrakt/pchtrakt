@@ -85,7 +85,7 @@ ps | grep "PCHtrakt.py" > /dev/null
 if [ $? -ne 0 ];
 then
 echo "PCHtrakt.py is not running, Starting processes"
-python2.7 /share/Apps/PCHtrakt/PCHtrakt.py --daemon > /dev/null 2>&1
+python2.7 /share/Apps/PCHtrakt/PCHtrakt.py --daemon
 fi
 }
 

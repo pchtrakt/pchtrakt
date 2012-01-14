@@ -131,7 +131,7 @@ def daemonize():
 
 		# This call to open is guaranteed to return the lowest file descriptor,
 		# which will be 0 (stdin), since it was closed above.
-	os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
+	os.open('/dev/null', os.O_RDWR)	# standard input (0)
 
 		# Duplicate standard input to standard output and standard error.
 	os.dup2(0, 1)			# standard output (1)
