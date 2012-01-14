@@ -1,0 +1,8 @@
+{
+appinfo_format="1",
+name="PCHtrakt",
+version="0.1",
+enabled="1",
+daemon_script="daemon.sh",
+}
+
