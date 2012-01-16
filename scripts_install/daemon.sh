@@ -58,8 +58,8 @@ force_PCHtrakt()
 {
    chmod 777 /share/Apps/PCHtrakt
    cd /share/Apps/PCHtrakt
-   #rm -r /share/Apps/PCHtrakt/daemon.sh
-   wget https://raw.github.com/PCHtrakt/PCHtrakt/master/scripts_install/daemon.sh
+   rm -r /share/Apps/PCHtrakt/daemon.sh
+   wget https://raw.github.com/PCHtrakt/PCHtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
    git clone -b release-0.1 git://github.com/PCHtrakt/PCHtrakt.git
