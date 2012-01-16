@@ -24,7 +24,7 @@
 # 	- some classes from Sick Beard () 
 
 import sys 
-import PCHtrakt
+import pchtrakt
 import getopt
 from pch import *
 from config import *
@@ -35,15 +35,15 @@ from lib import parser
 from lib import regexes
 from datetime import date
 
-PCHtrakt.stop = 0
-PCHtrakt.currentPath = ''
-PCHtrakt.currentTime = 0
-PCHtrakt.watched = 0
+pchtrakt.stop = 0
+pchtrakt.currentPath = ''
+pchtrakt.currentTime = 0
+pchtrakt.watched = 0
 tvdb = tvdb_api.Tvdb()
-PCHtrakt.DAEMON = 0
+pchtrakt.DAEMON = 0
 
 def printHelp():
-	print 'Usage %s <other options>' % 'PCHtrak.py'
+	print 'Usage %s <other options>' % 'pchtrak.py'
 	print ''
 	print 'TODO'
 
@@ -60,10 +60,10 @@ def getParams():
 			if sys.platform == 'win32':
 				print "Daemonize not supported under Windows, starting normally"
 			else:
-				PCHtrakt.DAEMON = True
+				pchtrakt.DAEMON = True
 		
 		if o in ('-h', '--help'):
-			print '-d,--daemon launches PCHtrakt in the background'
+			print '-d,--daemon launches pchtrakt in the background'
 			sys.exit()
 
 def main():
@@ -82,9 +82,9 @@ def main():
 		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
 		videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
-		if PCHtrakt.currentPath != '':
+		if pchtrakt.currentPath != '':
 			videoStopped()
-			PCHtrakt.currentPath = ''
+			pchtrakt.currentPath = ''
 		Debug("PCH status = " + oStatus.status)
 
 def daemonize():
@@ -146,18 +146,18 @@ these methods should be in another class
 ... but these are not the methods you are looking for :D
 """
 def videoStatusHandle(oStatus,id,year,parsedInfo):
-	if PCHtrakt.currentPath != oStatus.fullPath:
-		PCHtrakt.currentPath = oStatus.fullPath
-		if PCHtrakt.currentPath != '':
+	if pchtrakt.currentPath != oStatus.fullPath:
+		pchtrakt.currentPath = oStatus.fullPath
+		if pchtrakt.currentPath != '':
 			videoStarted(oStatus,id,year,parsedInfo)
 		else:
 			videoStopped()
 	elif oStatus.percent > 90:
-		if PCHtrakt.watched == 0:
-			PCHtrakt.watched = 1
+		if pchtrakt.watched == 0:
+			pchtrakt.watched = 1
 			videoIsEnding(oStatus,id,year,parsedInfo)
-	elif oStatus.currentTime > PCHtrakt.currentTime + refreshTime*60:
-		PCHtrakt.currentTime = oStatus.currentTime
+	elif oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
+		pchtrakt.currentTime = oStatus.currentTime
 		videoStillRunning(oStatus,id,year,parsedInfo)
 		
 def videoStarted(oStatus,id,year,parsedInfo):
@@ -181,8 +181,8 @@ def videoIsEnding(oStatus,id,year,parsedInfo):
 	
 if __name__ == '__main__':
 	getParams()
-	if PCHtrakt.DAEMON == True:
+	if pchtrakt.DAEMON == True:
 		daemonize()
-	while not PCHtrakt.stop:
+	while not pchtrakt.stop:
 		main()
 		sleep(sleepTime)
