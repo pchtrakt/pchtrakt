@@ -59,6 +59,7 @@ class TestPchRequestor(unittest.TestCase):
 		self.fakeResponseBUFFERING = u"<theDavidBox><request><arg0>get_current_vod_info</arg0><module>playback</module></request><response><bufferStatus>0</bufferStatus><currentStatus>buffering</currentStatus><currentTime>2341</currentTime><downloadSpeed>0</downloadSpeed><fullPath>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</fullPath><lastPacketTime>0</lastPacketTime><mediatype>OTHERS</mediatype><seekEnable>true</seekEnable><title>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</title><totalTime>5620</totalTime></response><returnValue>0</returnValue></theDavidBox>"
 		self.fakeResponsePAUSE = u"<theDavidBox><request><arg0>get_current_vod_info</arg0><module>playback</module></request><response><bufferStatus>0</bufferStatus><currentStatus>pause</currentStatus><currentTime>2341</currentTime><downloadSpeed>0</downloadSpeed><fullPath>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</fullPath><lastPacketTime>0</lastPacketTime><mediatype>OTHERS</mediatype><seekEnable>true</seekEnable><title>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</title><totalTime>5620</totalTime></response><returnValue>0</returnValue></theDavidBox>"
 		self.fakeResponsePLAYING = u"<theDavidBox><request><arg0>get_current_vod_info</arg0><module>playback</module></request><response><bufferStatus>0</bufferStatus><currentStatus>play</currentStatus><currentTime>2341</currentTime><downloadSpeed>0</downloadSpeed><fullPath>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</fullPath><lastPacketTime>0</lastPacketTime><mediatype>OTHERS</mediatype><seekEnable>true</seekEnable><title>/opt/sybhttpd/localhost.drives/NETWORK_SHARE/download/Home.(2009).1080p.mkv</title><totalTime>5620</totalTime></response><returnValue>0</returnValue></theDavidBox>"
+		self.fakeResponsePLAYING_BD = u"<theDavidBox><request><arg0>get_current_vod_info</arg0><module>playback</module></request><response><currentStatus>play</currentStatus><currentTime>82</currentTime><currentchapter>135</currentchapter><downloadSpeed>0</downloadSpeed><fullPath>/opt/sybhttpd/localhost.drives/SATA_DISK_B4/Video/Films/Home/</fullPath><lastPacketTime>0</lastPacketTime><mediatype>BD</mediatype><seekEnable>true</seekEnable><title>/opt/sybhttpd/localhost.drives/SATA_DISK_B4/Video/Films/Home/</title><totalTime>99</totalTime><totalchapter>909</totalchapter></response><returnValue>0</returnValue></theDavidBox>"
 			
 	def test_parseResponse(self):
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponseOTHER).status, EnumStatus.UNKNOWN, "Should be UNKNOWN")
@@ -69,10 +70,22 @@ class TestPchRequestor(unittest.TestCase):
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).status, EnumStatus.PLAY,"Should be PLAY")
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).totalTime, 5620,"Should be 5620 seconds")
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).currentTime, 2341,"Should be 2341 seconds")
+		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).percent, 42,"Should be 42%")
 		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING).fileName, "Home.(2009).1080p.mkv","Should be [Home.(2009).1080p.mkv]")
-					 						 					 
+		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING_BD).fileName, "Home","Should be [Home]")
+		self.assertEqual(self.oPchRequestor.parseResponse(self.fakeResponsePLAYING_BD).percent, 15,"Should be 15%")
+									
 	def test_getStatus(self):
 		self.assertEqual(self.oPchRequestor.getStatus("1.1.1.1",0.1).status, EnumStatus.UNKNOWN, "Should be UNKNOWN (cannot connect to pch)")
+		
+	def test_getStatusRemote(self):
+		oStatus = self.oPchRequestor.getStatus("83.134.24.223",0.1)
+		if(oStatus.status != EnumStatus.UNKNOWN):
+			Debug(u"Remote PCH is [" + oStatus.status + "]")
+			Debug(u"	FileName=" + oStatus.fileName)
+			Debug(u"	CurrentTime=" + str(oStatus.currentTime) + "s")
+			Debug(u"	TotalTime=" + str(oStatus.totalTime) + "s")
+			Debug(u"	PercentTime=" + str(oStatus.percent) + "%")
 
 class TestMediaParser(unittest.TestCase):
 
