@@ -59,10 +59,10 @@ force_PCHtrakt()
    chmod 777 /share/Apps/PCHtrakt
    cd /share/Apps/PCHtrakt
    #rm -r /share/Apps/PCHtrakt/daemon.sh
-   #wget www.jamied.pwp.blueyonder.co.uk/SBC200/daemon.sh
+   wget https://raw.github.com/PCHtrakt/PCHtrakt/master/scripts_install/daemon.sh
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b dvp git://github.com/PCHtrakt/PCHtrakt.git
+   git clone -b release-0.1 git://github.com/PCHtrakt/PCHtrakt.git
    #git clone git://github.com/PCHtrakt/PCHtrakt.git PCHtrakt
    cp -R PCHtrakt/* /share/Apps/PCHtrakt
    chmod -R 777 /share/Apps/PCHtrakt
@@ -99,8 +99,10 @@ kill $(ps -ef |grep "PCHtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 #Main
 case "$1" in
     start)
-    install_defaults;
 	stop_PCHtrakt;
+	sleep 2
+    install_defaults;
+    sleep 2
 	start_PCHtrakt;
     ;;
 
