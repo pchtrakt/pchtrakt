@@ -1,0 +1,11 @@
+#  Compiled source   #
+######################
+*.py[co]
+
+config.py
+
+#vim files
+*sw?
+
+*zip
+*tar
