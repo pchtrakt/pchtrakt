@@ -80,8 +80,8 @@ cd /share/Apps/pchtrakt/
 
 start_pchtrakt()
 {
- start pchtrakt
-ps | grep "[p]chtrakt.py" > /dev/null
+# start pchtrakt
+ps | grep "[p]chtrakt.py --daemon" > /dev/null
 if [ $? -ne 0 ];
 then
 echo "pchtrakt.py is not running, Starting processes"
