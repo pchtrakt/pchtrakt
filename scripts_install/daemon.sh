@@ -81,7 +81,7 @@ cd /share/Apps/pchtrakt/
 start_pchtrakt()
 {
  start pchtrakt
-ps | grep "[P]CHtrakt.py" > /dev/null
+ps | grep "[p]chtrakt.py" > /dev/null
 if [ $? -ne 0 ];
 then
 echo "pchtrakt.py is not running, Starting processes"
@@ -92,7 +92,7 @@ fi
 stop_pchtrakt()
 {
 # Stop pchtrakt
-kill $(ps -ef |grep "[P]CHtrakt" |awk '{ print $1 }') > /dev/null 2>&1
+kill $(ps -ef |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 
 }
 
