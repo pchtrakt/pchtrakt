@@ -73,7 +73,10 @@ def main():
 		oNameParser =  parser.NameParser()
 		parsedInfo = oNameParser.parse(oStatus.fileName)
 		Debug(u"PCH current status = [" + oStatus.status + "] - TV Show : " + parsedInfo.series_name + " - Season:" + str(parsedInfo.season_number) + " - Episode:" + str(parsedInfo.episode_numbers))
-		episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
+		try:
+			episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[0]] #TODO(achtus) Hardcoding 1st episode
+		except:
+			return
 		Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
 		Debug("FirstAired= " + str(tvdb[parsedInfo.series_name]['firstaired']))
 		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
