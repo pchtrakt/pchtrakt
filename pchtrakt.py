@@ -20,9 +20,9 @@
 # pchtrakt - Connect your PCH 200 Series to trakt.tv :)
 # pchtrakt uses some pyhton lib :
 #	- tvdb_api (https://github.com/dbr/tvdb_api)
-#	- nbrhttpconnection ()
+#	- nbrhttpconnection (another project)
 # 	- some classes from Sick Beard (http://sickbeard.com/)
-#	- ;) 
+#	- ;) :S
 
 import sys 
 import pchtrakt
