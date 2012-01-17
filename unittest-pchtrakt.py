@@ -1,32 +1,3 @@
-# -*- coding: utf-8 -*-
-# Authors: Jonathan Lauwers / Frederic Haumont
-# URL: http://github.com/PCHtrakt/PCHtrakt
-#
-# This file is part of PCHtrakt.
-#
-# PCHtrakt is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# PCHtrakt is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
-
-import unittest
-from pch import *
-from mediaparser import *
-from urllib2 import URLError, HTTPError
-from xml.etree import ElementTree 
-from lib import tvdb_api 
-from lib import parser
-from lib import regexes
-import re
-import ConfigParser
 
 TVShows = [ 
 			# FileName , TV Show, #Seasion, #Episode(s) 
