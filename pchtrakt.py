@@ -22,7 +22,6 @@
 #	- tvdb_api (https://github.com/dbr/tvdb_api)
 #	- nbrhttpconnection ()
 # 	- some classes from Sick Beard (http://sickbeard.com/)
-#	- ;) 
 
 import sys 
 import pchtrakt
