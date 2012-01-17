@@ -21,7 +21,8 @@
 # pchtrakt uses some pyhton lib :
 #	- tvdb_api ()
 #	- nbrhttpconnection ()
-# 	- some classes from Sick Beard (http://sickbeard.com/) 
+# 	- some classes from Sick Beard (http://sickbeard.com/)
+#	- ;) 
 
 import sys 
 import pchtrakt
