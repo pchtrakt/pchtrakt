@@ -99,8 +99,6 @@ kill $(ps -ef |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 #Main
 case "$1" in
     start)
-	stop_pchtrakt;
-	sleep 2
     install_defaults;
     sleep 2
 	start_pchtrakt;
