@@ -39,11 +39,12 @@ pchtrakt.stop = 0
 pchtrakt.currentPath = ''
 pchtrakt.currentTime = 0
 pchtrakt.watched = 0
+
 tvdb = tvdb_api.Tvdb()
 pchtrakt.DAEMON = 0
 
 def printHelp():
-	print 'Usage %s <other options>' % 'PCHtrak.py'
+	print 'Usage %s <other options>' % 'pchtrak.py'
 	print ''
 	print 'TODO'
 

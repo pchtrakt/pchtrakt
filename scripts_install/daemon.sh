@@ -11,7 +11,7 @@ install_defaults()
    echo "Required dependency, opkg (local) is installed."
    else
    echo "Required dependency, opkg (local) is not installed, install it via C.S.I"
-   rm -r /share/Apps/PCHtrakt
+   rm -r /share/Apps/pchtrakt
    exit 0
  fi
 
@@ -37,35 +37,35 @@ install_defaults()
    opkg install git -force-depends -force-overwrite
  fi
 
-# install PCHtrakt
+# install pchtrakt
 #verif version?
- if [ -d /share/Apps/PCHtrakt/lib ] ; then
-   echo "PCHtrakt is installed"
+ if [ -d /share/Apps/pchtrakt/lib ] ; then
+   echo "pchtrakt is installed"
    else
-   chmod 777 /share/Apps/PCHtrakt
+   chmod 777 /share/Apps/pchtrakt
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b release-0.1 git://github.com/PCHtrakt/PCHtrakt.git
-  #git clone git://github.com/PCHtrakt/PCHtrakt.git PCHtrakt
-   cp -R PCHtrakt/* /share/Apps/PCHtrakt
-   chmod 777 /share/Apps/PCHtrakt
+   git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
+  #git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+   cp -R pchtrakt/* /share/Apps/pchtrakt
+   chmod 777 /share/Apps/pchtrakt
    cd
    rm -r /share/tmp
  fi
 }
 
-force_PCHtrakt()
+force_pchtrakt()
 {
-   chmod 777 /share/Apps/PCHtrakt
-   cd /share/Apps/PCHtrakt
-   #rm -r /share/Apps/PCHtrakt/daemon.sh
-   #wget www.jamied.pwp.blueyonder.co.uk/SBC200/daemon.sh
+   chmod 777 /share/Apps/pchtrakt
+   cd /share/Apps/pchtrakt
+   rm -r /share/Apps/pchtrakt/daemon.sh
+   wget https://raw.github.com/pchtrakt/pchtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b dvp git://github.com/PCHtrakt/PCHtrakt.git
-   #git clone git://github.com/PCHtrakt/PCHtrakt.git PCHtrakt
-   cp -R PCHtrakt/* /share/Apps/PCHtrakt
-   chmod -R 777 /share/Apps/PCHtrakt
+   git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
+   #git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+   cp -R pchtrakt/* /share/Apps/pchtrakt
+   chmod -R 777 /share/Apps/pchtrakt
    cd
    rm -r /share/tmp
 }
@@ -75,61 +75,60 @@ force_all()
 opkg update
 opkg install python2.7-dev -force-depends -force-overwrite
 opkg install git -force-depends -force-overwrite
-cd /share/Apps/PCHtrakt/
+cd /share/Apps/pchtrakt/
 }
 
-start_PCHtrakt()
+start_pchtrakt()
 {
-# start PCHtrakt
-#ps | grep "PCHtrakt.py" > /dev/null
-#if [ $? -ne 0 ];
-#then
-#echo "PCHtrakt.py is not running, Starting processes"
-python2.7 /share/Apps/PCHtrakt/PCHtrakt.py --daemon
-#fi
+# start pchtrakt
+ps | grep "[p]chtrakt.py --daemon" > /dev/null
+if [ $? -ne 0 ];
+then
+echo "pchtrakt.py is not running, Starting processes"
+python2.7 /share/Apps/pchtrakt/pchtrakt.py --daemon
+fi
 }
 
-stop_PCHtrakt()
+stop_pchtrakt()
 {
-# Stop PCHtrakt
-kill $(ps -ef |grep "PCHtrakt" |awk '{ print $1 }') > /dev/null 2>&1
-
+# Stop pchtrakt
+kill $(ps -ef |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 }
 
 #Main
 case "$1" in
     start)
     install_defaults;
-	stop_PCHtrakt;
-	start_PCHtrakt;
+    sleep 2
+	start_pchtrakt;
     ;;
 
 
     stop)
-    stop_PCHtrakt;
+    stop_pchtrakt;
     exit
     ;;
 
     restart)
-    stop_PCHtrakt;
+    stop_pchtrakt;
     sleep 2
-    start_PCHtrakt;
+    start_pchtrakt;
     ;;
 
     forceall)
-    stop_PCHtrakt;
+    stop_pchtrakt;
     sleep 2
         force_all;
-    force_PCHtrakt;
+    force_pchtrakt;
     sleep 2
-        start_PCHtrakt;
+        start_pchtrakt;
     ;;
 
     forcesb)
-    stop_PCHtrakt;
+    stop_pchtrakt;
     sleep 2
-        force_PCHtrakt;
+        force_pchtrakt;
     sleep 2
-        start_PCHtrakt;
+        start_pchtrakt;
     ;;
 esac
