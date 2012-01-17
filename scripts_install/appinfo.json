@@ -1,6 +1,6 @@
 {
 appinfo_format="1",
-name="PCHtrakt",
+name="pchtrakt",
 version="0.1",
 enabled="1",
 daemon_script="daemon.sh",
