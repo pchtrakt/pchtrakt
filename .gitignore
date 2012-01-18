@@ -18,4 +18,4 @@ lib/tvdb_api/setup.py
 lib/tvdb_api/tests/
 
 #local_config
-local_settings.py
+local_config.py
