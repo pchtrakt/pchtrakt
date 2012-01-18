@@ -30,7 +30,7 @@ from pch import *
 from config import *
 from time import sleep
 from lib.utilities import *
-from lib import tvdb_api 
+from lib.tvdb_api import tvdb_api 
 from lib import parser
 from lib import regexes
 from datetime import date
@@ -146,6 +146,7 @@ these methods should be in another class
 ... but these are not the methods you are looking for :D
 """
 def videoStatusHandle(oStatus,id,year,parsedInfo):
+	#TODO(jlauwers) if double esisode then commit 1st episode at 1/2 lenght and start 2nd
 	if pchtrakt.currentPath != oStatus.fullPath:
 		pchtrakt.currentPath = oStatus.fullPath
 		if pchtrakt.currentPath != '':
