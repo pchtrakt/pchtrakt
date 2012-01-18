@@ -9,3 +9,10 @@ config.py
 
 *zip
 *tar
+
+#useless stuff from tvdb_api repository
+lib/tvdb_api/.gitignore
+lib/tvdb_api/Rakefile
+lib/tvdb_api/readme.md
+lib/tvdb_api/setup.py
+lib/tvdb_api/tests/

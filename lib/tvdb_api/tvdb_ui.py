@@ -132,3 +132,4 @@ class ConsoleUI(BaseUI):
                     self._displaySeries(allSeries)
             #end try
         #end while not valid_input
+
