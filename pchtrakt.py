@@ -151,6 +151,8 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 	global nbr #TODO(jlauwers) change global
 	if len(parsedInfo.episode_numbers)>1:
 		doubleEpisode = 1
+	else:
+		doubleEpisode = 0
 		
 	if pchtrakt.currentPath != oStatus.fullPath:
 		pchtrakt.currentPath = oStatus.fullPath
