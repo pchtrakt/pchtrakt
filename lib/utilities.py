@@ -4,6 +4,7 @@
 import os, sys
 import time, socket
 from config import *
+from local_config import *
 try: import simplejson as json
 except ImportError: import json
 

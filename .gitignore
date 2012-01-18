@@ -16,3 +16,6 @@ lib/tvdb_api/Rakefile
 lib/tvdb_api/readme.md
 lib/tvdb_api/setup.py
 lib/tvdb_api/tests/
+
+#local_config
+local_settings.py

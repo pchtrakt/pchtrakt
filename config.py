@@ -19,8 +19,8 @@
 
 ipPch = "127.0.0.1"
 pathYAMJ='' #not used yet
-username = ''
-pwd = ''
-debug = 'false'
+username = 'your_username'
+pwd = 'your_password'
+debug = 'true'
 sleepTime = 5 #sec
 refreshTime = 15 #min

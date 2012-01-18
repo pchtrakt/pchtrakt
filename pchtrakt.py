@@ -28,6 +28,7 @@ import pchtrakt
 import getopt
 from pch import *
 from config import *
+from local_config import *
 from time import sleep
 from lib.utilities import *
 from lib.tvdb_api import tvdb_api 
@@ -78,8 +79,6 @@ def main():
 		except:
 			return
 		Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-		Debug("FirstAired= " + str(tvdb[parsedInfo.series_name]['firstaired']))
-		Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
 		videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
 		if pchtrakt.currentPath != '':
@@ -145,25 +144,45 @@ def daemonize():
 these methods should be in another class
 ... but these are not the methods you are looking for :D
 """
+nbr = 0
 def videoStatusHandle(oStatus,id,year,parsedInfo):
-	#TODO(jlauwers) if double esisode then commit 1st episode at 1/2 lenght and start 2nd
+	#TODO(jlauwers) if double episode then commit 1st episode at 1/2 lenght and start 2nd
+	Debug(str(oStatus.currentTime) + ' > ' + str(pchtrakt.currentTime) + '+' + str(refreshTime) + '*60')	
+	global nbr #TODO(jlauwers) change global
+	if len(parsedInfo.episode_numbers)>1:
+		doubleEpisode = 1
+		
 	if pchtrakt.currentPath != oStatus.fullPath:
 		pchtrakt.currentPath = oStatus.fullPath
+		pchtrakt.currentTime = oStatus.currentTime
+		nbr = 0
 		if pchtrakt.currentPath != '':
+			#TODO(jlauwrers) what if we stop a 51% and play it again later?
 			videoStarted(oStatus,id,year,parsedInfo)
 		else:
 			videoStopped()
+	elif oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
+		pchtrakt.currentTime = oStatus.currentTime
+		videoStillRunning(oStatus,id,year,parsedInfo,nbr)		
+	elif doubleEpisode and oStatus.percent > 100.0/len(parsedInfo.episode_numbers) and oStatus.percent > (nbr+1) * 100.0/len(parsedInfo.episode_numbers):
+		Debug(str(nbr+1) + ' part of a multi-episode' )
+		videoIsEnding(oStatus,id,year,parsedInfo,nbr)
+		Debug(str(parsedInfo.episode_numbers[nbr]) + ' is finished')
+		nbr = nbr + 1
+		videoStarted(oStatus,id,year,parsedInfo,nbr)
+		Debug(str(parsedInfo.episode_numbers[nbr]) + ' is started')
 	elif oStatus.percent > 90:
 		if pchtrakt.watched == 0:
 			pchtrakt.watched = 1
-			videoIsEnding(oStatus,id,year,parsedInfo)
-	elif oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
-		pchtrakt.currentTime = oStatus.currentTime
-		videoStillRunning(oStatus,id,year,parsedInfo)
+			if doubleEpisode:
+				videoIsEnding(oStatus,id,year,parsedInfo,len(parsedInfo.episode_numbers)-1)
+			else:
+				videoIsEnding(oStatus,id,year,parsedInfo)
+	
 		
-def videoStarted(oStatus,id,year,parsedInfo):
+def videoStarted(oStatus,id,year,parsedInfo,episode = 0):
 	#add theTvDb ID
-	watchingEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[0]),str(oStatus.totalTime),str(oStatus.percent))
+	watchingEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[episode]),str(oStatus.totalTime),str(oStatus.percent))
 	Debug('Video playing!')
 	
 
@@ -171,12 +190,13 @@ def videoStopped():
 	cancelWatchingEpisodeOnTrakt()
 	Debug('Video stopped!')
 
-def videoStillRunning(oStatus,id,year,parsedInfo):
-	videoStarted(oStatus,id,year,parsedInfo)
+def videoStillRunning(oStatus,id,year,parsedInfo,episode = 0):
+	videoStarted(oStatus,id,year,parsedInfo,episode)
 	Debug('Video still running!')
 
-def videoIsEnding(oStatus,id,year,parsedInfo):
-	scrobbleEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[0]),str(oStatus.totalTime),str(oStatus.percent))
+def videoIsEnding(oStatus,id,year,parsedInfo,episode = 0):
+	Debug('episode : ' + str(episode))
+	scrobbleEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[episode]),str(oStatus.totalTime),str(oStatus.percent))
 	#TODO(jlauwers) Create the .watched file if yamjpath is not empty?
 	Debug('Video is ending')	
 	
