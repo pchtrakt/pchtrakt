@@ -22,7 +22,7 @@ from pch import *
 from mediaparser import *
 from urllib2 import URLError, HTTPError
 from xml.etree import ElementTree 
-from lib import tvdb_api 
+from lib.tvdb_api import tvdb_api 
 from lib import parser
 from lib import regexes
 import re
@@ -41,6 +41,7 @@ TVShows = [
 			("Terra.Nova.S01E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
 			("Terra.Nova.S1E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
 			("Dexter.S6E9.mkv","Dexter",6,[9])
+			,("The Cleveland Show - S03E01 - BFFs.HDTV.mkv","The Cleveland Show",3,[1])
 		]
 
 Movies = [
