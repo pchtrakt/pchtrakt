@@ -44,6 +44,8 @@ pchtrakt.watched = 0
 tvdb = tvdb_api.Tvdb()
 pchtrakt.DAEMON = 0
 pchtrakt.nbr = 0
+pchtrakt.oPchRequestor = PchRequestor()
+pchtrakt.oNameParser =  parser.NameParser()
 
 def printHelp():
 	print 'Usage %s <other options>' % 'pchtrak.py'
@@ -70,11 +72,9 @@ def getParams():
 			sys.exit()
 
 def main():
-	oPchRequestor = PchRequestor()
-	oStatus = oPchRequestor.getStatus(ipPch,5)
+	oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
-		oNameParser =  parser.NameParser()
-		parsedInfo = oNameParser.parse(oStatus.fileName)
+		parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
 		Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
 			+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
 			+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
@@ -163,14 +163,18 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 		pchtrakt.currentTime = oStatus.currentTime
 		pchtrakt.nbr = 0
 		if pchtrakt.currentPath != '':
-			#TODO(jlauwrers) what if we stop a 51% and play it again later?
-			videoStarted(oStatus,id,year,parsedInfo)
+			if doubleEpisode and oStatus.percent > 45:
+				pchtrakt.nbr = pchtrakt.nbr + 1
+				id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]]['id']
+				videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.nbr)
+			else:
+				videoStarted(oStatus,id,year,parsedInfo)
 		else:
 			videoStopped()
 	elif oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
 		pchtrakt.currentTime = oStatus.currentTime
 		videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.nbr)		
-	elif doubleEpisode and oStatus.percent > 100.0/len(parsedInfo.episode_numbers) and oStatus.percent > (pchtrakt.nbr+1) * 100.0/len(parsedInfo.episode_numbers):
+	elif doubleEpisode and oStatus.percent > 90.0/len(parsedInfo.episode_numbers) and oStatus.percent > (pchtrakt.nbr+1) * 90.0/len(parsedInfo.episode_numbers):
 		Debug(str(pchtrakt.nbr+1) + ' part of a multi-episode' )
 		videoIsEnding(oStatus,id,year,parsedInfo,pchtrakt.nbr)
 		Debug(str(parsedInfo.episode_numbers[pchtrakt.nbr]) + ' is finished')
@@ -214,5 +218,9 @@ if __name__ == '__main__':
 	if pchtrakt.DAEMON == True:
 		daemonize()
 	while not pchtrakt.stop:
-		main()
-		sleep(sleepTime)
+		try:
+			main()
+			sleep(sleepTime)
+		except KeyboardInterrupt, SystemExit:
+			print ':::Stopping pchtrakt:::'
+			pchtrakt.stop = 1
