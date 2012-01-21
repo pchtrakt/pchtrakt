@@ -49,6 +49,8 @@ install_defaults()
   #git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod 777 /share/Apps/pchtrakt
+   cd /share/Apps/pchtrakt
+   touch local_config.py
    cd
    rm -r /share/tmp
  fi
