@@ -216,12 +216,12 @@ def videoIsEnding(oStatus,id,year,parsedInfo,episode = 0):
 	
 if __name__ == '__main__':
 	getParams()
-	if pchtrakt.DAEMON == True:
+	if pchtrakt.DAEMON:
 		daemonize()
 	while not pchtrakt.stop:
 		try:
 			main()
 			sleep(sleepTime)
-		except KeyboardInterrupt, SystemExit:
+		except (KeyboardInterrupt, SystemExit):
 			print ':::Stopping pchtrakt:::'
 			pchtrakt.stop = 1

@@ -109,7 +109,7 @@ def getTraktConnection():
 # passVersions: default is False, when true it passes extra version information to trakt to help debug problems
 def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=False, silent=False, passVersions=False):
     closeConnection = False
-    if conn == False:
+    if not conn:
         conn = getTraktConnection()
         closeConnection = True
     if conn == None:
