@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 # Authors: Jonathan Lauwers / Frederic Haumont
-# URL: http://github.com/PCHtrakt/PCHtrakt
+# URL: http://github.com/pchtrakt/pchtrakt
 #
-# This file is part of PCHtrakt.
+# This file is part of pchtrakt.
 #
-# PCHtrakt is free software: you can redistribute it and/or modify
+# pchtrakt is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# PCHtrakt is distributed in the hope that it will be useful,
+# pchtrakt is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
+# along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
 from pch import *
@@ -27,29 +27,47 @@ from lib import parser
 from lib import regexes
 import re
 import ConfigParser
->>>>>>> release-0.1
 
 TVShows = [ 
-			# FileName , TV Show, #Seasion, #Episode(s) 
-			("Dexter - 6x09.mkv","Dexter",6,[9]),
-			("Terra Nova - 1x11x12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
-			("Dexter - S06E09.mkv","Dexter",6,[9]),
-			("Terra Nova - S01E11-12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12]),
-			("Dexter.6x09.mkv","Dexter",6,[9]),
-			("Terra.Nova.1x11x12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-			("Breaking.Bad.S02E03.Bit.by.a.Dead.Bee.mkv","Breaking Bad",2,[3]),
-			("Dexter.S06E09.mkv","Dexter",6,[9]),
-			("Terra.Nova.S01E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-			("Terra.Nova.S1E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12]),
-			("Dexter.S6E9.mkv","Dexter",6,[9])
+			# Filename , Serie, #Season, #Episode(s) 
+			 ("Dexter - 6x09.mkv","Dexter",6,[9])
+			,("Terra Nova - 1x11x12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12])
+			,("Dexter - S06E09.mkv","Dexter",6,[9])
+			,("Terra Nova - S01E11-12 - Occupation & Resistance.mkv","Terra Nova",1,[11,12])
+			,("Dexter.6x09.mkv","Dexter",6,[9])
+			,("Terra.Nova.1x11x12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12])
+			,("Breaking.Bad.S02E03.Bit.by.a.Dead.Bee.mkv","Breaking Bad",2,[3])
+			,("Dexter.S06E09.mkv","Dexter",6,[9])
+			,("Terra.Nova.S01E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12])
+			,("Terra.Nova.S1E11-12.Occupation.&.Resistance.mkv","Terra Nova",1,[11,12])
+			,("Dexter.S6E9.mkv","Dexter",6,[9])
 			,("The Cleveland Show - S03E01 - BFFs.HDTV.mkv","The Cleveland Show",3,[1])
 		]
 
 Movies = [
-			# FileName ,Movie, Year 
-			("Home.(2009).1080p","Home",2009),
-			("Home (2009) 1080p","Home",2009),
-			("Home_(2009)_1080p","Home",2009)	
+			# Filename [I should inform the majors that theses files are some examples taken from the net ! ;-)]
+			 ("Home.(2009).1080p") 
+			,("Home (2009) 1080p")
+			,("Home_(2009)_1080p")	
+			,("Inception.BDRip.1080p.mkv")
+			,("indiana jones and the last crusade 1989 1080p x264 dd5.1-m794.mkv")
+			,("Indiana.Jones.and.the.Temple.of.Doom.[1984].HDTV.1080p.mkv")
+			,("Inglourious.Basterds.(2009).BDRip.1080p.mkv")		
+			,("James.Bond.04.Thunderball.1965.Bluray.1080p.DTSMA.x264.dxva-FraMeSToR.mkv")
+			,("James.Bond.08.Live.and.Let.Die.1973.Bluray.1080p.DTSMA.x264.dxva-FraMeSToR.mkv")
+			,("The.Godfather.Part.III.(1990).BDRip.1080p.[SET Godfather].mkv")
+			,("Underworld.Rise.Of.The.Lycans.(2008).BDRip.1080p.[SET Underworld].mkv")
+			,("unstoppable.2010.bluray.1080p.dts.x264-chd.mkv")
+			,("UP.(2009).BDRip.720p.mkv") # epic !
+			,("127.Hours.2010.1080p.BluRay.x264-SECTOR7.mkv")
+			,("13.Assassins.2010.LIMITED.1080p.BluRay.x264-WEST.mkv")
+			,("2012.(2009).BDRip.1080p.mkv")
+			,("300.(2006).BDRip.1080p.mkv")
+			,("Big.Fish.2003.1080p.BluRay.DTS.x264-DON")
+			,("inf-fast5-1080p[ID tt1596343].mkv") # Who are looking this shit ?
+			,("Le.Fabuleux.Destin.d'Amélie.Poulain.2001.1080p.BluRay.DTS.x264-CtrlHD")
+			,("avchd-paul.2011.extended.1080p.x264")
+			,("twiz-unknown-1080p")
 		]				
 				
 class TestPchRequestor(unittest.TestCase):
@@ -95,52 +113,28 @@ class TestMediaParser(unittest.TestCase):
 		self.mediaparser = MediaParser()
 
 	def test_TVShows(self):
-		for (fileName,SerieName,Season,Episode) in  TVShows:
-			self.assertEqual(self.mediaparser.parse(fileName).series_name,SerieName)
-			self.assertEqual(self.mediaparser.parse(fileName).season_number,Season)
-			self.assertEqual(self.mediaparser.parse(fileName).episode_numbers,Episode)
-			self.assertEqual(isinstance(self.mediaparser.parse(fileName),parser.ParseResult),True)
-		
-		"""
-		config = ConfigParser.RawConfigParser()
-		# When adding sections or items, add them in the reverse order of
-		# how you want them to be displayed in the actual file.
-		# In addition, please note that using RawConfigParser's and the raw
-		# mode of ConfigParser's respective set functions, you can assign
-		# non-string values to keys internally, but will receive an error
-		# when attempting to write to a file or when you get it in non-raw
-		# mode. SafeConfigParser does not allow such assignments to take place.
-		config.add_section('PCHtrakt')
-		config.set('PCHtrakt', 'pch_ip', '192.168.1.4')
-		config.set('PCHtrakt', 'tratk.tv_login', 'put_your_trakt.tv_login_here')
-		config.set('PCHtrakt', 'tratk.tv_pwd', 'put_your_trakt.tv_pwd_here')
-		config.set('PCHtrakt', 'enable_movie_scrobbling', 'true')
-		config.set('PCHtrakt', 'enable_tvshow_scrobbling', 'true')
-
-		config.add_section('YAMJ')
-		config.set('YAMJ', 'path', '/media/raid5/Video/Yamj/Jukebox/')
-		config.set('YAMJ', 'enable_watched_status', 'false')
-		
-		# Writing our configuration file to 'example.cfg'
-		with open('pchtrakt.cfg', 'wb') as configfile:
-			config.write(configfile)	
+		for (fileName,serie_name,season,episode_numbers) in TVShows:
+			self.assertEqual(isinstance(self.mediaparser.parse(fileName),MediaParserResultTVShow),True)
+			self.assertEqual(self.mediaparser.parse(fileName).series_name,serie_name)
+			self.assertEqual(self.mediaparser.parse(fileName).season_number,season)
+			self.assertEqual(self.mediaparser.parse(fileName).episode_numbers,episode_numbers)
 			
-		config = ConfigParser.SafeConfigParser({'pch_ip2': 'Life', 'baz': 'hard'})
-		config.read('pchtrakt.cfg')
-		print config.get('PCHtrakt', 'pch_ip2') # -> "Python is fun!"
-		"""	
-		
+	def test_Movies(self):
+		for (fileName) in Movies:
+			self.assertEqual(isinstance(self.mediaparser.parse(fileName),MediaParserResultMovie),True)
+			#Debug("Title=" + self.mediaparser.parse(fileName).movie_title +" (" + str(self.mediaparser.parse(fileName).year + ") - IMDB=" + str(self.mediaparser.parse(fileName).imdbid)))
+
 class TestTVDBAPIUsage(unittest.TestCase):
 	
 	def test_tvdb_api(self):
 		tvdb = tvdb_api.Tvdb()
-		for (fileName,SerieName,Season,Episode) in  TVShows:
-			serieinfo = tvdb[SerieName]
-			seasoninfo = tvdb[SerieName][Season]
-			episodeinfo = tvdb[SerieName][Season][Episode[0]]
-			#Debug("TvShow ID on tvdb = " + str(serieinfo['id']))
-			#Debug("FirstAired= " + str(serieinfo['firstaired']))
-			#Debug("Episode ID on tvdb = " + str(episodeinfo['id']))
+		for (fileName,serie_name,season,episode_numbers) in TVShows:
+			serie_info = tvdb[serie_name]
+			season_info = tvdb[serie_name][season]
+			episode_info = tvdb[serie_name][season][episode_numbers[0]]
+			#Debug("TvShow ID on tvdb = " + str(serie_info['id']))
+			#Debug("FirstAired= " + str(serie_info['firstaired']))
+			#Debug("Episode ID on tvdb = " + str(episode_info['id']))
 		
 if __name__ == '__main__':
     unittest.main()

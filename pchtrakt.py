@@ -77,16 +77,17 @@ def main():
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 		if oStatus.status != EnumStatus.LOAD:
 			parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
-			Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
-				+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
-				+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
-			try:
-				episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] #TODO(achtus) Hardcoding 1st episode
-			except:
-				Debug('TvDB issue!')
-				return
-			Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-			videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
+			if isinstance(parsedInfo,MediaParserResultTVShow):
+				Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
+					+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
+					+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
+				try:
+					episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] #TODO(achtus) Hardcoding 1st episode
+				except:
+					Debug('TvDB issue!')
+					return
+				Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
+				videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
 		if pchtrakt.currentPath != '':
 			videoStopped()
