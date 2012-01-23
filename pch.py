@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 # Authors: Jonathan Lauwers / Frederic Haumont
-# URL: http://github.com/PCHtrakt/PCHtrakt
+# URL: http://github.com/pchtrakt/pchtrakt
 #
-# This file is part of PCHtrakt.
+# This file is part of pchtrakt.
 #
-# PCHtrakt is free software: you can redistribute it and/or modify
+# pchtrakt is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# PCHtrakt is distributed in the hope that it will be useful,
+# pchtrakt is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
+# along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
 from xml.etree import ElementTree 
 from string import split
 from urllib2 import Request, urlopen, URLError, HTTPError
 from lib.utilities import Debug
+import math
 
 class EnumStatus:
 	NOPLAY='noplay'
@@ -38,6 +39,9 @@ class PchStatus:
 		self.currentTime = 0
 		self.totalTime = 0
 		self.percent = 0
+		self.mediaType = ""
+		self.currentChapter = 0 # For Blu-ray Disc only
+		self.totalChapter = 0 # For Blu-ray Disc only
 		self.error = None 
 		
 class PchRequestor:
@@ -50,13 +54,20 @@ class PchRequestor:
 				if oXml.find("returnValue").text == '0':
 					oPchStatus.status = oXml.find("response/currentStatus").text
 					oPchStatus.fullPath = oXml.find("response/fullPath").text
-					oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][0]
-					oPchStatus.currentTime = float(oXml.find("response/currentTime").text)
-					oPchStatus.totalTime = float(oXml.find("response/totalTime").text)
-					if oPchStatus.totalTime!=0:
-						oPchStatus.percent = int(oPchStatus.currentTime / oPchStatus.totalTime * 100)
+					oPchStatus.currentTime = int(oXml.find("response/currentTime").text)
+					oPchStatus.totalTime = int(oXml.find("response/totalTime").text)
+					if oXml.find("response/mediatype")!= None:
+						self.mediaType = oXml.find("response/mediatype").text
+					if(self.mediaType == "BD"): # Blu-ray Disc are not handle like .mkv or .avi files
+						oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][1] # add a / on last position when ISO
+						oPchStatus.currentChapter = int(oXml.find("response/currentchapter").text)
+						oPchStatus.totalChapter = int(oXml.find("response/totalchapter").text)
+						if oPchStatus.totalChapter!= 0:
+							oPchStatus.percent = int(math.ceil(float(oPchStatus.currentChapter) / float(oPchStatus.totalChapter) * 100.0)) # approximation because chapters are differents
 					else:
-						oPchStatus.percent = 0
+						oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][0]
+						if oPchStatus.totalTime!=0:
+							oPchStatus.percent = int(math.ceil(float(oPchStatus.currentTime) / float(oPchStatus.totalTime) * 100.0))
 				else:
 					oPchStatus.status=EnumStatus.NOPLAY
 			else:
@@ -66,7 +77,7 @@ class PchRequestor:
 			oPchStatus.status = EnumStatus.UNKNOWN		
 		return oPchStatus
 		
-	def getStatus(self,ip,timeout):
+	def getStatus(self,ip,timeout=5.0):
 		oPchStatus = PchStatus()
 		try:
 			oResponse = urlopen("http://" + ip + ":8008/playback?arg0=get_current_vod_info",None,timeout)

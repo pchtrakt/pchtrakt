@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 # Authors: Jonathan Lauwers / Frederic Haumont
-# URL: http://github.com/PCHtrakt/PCHtrakt
+# URL: http://github.com/pchtrakt/pchtrakt
 #
-# This file is part of PCHtrakt.
+# This file is part of pchtrakt.
 #
-# PCHtrakt is free software: you can redistribute it and/or modify
+# pchtrakt is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# PCHtrakt is distributed in the hope that it will be useful,
+# pchtrakt is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with PCHtrakt.  If not, see <http://www.gnu.org/licenses/>.
+# along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
-# PCHtrakt - Connect your PCH 200 Series to trakt.tv :)
-# PCHtrakt uses some pyhton lib :
-#	- tvdb_api ()
-#	- nbrhttpconnection ()
-# 	- some classes from Sick Beard () 
+# pchtrakt - Connect your PCH 200 Series to trakt.tv :)
+# pchtrakt uses some pyhton lib :
+#	- tvdb_api (https://github.com/dbr/tvdb_api)
+#	- nbrhttpconnection (another project)
+# 	- some classes from Sick Beard (http://sickbeard.com/)
 
 import sys 
 import pchtrakt
@@ -41,6 +41,7 @@ pchtrakt.stop = 0
 pchtrakt.currentPath = ''
 pchtrakt.currentTime = 0
 pchtrakt.watched = 0
+
 tvdb = tvdb_api.Tvdb()
 pchtrakt.DAEMON = 0
 pchtrakt.nbr = 0
@@ -75,10 +76,7 @@ def getParams():
 def main():
 	oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
 	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
-		if pchtrakt.currentPath != oStatus.fullPath:
-			pchtrakt.currentPath = oStatus.fullPath
-			pchtrakt.StopTrying = 0
-		if not pchtrakt.StopTrying:
+		if oStatus.status != EnumStatus.LOAD:
 			parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
 			Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
 				+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
@@ -89,7 +87,7 @@ def main():
 				Debug('TvDB issue!')
 				return
 			Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-			videoStatusHandle(oStatus,str(episodeinfo['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
+			videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 	else:
 		if pchtrakt.currentPath != '':
 			videoStopped()
@@ -161,7 +159,6 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 		doubleEpisode = 1
 	else:
 		doubleEpisode = 0
-	Debug('Current time: '  +  str(pchtrakt.currentTime) + ' > ' + str(pchtrakt.currentTime + refreshTime*60) + ' --- ' + str(oStatus.currentTime))
 	if pchtrakt.currentPath != oStatus.fullPath:
 		pchtrakt.watched = 0
 		pchtrakt.currentPath = oStatus.fullPath
