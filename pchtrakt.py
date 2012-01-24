@@ -24,8 +24,8 @@
 # 	- some classes from Sick Beard (http://sickbeard.com/)
 
 import sys 
-import pchtrakt
 import getopt
+import pchtrakt
 
 from pch import *
 from config import *
@@ -37,12 +37,12 @@ from lib import parser
 from lib import regexes
 from datetime import date
 
+tvdb = tvdb_api.Tvdb()
+MAXFD = 1024
 pchtrakt.stop = 0
 pchtrakt.currentPath = ''
 pchtrakt.currentTime = 0
 pchtrakt.watched = 0
-
-tvdb = tvdb_api.Tvdb()
 pchtrakt.DAEMON = 0
 pchtrakt.nbr = 0
 pchtrakt.oPchRequestor = PchRequestor()
@@ -220,13 +220,13 @@ def videoIsEnding(oStatus,id,year,parsedInfo,episode = 0):
 	
 if __name__ == '__main__':
 	getParams()
-	if pchtrakt.DAEMON == True:
+	if pchtrakt.DAEMON:
 		daemonize()
 	while not pchtrakt.stop:
 		try:
 			main()
 			sleep(sleepTime)
-		except KeyboardInterrupt, SystemExit:
+		except (KeyboardInterrupt, SystemExit):
 			print ':::Stopping pchtrakt:::'
 			pchtrakt.stop = 1
 		except parser.InvalidNameException:
