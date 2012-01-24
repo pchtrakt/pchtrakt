@@ -75,25 +75,29 @@ def getParams():
 
 def main():
 	oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
-	if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
-		if oStatus.status != EnumStatus.LOAD:
-			parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
-			Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
-				+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
-				+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
-			try:
-				episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] 
-			except:
-				Debug('TvDB issue!')
-				return
-			Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-			videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
-	else:
-		if pchtrakt.currentPath != '':
-			videoStopped()
-			pchtrakt.watched = 0
-			pchtrakt.currentPath = ''
-		Debug("PCH status = " + oStatus.status)
+	if pchtrakt.currentPath != oStatus.fullPath:
+		pchtrakt.currentPath = oStatus.fullPath
+	if not pchtrakt.StopTrying:
+		if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
+			if oStatus.status != EnumStatus.LOAD:
+				parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
+				Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
+					+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
+					+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
+				try:
+					episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] 
+				except:
+					Debug('TvDB issue!')
+					pchtrakt.StopTrying = 1
+					return
+				Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
+				videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
+		else:
+			if pchtrakt.currentPath != '':
+				videoStopped()
+				pchtrakt.watched = 0
+				pchtrakt.currentPath = ''
+			Debug("PCH status = " + oStatus.status)
 
 def daemonize():
 	"""
