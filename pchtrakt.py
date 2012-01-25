@@ -76,7 +76,7 @@ def getParams():
 def main():
 	oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
 	if pchtrakt.currentPath != oStatus.fullPath:
-		pchtrakt.currentPath = oStatus.fullPath
+		pchtrakt.StopTrying = 0
 	if not pchtrakt.StopTrying:
 		if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
 			if oStatus.status != EnumStatus.LOAD:
@@ -89,6 +89,7 @@ def main():
 				except:
 					Debug('TvDB issue!')
 					pchtrakt.StopTrying = 1
+					pchtrakt.currentPath = oStatus.fullPath
 					return
 				Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
 				videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
