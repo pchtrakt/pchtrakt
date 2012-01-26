@@ -18,8 +18,8 @@
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from pch import *
-from mediaparser import *
+from pchtrakt.pch import *
+from pchtrakt.mediaparser import *
 from urllib2 import URLError, HTTPError
 from xml.etree import ElementTree 
 from lib.tvdb_api import tvdb_api 

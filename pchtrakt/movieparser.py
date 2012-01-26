@@ -19,7 +19,7 @@
 
 from lib import regexes
 import re
-import mediaparser 
+import mediaparser
 
 regexes_movies = [ 
 					("imdbid", # not works
@@ -74,7 +74,7 @@ class MovieParser():
 				tmp_imdbid = match.group('imdbid')				
 				
 			#Debug(name + "=" + str(regex.search(file_name).groupdict()) + '	   [' + file_name + ']')
-			return MediaParserResultMovie(file_name,tmp_movie_title,tmp_year,tmp_imdbid)
+			return mediaparser.MediaParserResultMovie(file_name,tmp_movie_title,tmp_year,tmp_imdbid)
 			break	
 		raise MovieResultNotFound(file_name)
 
