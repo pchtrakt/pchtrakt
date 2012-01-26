@@ -52,7 +52,6 @@ install_defaults()
    cd /share/Apps/pchtrakt
    rm -r /share/tmp
  fi
-cd /share/Apps/pchtrakt
 
 }
 
@@ -87,7 +86,9 @@ ps | grep "[p]chtrakt.py --daemon" > /dev/null
 if [ $? -ne 0 ];
 then
 echo "pchtrakt.py is not running, Starting processes"
+cd /share/Apps/pchtrakt
 python2.7 /share/Apps/pchtrakt/pchtrakt.py --daemon
+cd
 fi
 }
 
