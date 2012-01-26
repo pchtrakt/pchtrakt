@@ -18,5 +18,5 @@ def newConfig():
 	config.set('PCHtrakt', 'enable_movie_scrobbling', 'true')
 	config.set('PCHtrakt', 'enable_tvshow_scrobbling', 'true')
 
-if not isfile(config_file):
+# if not isfile(config_file):
 	
