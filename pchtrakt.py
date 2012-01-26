@@ -70,29 +70,7 @@ def getParams():
 			printHelp()
 			sys.exit()
 
-def main():
-	pchtrakt.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
-	if pchtrakt.currentPath != pchtrakt.oStatus.fullPath:
-		pchtrakt.StopTrying = 0
-	if not pchtrakt.StopTrying:
-		if pchtrakt.oStatus.status != EnumStatus.NOPLAY and pchtrakt.oStatus.status != EnumStatus.UNKNOWN:
-			if pchtrakt.oStatus.status != EnumStatus.LOAD:
-				parsedInfo = pchtrakt.oNameParser.parse(pchtrakt.oStatus.fileName)
-				if parsedInfo.season_number == None:
-					raise BaseException('No season - maybe anime?')
-				Debug('TV Show : %s - Season:%s - Episode:%s - %s%% - %s - TvDB: %s' 
-					%(parsedInfo.series_name,parsedInfo.season_number,
-					parsedInfo.episode_numbers,pchtrakt.oStatus.percent,
-					pchtrakt.oStatus.status,tvdb[parsedInfo.series_name]['id']))
-				#episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] 
-				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
-		else:
-			if pchtrakt.currentPath != '':
-				videoStopped()
-				pchtrakt.watched = 0
-				pchtrakt.currentPath = ''
-			Debug("PCH status = " + pchtrakt.oStatus.status)
-
+			
 def daemonize():
 	"""
 	Fork off as a daemon
@@ -146,11 +124,32 @@ def daemonize():
 	os.dup2(0, 1)			# standard output (1)
 	os.dup2(0, 2)			# standard error (2)
 
-	
-"""
-these methods should be in another class
-... but these are not the methods you are looking for :D
-"""
+			
+			
+def main():
+	pchtrakt.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
+	if pchtrakt.currentPath != pchtrakt.oStatus.fullPath:
+		pchtrakt.StopTrying = 0
+	if not pchtrakt.StopTrying:
+		if pchtrakt.oStatus.status != EnumStatus.NOPLAY and pchtrakt.oStatus.status != EnumStatus.UNKNOWN:
+			if pchtrakt.oStatus.status != EnumStatus.LOAD:
+				parsedInfo = pchtrakt.oNameParser.parse(pchtrakt.oStatus.fileName)
+				if parsedInfo.season_number == 0:
+					# anime = tvdb[parsedInfo.series_name].search(parsedInfo.episode_numbers[0], key = 'absolute_number')
+					# Debug(anime[0]['episodenumber'])
+					# Debug(anime[0]['seasonnumber'])
+					raise BaseException('No season - maybe anime?')
+				Debug('TV Show : %s - Season:%s - Episode:%s - %s%% - %s - TvDB: %s' 
+					%(parsedInfo.series_name,parsedInfo.season_number,
+					parsedInfo.episode_numbers,pchtrakt.oStatus.percent,
+					pchtrakt.oStatus.status,tvdb[parsedInfo.series_name]['id']))
+				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
+		else:
+			if pchtrakt.currentPath != '':
+				videoStopped()
+				pchtrakt.watched = 0
+				pchtrakt.currentPath = ''
+			Debug("PCH status = %s" %pchtrakt.oStatus.status)
 
 def videoStatusHandle(oStatus,id,year,parsedInfo):
 	if len(parsedInfo.episode_numbers)>1:
@@ -161,28 +160,25 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 		pchtrakt.watched = 0
 		pchtrakt.currentPath = oStatus.fullPath
 		pchtrakt.currentTime = oStatus.currentTime
-		pchtrakt.nbr = 0
+		pchtrakt.idxEpisode = 0
 		if pchtrakt.currentPath != '':
 			if doubleEpisode and oStatus.percent > 45:
-				pchtrakt.nbr = pchtrakt.nbr + 1
-				id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]]['id']
-				videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.nbr)
+				pchtrakt.idxEpisode += 1
+				id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.idxEpisode]]['id']
+				videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.idxEpisode)
 			else:
 				videoStarted(oStatus,id,year,parsedInfo)
 		else:
 			videoStopped()
 	if oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
 		pchtrakt.currentTime = oStatus.currentTime
-		videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.nbr)		
-	elif doubleEpisode and oStatus.percent > 90.0/len(parsedInfo.episode_numbers) and oStatus.percent > (pchtrakt.nbr+1) * 90.0/len(parsedInfo.episode_numbers):
-		Debug(str(pchtrakt.nbr+1) + ' part of a multi-episode' )
-		videoIsEnding(oStatus,id,year,parsedInfo,pchtrakt.nbr)
-		Debug(str(parsedInfo.episode_numbers[pchtrakt.nbr]) + ' is finished')
+		videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)		
+	elif doubleEpisode and oStatus.percent > 90.0/len(parsedInfo.episode_numbers) and oStatus.percent > (pchtrakt.idxEpisode+1) * 90.0/len(parsedInfo.episode_numbers):
+		videoIsEnding(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)
 		sleep(5)
-		pchtrakt.nbr = pchtrakt.nbr + 1
-		id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]]['id']
-		videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.nbr)
-		Debug(str(parsedInfo.episode_numbers[pchtrakt.nbr]) + ' is started')
+		pchtrakt.idxEpisode += 1
+		id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.idxEpisode]]['id']
+		videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.idxEpisode)
 	elif oStatus.percent > 90:
 		if not pchtrakt.watched:
 			if doubleEpisode:
