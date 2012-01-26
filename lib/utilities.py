@@ -175,7 +175,7 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             return data
         if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": Bad responce from trakt") # Error
         return None
-    
+
     if 'status' in data:
         if data['status'] == 'failure':
             print "traktQuery: Error: " + str(data['error'])
