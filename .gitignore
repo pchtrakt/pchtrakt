@@ -11,3 +11,5 @@ config.py
 *tar
 local_config.py
 
+ignore/
+pchtrakt.ini
