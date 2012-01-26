@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 
+# From https://github.com/Manromen/script.TraktUtilities
 
 import os, sys
 import time, socket
