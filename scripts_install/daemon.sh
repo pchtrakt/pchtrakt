@@ -50,7 +50,7 @@ install_defaults()
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod 777 /share/Apps/pchtrakt
    cd /share/Apps/pchtrakt
-   touch local_config.py
+   touch pchtrakt/local_config.py
    cd
    rm -r /share/tmp
  fi
