@@ -4,7 +4,6 @@
 import os, sys
 import time, socket
 from pchtrakt.config import *
-from pchtrakt.local_config import *
 try: import simplejson as json
 except ImportError: import json
 

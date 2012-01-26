@@ -32,7 +32,6 @@ import os
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
-from pchtrakt.local_config import *
 from time import sleep
 from lib.tvdb_api import tvdb_api 
 from lib.tvdb_api import tvdb_exceptions

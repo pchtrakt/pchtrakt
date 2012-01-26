@@ -16,11 +16,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
+import ConfigParser
+config = ConfigParser.RawConfigParser()
 
-ipPch = "127.0.0.1" #change only if pchtrakt is not installed on the popcorn itself
-pathYAMJ='' #not used yet
-username = 'your_username'
-pwd = 'your_password'
-debug = 'true'
+config.read('pchtrakt.ini')
+ipPch = config.get('PCHtrakt', 'pch_ip') 
+username = config.get('PCHtrakt', 'trakt_login') 
+pwd = config.get('PCHtrakt', 'trakt_pwd') 
 sleepTime = 5 #sec
 refreshTime = 15 #min
+
+pathYAMJ='' #not used yet
+debug = 'true'

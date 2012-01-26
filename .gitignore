@@ -22,3 +22,4 @@ local_config.py
 
 #ignore rep
 ignore
+*.ini
