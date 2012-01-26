@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Authors: Jonathan Lauwers / Frederic Haumont
 # URL: http://github.com/pchtrakt/pchtrakt
@@ -26,13 +27,15 @@
 import sys 
 import getopt
 import pchtrakt
+import os
 
 from pch import *
+from scrobble import *
 from config import *
 from local_config import *
 from time import sleep
-from lib.utilities import *
 from lib.tvdb_api import tvdb_api 
+from lib.tvdb_api import tvdb_exceptions
 from lib import parser
 from lib import regexes
 from datetime import date
@@ -48,11 +51,13 @@ pchtrakt.nbr = 0
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.oNameParser =  parser.NameParser()
 pchtrakt.StopTrying = 0
+pchtrakt.oStatus = 0
 
 def printHelp():
-	print 'Usage %s <other options>' % 'pchtrak.py'
-	print ''
-	print 'TODO'
+	print 'Usage %s <options>' % 'pchtrak.py'
+	print 'Options:'
+	print '	-d,--daemon:	launches pchtrakt in the background'
+
 
 def getParams():
 	try:
@@ -70,35 +75,31 @@ def getParams():
 				pchtrakt.DAEMON = True
 		
 		if o in ('-h', '--help'):
-			print '-d,--daemon launches pchtrakt in the background'
+			printHelp()
 			sys.exit()
 
 def main():
-	oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
-	if pchtrakt.currentPath != oStatus.fullPath:
+	pchtrakt.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
+	if pchtrakt.currentPath != pchtrakt.oStatus.fullPath:
 		pchtrakt.StopTrying = 0
 	if not pchtrakt.StopTrying:
-		if oStatus.status != EnumStatus.NOPLAY and oStatus.status != EnumStatus.UNKNOWN:
-			if oStatus.status != EnumStatus.LOAD:
-				parsedInfo = pchtrakt.oNameParser.parse(oStatus.fileName)
-				Debug(oStatus.status + " - TV Show : " + parsedInfo.series_name 
-					+ " - Season:" + str(parsedInfo.season_number) + " - Episode:" 
-					+ str(parsedInfo.episode_numbers) + ' - ' + str(oStatus.percent) + "%")
-				try:
-					episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] 
-				except:
-					Debug('TvDB issue!')
-					pchtrakt.StopTrying = 1
-					pchtrakt.currentPath = oStatus.fullPath
-					return
-				Debug("TvShow ID on tvdb = " + str(tvdb[parsedInfo.series_name]['id']))
-				videoStatusHandle(oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
+		if pchtrakt.oStatus.status != EnumStatus.NOPLAY and pchtrakt.oStatus.status != EnumStatus.UNKNOWN:
+			if pchtrakt.oStatus.status != EnumStatus.LOAD:
+				parsedInfo = pchtrakt.oNameParser.parse(pchtrakt.oStatus.fileName)
+				if parsedInfo.season_number == None:
+					raise BaseException('No season - maybe anime?')
+				Debug('TV Show : %s - Season:%s - Episode:%s - %s%% - %s - TvDB: %s' 
+					%(parsedInfo.series_name,parsedInfo.season_number,
+					parsedInfo.episode_numbers,pchtrakt.oStatus.percent,
+					pchtrakt.oStatus.status,tvdb[parsedInfo.series_name]['id']))
+				#episodeinfo = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.nbr]] 
+				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 		else:
 			if pchtrakt.currentPath != '':
 				videoStopped()
 				pchtrakt.watched = 0
 				pchtrakt.currentPath = ''
-			Debug("PCH status = " + oStatus.status)
+			Debug("PCH status = " + pchtrakt.oStatus.status)
 
 def daemonize():
 	"""
@@ -191,34 +192,17 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 		videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.nbr)
 		Debug(str(parsedInfo.episode_numbers[pchtrakt.nbr]) + ' is started')
 	elif oStatus.percent > 90:
-		if pchtrakt.watched == 0:
+		if not pchtrakt.watched:
 			if doubleEpisode:
 				videoIsEnding(oStatus,id,year,parsedInfo,len(parsedInfo.episode_numbers)-1)
 			else:
-				videoIsEnding(oStatus,id,year,parsedInfo)
-	
-		
-def videoStarted(oStatus,id,year,parsedInfo,episode = 0):
-	#add theTvDb ID
-	watchingEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[episode]),str(oStatus.totalTime),str(oStatus.percent))
-	Debug('Video playing!')
+				 pchtrakt.watched = videoIsEnding(oStatus,id,year,parsedInfo)
+
+def stopTrying():
+	pchtrakt.StopTrying = 1
+	pchtrakt.currentPath = pchtrakt.oStatus.fullPath
 	
 
-def videoStopped():
-	cancelWatchingEpisodeOnTrakt()
-	Debug('Video stopped!')
-
-def videoStillRunning(oStatus,id,year,parsedInfo,episode = 0):
-	videoStarted(oStatus,id,year,parsedInfo,episode)
-	Debug('Video still running!')
-
-def videoIsEnding(oStatus,id,year,parsedInfo,episode = 0):
-	Debug('episode : ' + str(episode) + ' : ' + str(parsedInfo.episode_numbers[episode]))
-	responce = scrobbleEpisodeOnTrakt(id,parsedInfo.series_name,year,str(parsedInfo.season_number),str(parsedInfo.episode_numbers[episode]),str(oStatus.totalTime),str(oStatus.percent))
-	if responce != None:
-		pchtrakt.watched = 1
-	Debug('Video is ending')
-	
 if __name__ == '__main__':
 	getParams()
 	if pchtrakt.DAEMON:
@@ -231,5 +215,12 @@ if __name__ == '__main__':
 			print ':::Stopping pchtrakt:::'
 			pchtrakt.stop = 1
 		except parser.InvalidNameException:
+			stopTrying()
 			print ':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath)
-			pchtrakt.StopTrying = 1
+		except tvdb_exceptions.tvdb_shownotfound:
+			stopTrying()
+			print ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
+		# except BaseException as e:
+			# stopTrying()
+			# print '::: %s :::' %(pchtrakt.currentPath)
+			# print '::: %s :::' %(e)
