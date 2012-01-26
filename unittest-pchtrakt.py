@@ -27,7 +27,6 @@ from lib import parser
 from lib import regexes
 import re
 import ConfigParser
->>>>>>> release-0.1
 
 TVShows = [ 
 			# FileName , TV Show, #Seasion, #Episode(s) 

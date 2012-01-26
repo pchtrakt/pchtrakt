@@ -29,10 +29,10 @@ import getopt
 import pchtrakt
 import os
 
-from pch import *
-from scrobble import *
-from config import *
-from local_config import *
+from pchtrakt.pch import *
+from pchtrakt.scrobble import *
+from pchtrakt.config import *
+from pchtrakt.local_config import *
 from time import sleep
 from lib.tvdb_api import tvdb_api 
 from lib.tvdb_api import tvdb_exceptions
@@ -42,16 +42,9 @@ from datetime import date
 
 tvdb = tvdb_api.Tvdb()
 MAXFD = 1024
-pchtrakt.stop = 0
-pchtrakt.currentPath = ''
-pchtrakt.currentTime = 0
-pchtrakt.watched = 0
-pchtrakt.DAEMON = 0
-pchtrakt.nbr = 0
+
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.oNameParser =  parser.NameParser()
-pchtrakt.StopTrying = 0
-pchtrakt.oStatus = 0
 
 def printHelp():
 	print 'Usage %s <options>' % 'pchtrak.py'
@@ -220,7 +213,7 @@ if __name__ == '__main__':
 		except tvdb_exceptions.tvdb_shownotfound:
 			stopTrying()
 			print ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
-		# except BaseException as e:
-			# stopTrying()
-			# print '::: %s :::' %(pchtrakt.currentPath)
-			# print '::: %s :::' %(e)
+		except BaseException as e:
+			stopTrying()
+			print '::: %s :::' %(pchtrakt.currentPath)
+			print '::: %s :::' %(e)
