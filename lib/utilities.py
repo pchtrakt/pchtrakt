@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-# 
+# From https://github.com/Manromen/script.TraktUtilities
 
 import os, sys
 import time, socket
-from config import *
-from local_config import *
+from pchtrakt.config import *
 try: import simplejson as json
 except ImportError: import json
 
@@ -138,8 +137,8 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             conn.request('GET', req)
         else:
             return None
-        print "trakt json url: "+req
-        print "json: " + jdata
+        # print "trakt json url: "+req
+        # print "json: " + jdata
     except socket.error:
         Debug("traktQuery: can't connect to trakt")
         if not silent: notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" )) # can't connect to trakt
