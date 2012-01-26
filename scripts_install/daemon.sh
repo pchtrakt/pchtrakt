@@ -95,6 +95,7 @@ fi
 stop_pchtrakt()
 {
 # Stop pchtrakt
+sed -i '/pchtrakt/ d' /tmp/appinit_state
 kill $(ps -ef |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 
 }
