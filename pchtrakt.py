@@ -147,7 +147,8 @@ def main():
 				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 		else:
 			if pchtrakt.currentPath != '':
-				videoStopped()
+				if pchtrakt.watched:
+					videoStopped()
 				pchtrakt.watched = 0
 				pchtrakt.currentPath = ''
 			Debug("PCH status = %s" %pchtrakt.oStatus.status)
@@ -169,8 +170,7 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 				videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.idxEpisode)
 			else:
 				videoStarted(oStatus,id,year,parsedInfo)
-		else:
-			videoStopped()
+				
 	if oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
 		pchtrakt.currentTime = oStatus.currentTime
 		videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)		
