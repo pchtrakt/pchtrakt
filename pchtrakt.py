@@ -37,6 +37,7 @@ from lib.tvdb_api import tvdb_api
 from lib.tvdb_api import tvdb_exceptions
 from lib import parser
 from lib import regexes
+from lib import utilities as utils
 from datetime import date
 
 tvdb = tvdb_api.Tvdb()
@@ -146,7 +147,8 @@ def main():
 				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 		else:
 			if pchtrakt.currentPath != '':
-				videoStopped()
+				if pchtrakt.watched:
+					videoStopped()
 				pchtrakt.watched = 0
 				pchtrakt.currentPath = ''
 			Debug("PCH status = %s" %pchtrakt.oStatus.status)
@@ -168,8 +170,7 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
 				videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.idxEpisode)
 			else:
 				videoStarted(oStatus,id,year,parsedInfo)
-		else:
-			videoStopped()
+				
 	if oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
 		pchtrakt.currentTime = oStatus.currentTime
 		videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)		
@@ -208,7 +209,13 @@ if __name__ == '__main__':
 		except tvdb_exceptions.tvdb_shownotfound:
 			stopTrying()
 			print ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
+			pchtrakt.logger.warning(e.msg)
+		except utils.AuthenticationTraktError as e:
+			stopTrying()
+			print ':::%s:::' % e.msg
+			pchtrakt.logger.error(e.msg)
 		except BaseException as e:
 			stopTrying()
 			print '::: %s :::' %(pchtrakt.currentPath)
 			print '::: %s :::' %(e)
+			pchtrakt.logger.exception(e)
