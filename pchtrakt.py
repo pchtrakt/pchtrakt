@@ -28,6 +28,7 @@ import sys
 import getopt
 import pchtrakt
 import os
+from logging import logger
 
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
@@ -200,15 +201,16 @@ if __name__ == '__main__':
 			main()
 			sleep(sleepTime)
 		except (KeyboardInterrupt, SystemExit):
-			print ':::Stopping pchtrakt:::'
+			
+			Debug(':::Stopping pchtrakt:::')
 			pchtrakt.stop = 1
 		except parser.InvalidNameException:
 			stopTrying()
-			print ':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath)
+			Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath))
 		except tvdb_exceptions.tvdb_shownotfound:
 			stopTrying()
-			print ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
+			Debug(':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath))
 		except BaseException as e:
 			stopTrying()
-			print '::: %s :::' %(pchtrakt.currentPath)
-			print '::: %s :::' %(e)
+			Debug('::: %s :::' %(pchtrakt.currentPath))
+			Debug('::: %s :::' %(e))
