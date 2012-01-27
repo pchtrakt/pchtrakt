@@ -87,7 +87,7 @@ if [ $? -ne 0 ];
 then
 echo "pchtrakt.py is not running, Starting processes"
 cd /share/Apps/pchtrakt
-python2.7 /share/Apps/pchtrakt/pchtrakt.py --daemon
+python2.7 pchtrakt.py --daemon
 cd
 fi
 }
