@@ -45,8 +45,8 @@ install_defaults()
    chmod 777 /share/Apps/pchtrakt
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
-  #git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+  # git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
+   git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod 777 /share/Apps/pchtrakt
    cd /share/Apps/pchtrakt
@@ -63,8 +63,8 @@ force_pchtrakt()
    wget https://raw.github.com/pchtrakt/pchtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
-   git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
-   #git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+   #git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
+   git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod -R 777 /share/Apps/pchtrakt
    cd
@@ -96,7 +96,7 @@ stop_pchtrakt()
 {
 # Stop pchtrakt
 sed -i '/pchtrakt/ d' /tmp/appinit_state
-kill $(ps -ef |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
+kill $(ps |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
 }
 
 #Main

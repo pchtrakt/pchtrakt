@@ -19,6 +19,7 @@ lib/tvdb_api/tests/
 
 #local_config
 local_config.py
+pchtrakt.log
 
 #ignore rep
 ignore
