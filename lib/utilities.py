@@ -30,6 +30,12 @@ pwdsha1 = sha1(pwd).hexdigest()
 
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
+class TraktError(Exception):
+    pass
+class AuthenticationTraktError(TraktError):
+    def __init__(self):
+        self.msg = 'Trakt.tv - Login or password incorrect'
+
 def Debug(msg, force=False):
     if (debug == 'true' or force):
         try:
@@ -178,6 +184,8 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
     if 'status' in data:
         if data['status'] == 'failure':
             print "traktQuery: Error: " + str(data['error'])
+            if data['error'] == 'failed authentication':
+                raise AuthenticationTraktError()
             if returnStatus:
                 return data;
             #if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": " + str(data['error'])) # Error
