@@ -66,64 +66,44 @@ def getParams():
 				print "Daemonize not supported under Windows, starting normally"
 			else:
 				pchtrakt.DAEMON = True
-		
+				pchtrakt.debug = False
+				
 		if o in ('-h', '--help'):
 			printHelp()
 			sys.exit()
 
 			
 def daemonize():
-	"""
-	Fork off as a daemon
-	"""
+    """
+    Fork off as a daemon
+    """
 
-	# Make a non-session-leader child process
-	try:
-		pid = os.fork() #@UndefinedVariable - only available in UNIX
-		if pid != 0:
-			sys.exit(0)
-	except OSError, e:
-		raise RuntimeError("1st fork failed: %s [%d]" %
-				   (e.strerror, e.errno))
+    # Make a non-session-leader child process
+    try:
+        pid = os.fork() #@UndefinedVariable - only available in UNIX
+        if pid != 0:
+            sys.exit(0)
+    except OSError, e:
+        raise RuntimeError("1st fork failed: %s [%d]" %
+                   (e.strerror, e.errno))
 
-	os.setsid() #@UndefinedVariable - only available in UNIX
+    os.setsid() #@UndefinedVariable - only available in UNIX
 
-	# Make sure I can read my own files and shut out others
-	prev = os.umask(0)
-	os.umask(prev and int('077', 8))
+    # Make sure I can read my own files and shut out others
+    prev = os.umask(0)
+    os.umask(prev and int('077', 8))
 
-	# Make the child a session-leader by detaching from the terminal
-	try:
-		pid = os.fork() #@UndefinedVariable - only available in UNIX
-		if pid != 0:
-			sys.exit(0)
-	except OSError, e:
-		raise RuntimeError("2st fork failed: %s [%d]" %
-					(e.strerror, e.errno))
-	import resource	# Resource usage information.
-	maxfd = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
-	if (maxfd == resource.RLIM_INFINITY):
-		maxfd = MAXFD
+    # Make the child a session-leader by detaching from the terminal
+    try:
+        pid = os.fork() #@UndefinedVariable - only available in UNIX
+        if pid != 0:
+            sys.exit(0)
+    except OSError, e:
+        raise RuntimeError("2st fork failed: %s [%d]" %
+                   (e.strerror, e.errno))
 
-	# Iterate through and close all file descriptors.
-	for fd in range(0, maxfd):
-		try:
-			os.close(fd)
-		except OSError:	# ERROR, fd wasn't open to begin with (ignored)
-			pass
-
-		# Redirect the standard I/O file descriptors to the specified file.  Since
-		# the daemon has no controlling terminal, most daemons redirect stdin,
-		# stdout, and stderr to /dev/null.  This is done to prevent side-effects
-		# from reads and writes to the standard I/O file descriptors.
-
-		# This call to open is guaranteed to return the lowest file descriptor,
-		# which will be 0 (stdin), since it was closed above.
-	os.open('/dev/null', os.O_RDWR)	# standard input (0)
-
-		# Duplicate standard input to standard output and standard error.
-	os.dup2(0, 1)			# standard output (1)
-	os.dup2(0, 2)			# standard error (2)
+    dev_null = file('/dev/null', 'r')
+    os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
 			
 			
@@ -147,7 +127,7 @@ def main():
 				videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
 		else:
 			if pchtrakt.currentPath != '':
-				if pchtrakt.watched:
+				if not pchtrakt.watched:
 					videoStopped()
 				pchtrakt.watched = 0
 				pchtrakt.currentPath = ''
@@ -201,21 +181,25 @@ if __name__ == '__main__':
 			main()
 			sleep(sleepTime)
 		except (KeyboardInterrupt, SystemExit):
-			print ':::Stopping pchtrakt:::'
+			Debug(':::Stopping pchtrakt:::')
 			pchtrakt.stop = 1
 		except parser.InvalidNameException:
 			stopTrying()
-			print ':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath)
+			Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath))
 		except tvdb_exceptions.tvdb_shownotfound:
 			stopTrying()
-			print ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
+			Debug(':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath))
 			pchtrakt.logger.warning(e.msg)
 		except utils.AuthenticationTraktError as e:
 			stopTrying()
-			print ':::%s:::' % e.msg
+			Debug(':::%s:::' % e.msg)
 			pchtrakt.logger.error(e.msg)
-		except BaseException as e:
+		except utils.MaxScrobbleError as e:
 			stopTrying()
-			print '::: %s :::' %(pchtrakt.currentPath)
-			print '::: %s :::' %(e)
-			pchtrakt.logger.exception(e)
+			Debug(':::%s:::' % e.msg)
+			pchtrakt.logger.error(e.msg)
+		# except BaseException as e:
+			# stopTrying()
+			# Debug( '::: %s :::' %(pchtrakt.currentPath)
+			# Debug( '::: %s :::' %(e)
+			# pchtrakt.logger.exception(e)

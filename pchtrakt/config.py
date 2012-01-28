@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 import ConfigParser
+import pchtrakt
 config = ConfigParser.RawConfigParser()
 
-config.read('pchtrakt.ini')
+config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 username = config.get('PCHtrakt', 'trakt_login') 
 pwd = config.get('PCHtrakt', 'trakt_pwd') 
@@ -27,4 +28,3 @@ sleepTime = 5 #sec
 refreshTime = 15 #min
 
 pathYAMJ='' #not used yet
-debug = 'true'

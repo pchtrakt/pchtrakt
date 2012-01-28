@@ -4,6 +4,7 @@
 import os, sys
 import time, socket
 from pchtrakt.config import *
+import pchtrakt
 try: import simplejson as json
 except ImportError: import json
 
@@ -35,9 +36,12 @@ class TraktError(Exception):
 class AuthenticationTraktError(TraktError):
     def __init__(self):
         self.msg = 'Trakt.tv - Login or password incorrect'
+class MaxScrobbleError(TraktError):
+	def __init__(self):
+		self.msg = 'Trakt.tv - Shows per hour limit reached'
 
 def Debug(msg, force=False):
-    if (debug == 'true' or force):
+    if (pchtrakt.debug or force):
         try:
             print msg
         except UnicodeEncodeError:
@@ -186,6 +190,8 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             print "traktQuery: Error: " + str(data['error'])
             if data['error'] == 'failed authentication':
                 raise AuthenticationTraktError()
+            if data['error'] == 'shows per hour limit reached':
+                raise MaxScrobbleError()
             if returnStatus:
                 return data;
             #if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": " + str(data['error'])) # Error

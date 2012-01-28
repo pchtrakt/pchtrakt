@@ -11,6 +11,7 @@ watched = 0
 DAEMON = 0
 nbr = 0
 config_file = 'pchtrakt.ini'
+debug = True
 
 logger = logging.getLogger('pchtrakt')
 hdlr = logging.FileHandler('pchtrakt.log')
