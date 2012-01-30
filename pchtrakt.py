@@ -135,7 +135,6 @@ def main():
                                         media.parsedInfo.year))
                     oResponse = urlopen(ImdbAPIurl)
                     oXml = ElementTree.XML(oResponse.read())
-                    catc
                     media.id = oXml.find('movie').get('id')
                     media.year = media.parsedInfo.year
                     Debug('Movie : %s - Year : %s - %s%% - IMDB: %s' 
