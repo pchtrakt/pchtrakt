@@ -21,48 +21,48 @@ from lib import parser
 from movieparser import *
 
 class MediaParserResult():
-	def __init__(self,file_name):
-		self.file_name = file_name
-		
+    def __init__(self,file_name):
+        self.file_name = file_name
+        
 class MediaParserResultAnime(MediaParserResult):
-	def __init__(self,file_name,series_name,episode_numbers):
-		self.file_name = file_name
-		self.series_name = series_name
-		self.episode_numbers = episode_numbers
-		
+    def __init__(self,file_name,series_name,episode_numbers):
+        self.file_name = file_name
+        self.series_name = series_name
+        self.episode_numbers = episode_numbers
+        
 class MediaParserResultTVShow(MediaParserResult):
-	def __init__(self,file_name,series_name,season_number,episode_numbers):
-		self.file_name = file_name
-		self.series_name = series_name
-		self.season_number = season_number
-		self.episode_numbers = episode_numbers
-		
+    def __init__(self,file_name,series_name,season_number,episode_numbers):
+        self.file_name = file_name
+        self.series_name = series_name
+        self.season_number = season_number
+        self.episode_numbers = episode_numbers
+        
 class MediaParserResultMovie(MediaParserResult):
-	def __init__(self,file_name,movie_title,year,imdbid):
-		self.file_name = file_name
-		self.movie_title = movie_title
-		self.year = year
-		self.imdbid = imdbid
-		
+    def __init__(self,file_name,movie_title,year,imdbid):
+        self.file_name = file_name
+        self.movie_title = movie_title
+        self.year = year
+        self.imdbid = imdbid
+        
 class MediaParserUnableToParse(Exception):
-	def __init__(self, file_name):
-		self.file_name = file_name
-	
+    def __init__(self, file_name):
+        self.file_name = file_name
+    
 class MediaParser():
-	def __init__(self):
-		self.TVShowParser = parser.NameParser()
-		self.MovieParser = MovieParser()
-		
-	def parse(self, file_name):
-		#TODO(achtus): try to detect tv show with 00x00 or 0x00 or s00e00 or s0e0 or s0e00
-		try:
-			oMovie = self.MovieParser.parse(file_name)
-			return oMovie
-		except MovieResultNotFound,e:
-			parsedResult = self.TVShowParser.parse(file_name)
-			oResultTVShow = MediaParserResultTVShow(file_name,parsedResult.series_name,parsedResult.season_number,parsedResult.episode_numbers)
-			return oResultTVShow
-		raise MediaParserUnableToParse("Unable to parse the filename and detecte an movie or a tv show")
-		
-	
-		
+    def __init__(self):
+        self.TVShowParser = parser.NameParser()
+        self.MovieParser = MovieParser()
+        
+    def parse(self, file_name):
+        #TODO(achtus): try to detect tv show with 00x00 or 0x00 or s00e00 or s0e0 or s0e00
+        try:
+            oMovie = self.MovieParser.parse(file_name)
+            return oMovie
+        except MovieResultNotFound,e:
+            parsedResult = self.TVShowParser.parse(file_name)
+            oResultTVShow = MediaParserResultTVShow(file_name,parsedResult.series_name,parsedResult.season_number,parsedResult.episode_numbers)
+            return oResultTVShow
+        raise MediaParserUnableToParse("Unable to parse the filename and detecte an movie or a tv show")
+        
+    
+        
