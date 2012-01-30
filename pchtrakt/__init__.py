@@ -3,9 +3,8 @@ import ConfigParser
 import logging
 
 StopTrying = 0
-oStatus = 0
 stop = 0
-currentPath = ''
+lastPath = ''
 currentTime = 0
 watched = 0
 DAEMON = 0
