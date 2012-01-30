@@ -6,7 +6,7 @@ from pchtrakt.config import *
 from time import sleep
 
 
-def videoStarted(myMedia):
+def showStarted(myMedia):
     responce = utilities.watchingEpisodeOnTrakt(myMedia.id,
                                                 myMedia.parsedInfo.series_name,
                                                 myMedia.year,
@@ -17,18 +17,50 @@ def videoStarted(myMedia):
     msg = 'Video playing: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
     pchtrakt.logger.info(msg)
-
-def videoStopped():
+    
+def movieStarted(myMedia):
+    responce = utilities.watchingMovieOnTrakt(myMedia.id,
+                                               myMedia.parsedInfo.movie_title,
+                                               myMedia.year,
+                                               str(myMedia.oStatus.totalTime),
+                                               str(myMedia.oStatus.percent))
+    msg = 'Video playing: %s - %s' %(responce['status'],responce['message'])
+    Debug(msg)
+    pchtrakt.logger.info(msg)
+    
+    
+def showStopped():
     responce = utilities.cancelWatchingEpisodeOnTrakt()
     msg = 'Video stopped: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
     pchtrakt.logger.info(msg)
 
-def videoStillRunning(myMedia):
-    videoStarted(myMedia)
+    
+def movieStopped():
+    responce = utilities.cancelWatchingMovieOnTrakt()
+    msg = 'Video stopped: %s - %s' %(responce['status'],responce['message'])
+    Debug(msg)
+    pchtrakt.logger.info(msg)
+    
+    
+def videoStopped():
+    if pchtrakt.isTvShow:
+        showStopped()
+    elif pchtrakt.isMovie:
+        movieStopped()
+    
+    
+def showStillRunning(myMedia):
+    showStarted(myMedia)
     Debug('Video still running!')
 
-def videoIsEnding(myMedia):
+    
+def movieStillRunning(myMedia):
+    movieStarted(myMedia)
+    Debug('Video still running!')
+    
+    
+def showIsEnding(myMedia):
     responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
                                                 myMedia.parsedInfo.series_name,
                                                 myMedia.year,
@@ -36,6 +68,20 @@ def videoIsEnding(myMedia):
                                                 str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
                                                 str(myMedia.oStatus.totalTime),
                                                 str(myMedia.oStatus.percent))
+    if responce != None:
+        msg = 'Video is ending: %s - %s ' %(responce['status'],responce['message'])
+        Debug(msg)
+        pchtrakt.logger.info(msg)
+        return 1
+    return 0
+    
+    
+def movieIsEnding(myMedia):
+    responce = utilities.scrobbleMovieOnTrakt(myMedia.id,
+                                               myMedia.parsedInfo.movie_title,
+                                               myMedia.year,
+                                               str(myMedia.oStatus.totalTime),
+                                               str(myMedia.oStatus.percent))
     if responce != None:
         msg = 'Video is ending: %s - %s ' %(responce['status'],responce['message'])
         Debug(msg)
@@ -50,14 +96,13 @@ def videoStatusHandleMovie(myMedia):
         pchtrakt.lastPath = myMedia.oStatus.fullPath
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         if pchtrakt.lastPath != '':
-            videoStarted(myMedia)
+            movieStarted(myMedia)
     if myMedia.oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
         pchtrakt.currentTime = myMedia.oStatus.currentTime
-        # videoStillRunning(myMedia)        
+        movieStillRunning(myMedia)        
     elif myMedia.oStatus.percent > 90:
         if not pchtrakt.watched:
-            pass
-            # pchtrakt.watched = videoIsEnding(myMedia)
+            pchtrakt.watched = movieIsEnding(myMedia)
             
             
 def videoStatusHandleTVSeries(myMedia):
@@ -74,28 +119,30 @@ def videoStatusHandleTVSeries(myMedia):
             if doubleEpisode:
                 while myMedia.oStatus.percent > (myMedia.idxEpisode + 1) * 90.0/len(myMedia.parsedInfo.episode_numbers):
                     myMedia.idxEpisode += 1
-                videoStarted(myMedia)
+                showStarted(myMedia)
                 pchtrakt.currentTime = myMedia.oStatus.currentTime
             else:
-                videoStarted(myMedia)
+                showStarted(myMedia)
                 
     if myMedia.oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
         pchtrakt.currentTime = myMedia.oStatus.currentTime
-        videoStillRunning(myMedia)        
+        showStillRunning(myMedia)        
     elif doubleEpisode and myMedia.oStatus.percent > (myMedia.idxEpisode+1) * 90.0/len(myMedia.parsedInfo.episode_numbers) and myMedia.idxEpisode+1 < len(myMedia.parsedInfo.episode_numbers):
-        videoIsEnding(myMedia)
+        showIsEnding(myMedia)
         sleep(5)
         myMedia.idxEpisode += 1
-        videoStarted(myMedia)
+        showStarted(myMedia)
     elif myMedia.oStatus.percent > 90:
         if not pchtrakt.watched:
             if doubleEpisode:
-                pchtrakt.watched = videoIsEnding(myMedia)
+                pchtrakt.watched = showIsEnding(myMedia)
             else:
-                 pchtrakt.watched = videoIsEnding(myMedia)
+                 pchtrakt.watched = showIsEnding(myMedia)
 
 def videoStatusHandle(myMedia):
     if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
         videoStatusHandleTVSeries(myMedia)
+        pchtrakt.isTvShow = 1
     elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
         videoStatusHandleMovie(myMedia)
+        pchtrakt.isMovie = 1

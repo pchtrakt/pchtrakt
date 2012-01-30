@@ -41,6 +41,9 @@ from lib import parser
 from lib import regexes
 from lib import utilities as utils
 from datetime import date
+from xml.etree import ElementTree
+from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib import quote
 
 tvdb = tvdb_api.Tvdb()
 
@@ -127,13 +130,28 @@ def main():
                     media.year = (tvdb[media.parsedInfo.series_name]['firstaired']).split('-')[0]
                     videoStatusHandle(media)
                 elif isinstance(media.parsedInfo,mp.MediaParserResultMovie):
-                    pass
+                    ImdbAPIurl = ('http://www.imdbapi.com/?t=%s&y=%s&r=xml'
+                                        %(quote(media.parsedInfo.movie_title),
+                                        media.parsedInfo.year))
+                    oResponse = urlopen(ImdbAPIurl)
+                    oXml = ElementTree.XML(oResponse.read())
+                    catc
+                    media.id = oXml.find('movie').get('id')
+                    media.year = media.parsedInfo.year
+                    Debug('Movie : %s - Year : %s - %s%% - IMDB: %s' 
+                                        %(media.parsedInfo.movie_title,
+                                            media.parsedInfo.year,
+                                            media.oStatus.percent,
+                                            media.id))
+                    videoStatusHandle(media)
         else:
             if pchtrakt.lastPath != '':
                 if not pchtrakt.watched:
                     videoStopped()
                 pchtrakt.watched = 0
                 pchtrakt.lastPath = ''
+                pchtrakt.isMovie = 0
+                pchtrakt.isTvShow = 0
             Debug("PCH status = %s" %media.oStatus.status)
 
 def stopTrying():
@@ -168,8 +186,8 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::%s:::' % e.msg)
             pchtrakt.logger.error(e.msg)
-        # except BaseException as e:
-            # stopTrying()
-            # Debug( '::: %s :::' %(pchtrakt.lastPath)
-            # Debug( '::: %s :::' %(e)
-            # pchtrakt.logger.exception(e)
+        except BaseException as e:
+            stopTrying()
+            Debug( '::: %s :::' %(pchtrakt.lastPath))
+            Debug( '::: %s :::' %(e))
+            pchtrakt.logger.exception(e)
