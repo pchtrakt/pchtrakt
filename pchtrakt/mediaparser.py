@@ -23,7 +23,6 @@ from movieparser import *
 class MediaParserResult():
     def __init__(self,file_name):
         self.file_name = file_name
-        
 class MediaParserResultAnime(MediaParserResult):
     def __init__(self,file_name,series_name,episode_numbers):
         self.file_name = file_name

@@ -3,15 +3,16 @@ import ConfigParser
 import logging
 
 StopTrying = 0
-oStatus = 0
 stop = 0
-currentPath = ''
+lastPath = ''
 currentTime = 0
 watched = 0
 DAEMON = 0
 nbr = 0
 config_file = 'pchtrakt.ini'
 debug = True
+isTvShow = 0
+isMovie = 0
 
 logger = logging.getLogger('pchtrakt')
 hdlr = logging.FileHandler('pchtrakt.log')
