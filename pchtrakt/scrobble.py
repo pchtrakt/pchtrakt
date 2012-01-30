@@ -3,6 +3,7 @@ from lib.utilities import Debug
 import pchtrakt
 from pchtrakt import mediaparser as mp
 from pchtrakt.config import *
+from time import sleep
 
 
 def videoStarted(myMedia):
