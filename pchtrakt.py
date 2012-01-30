@@ -37,6 +37,7 @@ from lib.tvdb_api import tvdb_api
 from lib.tvdb_api import tvdb_exceptions
 from lib import parser
 from lib import regexes
+from lib import utilities as utils
 from datetime import date
 
 tvdb = tvdb_api.Tvdb()
@@ -65,6 +66,7 @@ def getParams():
                 print "Daemonize not supported under Windows, starting normally"
             else:
                 pchtrakt.DAEMON = True
+                pchtrakt.debug = False
         
         if o in ('-h', '--help'):
             printHelp()
@@ -97,35 +99,11 @@ def daemonize():
         if pid != 0:
             sys.exit(0)
     except OSError, e:
-        raise RuntimeError("2st fork failed: %s [%d]" %
-                    (e.strerror, e.errno))
-    import resource    # Resource usage information.
-    maxfd = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
-    if (maxfd == resource.RLIM_INFINITY):
-        maxfd = MAXFD
+        raise RuntimeError("2st fork failed: %s [%d]" % (e.strerror, e.errno))
 
-    # Iterate through and close all file descriptors.
-    for fd in range(0, maxfd):
-        try:
-            os.close(fd)
-        except OSError:    # ERROR, fd wasn't open to begin with (ignored)
-            pass
+    dev_null = file('/dev/null', 'r')
+    os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
-        # Redirect the standard I/O file descriptors to the specified file.  Since
-        # the daemon has no controlling terminal, most daemons redirect stdin,
-        # stdout, and stderr to /dev/null.  This is done to prevent side-effects
-        # from reads and writes to the standard I/O file descriptors.
-
-        # This call to open is guaranteed to return the lowest file descriptor,
-        # which will be 0 (stdin), since it was closed above.
-    os.open('/dev/null', os.O_RDWR)    # standard input (0)
-
-        # Duplicate standard input to standard output and standard error.
-    os.dup2(0, 1)            # standard output (1)
-    os.dup2(0, 2)            # standard error (2)
-
-            
-            
 def main():
     pchtrakt.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
     if pchtrakt.currentPath != pchtrakt.oStatus.fullPath:
@@ -146,7 +124,8 @@ def main():
                 videoStatusHandle(pchtrakt.oStatus,str(tvdb[parsedInfo.series_name]['id']),str(tvdb[parsedInfo.series_name]['firstaired']).split('-')[0],parsedInfo)
         else:
             if pchtrakt.currentPath != '':
-                videoStopped()
+                if not pchtrakt.watched:
+                    videoStopped()
                 pchtrakt.watched = 0
                 pchtrakt.currentPath = ''
             Debug("PCH status = %s" %pchtrakt.oStatus.status)
@@ -162,18 +141,19 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
         pchtrakt.currentTime = oStatus.currentTime
         pchtrakt.idxEpisode = 0
         if pchtrakt.currentPath != '':
-            if doubleEpisode and oStatus.percent > 45:
-                pchtrakt.idxEpisode += 1
+            if doubleEpisode:
+                pchtrakt.idxEpisode = 0
+                while oStatus.percent > (pchtrakt.idxEpisode + 1) * 90.0/len(parsedInfo.episode_numbers):
+                    pchtrakt.idxEpisode += 1
                 id2 = tvdb[parsedInfo.series_name][parsedInfo.season_number][parsedInfo.episode_numbers[pchtrakt.idxEpisode]]['id']
                 videoStarted(oStatus,id2,year,parsedInfo,pchtrakt.idxEpisode)
             else:
                 videoStarted(oStatus,id,year,parsedInfo)
-        else:
-            videoStopped()
+                
     if oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
         pchtrakt.currentTime = oStatus.currentTime
         videoStillRunning(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)        
-    elif doubleEpisode and oStatus.percent > 90.0/len(parsedInfo.episode_numbers) and oStatus.percent > (pchtrakt.idxEpisode+1) * 90.0/len(parsedInfo.episode_numbers):
+    elif doubleEpisode and oStatus.percent > (pchtrakt.idxEpisode+1) * 90.0/len(parsedInfo.episode_numbers) and pchtrakt.idxEpisode+1 < len(parsedInfo.episode_numbers):
         videoIsEnding(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)
         sleep(5)
         pchtrakt.idxEpisode += 1
@@ -182,7 +162,7 @@ def videoStatusHandle(oStatus,id,year,parsedInfo):
     elif oStatus.percent > 90:
         if not pchtrakt.watched:
             if doubleEpisode:
-                videoIsEnding(oStatus,id,year,parsedInfo,len(parsedInfo.episode_numbers)-1)
+                pchtrakt.watched = videoIsEnding(oStatus,id,year,parsedInfo,pchtrakt.idxEpisode)
             else:
                  pchtrakt.watched = videoIsEnding(oStatus,id,year,parsedInfo)
 
@@ -200,16 +180,26 @@ if __name__ == '__main__':
             main()
             sleep(sleepTime)
         except (KeyboardInterrupt, SystemExit):
-            
             Debug(':::Stopping pchtrakt:::')
             pchtrakt.stop = 1
         except parser.InvalidNameException:
             stopTrying()
             Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.currentPath))
-        except tvdb_exceptions.tvdb_shownotfound:
+        except tvdb_exceptions.tvdb_shownotfound as e:
             stopTrying()
-            Debug(':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath))
-        except BaseException as e:
+            msg = ':::TheTvDB - Show not found %s :::' %(pchtrakt.currentPath)
+            Debug(msg)
+            pchtrakt.logger.warning(msg)
+        except utils.AuthenticationTraktError as e:
             stopTrying()
-            Debug('::: %s :::' %(pchtrakt.currentPath))
-            Debug('::: %s :::' %(e))
+            Debug(':::%s:::' % e.msg)
+            pchtrakt.logger.error(e.msg)
+        except utils.MaxScrobbleError as e:
+            stopTrying()
+            Debug(':::%s:::' % e.msg)
+            pchtrakt.logger.error(e.msg)
+        # except BaseException as e:
+            # stopTrying()
+            # Debug( '::: %s :::' %(pchtrakt.currentPath)
+            # Debug( '::: %s :::' %(e)
+            # pchtrakt.logger.exception(e)

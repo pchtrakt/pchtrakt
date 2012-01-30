@@ -1,7 +1,7 @@
 {
 appinfo_format="1",
 name="pchtrakt",
-version="0.1",
+version="0.2.1",
 enabled="1",
 daemon_script="daemon.sh",
 }
