@@ -13,6 +13,7 @@ config_file = 'pchtrakt.ini'
 debug = True
 isTvShow = 0
 isMovie = 0
+idOK = 0
 
 logger = logging.getLogger('pchtrakt')
 hdlr = logging.FileHandler('pchtrakt.log')

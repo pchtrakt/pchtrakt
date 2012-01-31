@@ -112,6 +112,7 @@ def main():
     media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
     if pchtrakt.lastPath != media.oStatus.fullPath:
         pchtrakt.StopTrying = 0
+        pchtrakt.idOK = 0
     if not pchtrakt.StopTrying:
         if media.oStatus.status != EnumStatus.NOPLAY and media.oStatus.status != EnumStatus.UNKNOWN:
             if media.oStatus.status != EnumStatus.LOAD:
@@ -130,18 +131,20 @@ def main():
                     media.year = (tvdb[media.parsedInfo.series_name]['firstaired']).split('-')[0]
                     videoStatusHandle(media)
                 elif isinstance(media.parsedInfo,mp.MediaParserResultMovie):
-                    ImdbAPIurl = ('http://www.imdbapi.com/?t=%s&y=%s&r=xml'
-                                        %(quote(media.parsedInfo.movie_title),
-                                        media.parsedInfo.year))
-                    oResponse = urlopen(ImdbAPIurl)
-                    oXml = ElementTree.XML(oResponse.read())
-                    media.id = oXml.find('movie').get('id')
-                    media.year = media.parsedInfo.year
+                    if not pchtrakt.idOK:
+                        ImdbAPIurl = ('http://www.imdbapi.com/?t=%s&y=%s&r=xml'
+                                            %(quote(media.parsedInfo.movie_title),
+                                            media.parsedInfo.year))
+                        oResponse = urlopen(ImdbAPIurl)
+                        oXml = ElementTree.XML(oResponse.read())
+                        media.id = oXml.find('movie').get('id')
+                        media.year = media.parsedInfo.year
+                        pchtrakt.idOK = 1
                     Debug('Movie : %s - Year : %s - %s%% - IMDB: %s' 
-                                        %(media.parsedInfo.movie_title,
-                                            media.parsedInfo.year,
-                                            media.oStatus.percent,
-                                            media.id))
+                                            %(media.parsedInfo.movie_title,
+                                                media.parsedInfo.year,
+                                                media.oStatus.percent,
+                                                media.id))
                     videoStatusHandle(media)
         else:
             if pchtrakt.lastPath != '':
@@ -169,9 +172,9 @@ if __name__ == '__main__':
         except (KeyboardInterrupt, SystemExit):
             Debug(':::Stopping pchtrakt:::')
             pchtrakt.stop = 1
-        except parser.InvalidNameException:
-            stopTrying()
-            Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.lastPath))
+        # except parser.InvalidNameException:
+            # stopTrying()
+            # Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.lastPath))
         except tvdb_exceptions.tvdb_shownotfound as e:
             stopTrying()
             msg = ':::TheTvDB - Show not found %s :::' %(pchtrakt.lastPath)
@@ -185,8 +188,8 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::%s:::' % e.msg)
             pchtrakt.logger.error(e.msg)
-        except BaseException as e:
-            stopTrying()
-            Debug( '::: %s :::' %(pchtrakt.lastPath))
-            Debug( '::: %s :::' %(e))
-            pchtrakt.logger.exception(e)
+        # except BaseException as e:
+            # stopTrying()
+            # Debug( '::: %s :::' %(pchtrakt.lastPath))
+            # Debug( '::: %s :::' %(e))
+            # pchtrakt.logger.exception(e)
