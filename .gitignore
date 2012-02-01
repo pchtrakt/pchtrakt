@@ -24,3 +24,4 @@ pchtrakt.log
 #ignore rep
 ignore
 *.ini
+*.log
