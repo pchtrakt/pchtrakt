@@ -95,8 +95,12 @@ fi
 stop_pchtrakt()
 {
 # Stop pchtrakt
-sed -i '/pchtrakt/ d' /tmp/appinit_state
-kill $(ps |grep "[p]chtrakt" |awk '{ print $1 }') > /dev/null 2>&1
+if [ -n "`ps | grep "pchtrakt" | grep -v "grep"`" ]; then
+        kill -9 `pidof python2.7 pchtrakt.py` >/dev/null 2>/dev/null
+        sleep 2
+fi
+}
+
 }
 
 #Main
