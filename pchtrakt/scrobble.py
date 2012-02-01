@@ -124,7 +124,7 @@ def videoStatusHandleTVSeries(myMedia):
             else:
                 showStarted(myMedia)
                 
-    if not pchtrakt.watched and myMedia.oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
+    if not pchtrakt.watched and myMedia.oStatus.currentTime > pchtrakt.currentTime + int(refreshTime)*60:
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         showStillRunning(myMedia)        
     elif doubleEpisode and myMedia.oStatus.percent > (myMedia.idxEpisode+1) * 90.0/len(myMedia.parsedInfo.episode_numbers) and myMedia.idxEpisode+1 < len(myMedia.parsedInfo.episode_numbers):
