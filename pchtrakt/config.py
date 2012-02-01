@@ -24,7 +24,9 @@ config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 username = config.get('PCHtrakt', 'trakt_login') 
 pwd = config.get('PCHtrakt', 'trakt_pwd') 
-sleepTime = 5 #sec
-refreshTime = 15 #min
+scrobbleTvShow = config.get('PCHtrakt', 'enable_tvshow_scrobbling') 
+scrobbleMovie = config.get('PCHtrakt', 'enable_movie_scrobbling') 
+sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
+refreshTime = config.get('PCHtrakt', 'refresh_time')
 
 pathYAMJ='' #not used yet

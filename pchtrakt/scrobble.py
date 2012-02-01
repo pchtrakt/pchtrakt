@@ -141,8 +141,10 @@ def videoStatusHandleTVSeries(myMedia):
 
 def videoStatusHandle(myMedia):
     if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
-        videoStatusHandleTVSeries(myMedia)
+        if scrobbleTvShow:
+            videoStatusHandleTVSeries(myMedia)
         pchtrakt.isTvShow = 1
     elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
-        videoStatusHandleMovie(myMedia)
+        if scrobbleMovie:
+            videoStatusHandleMovie(myMedia)
         pchtrakt.isMovie = 1

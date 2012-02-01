@@ -21,24 +21,36 @@ formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s\r')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
 logger.setLevel(logging.INFO)
+config = ConfigParser.RawConfigParser()
+
+def loadOldConfig():
+    config.read(config_file)
 
 def newConfig():
-    config = ConfigParser.RawConfigParser()
-    config.add_section('PCHtrakt')
-    config.set('PCHtrakt', 'pch_ip', '127.0.0.1        ; do not change if installed directly on the popcorn')
-    config.set('PCHtrakt', 'trakt_login', 'put_your_trakt.tv_login_here')
-    config.set('PCHtrakt', 'trakt_pwd', 'put_your_trakt.tv_pwd_here')
-    config.set('PCHtrakt', 'sleep_time', '8')
-    config.set('PCHtrakt', 'refresh_time', '15')
-    config.set('PCHtrakt', 'log_file', 'pchtrakt.log')
-    # config.set('PCHtrakt', 'enable_movie_scrobbling', 'true')
-    # config.set('PCHtrakt', 'enable_tvshow_scrobbling', 'true')
+    if not isfile(config_file):
+        config.add_section('PCHtrakt')
+    if not config.has_option('PCHtrakt','pch_ip'):
+        config.set('PCHtrakt', 'pch_ip', '127.0.0.1        ; do not change if installed directly on the popcorn')
+    if not config.has_option('PCHtrakt','trakt_login'):
+        config.set('PCHtrakt', 'trakt_login', 'put_your_trakt.tv_login_here')
+    if not config.has_option('PCHtrakt','trakt_pwd'):
+        config.set('PCHtrakt', 'trakt_pwd', 'put_your_trakt.tv_pwd_here')
+    if not config.has_option('PCHtrakt','sleep_time'):
+        config.set('PCHtrakt', 'sleep_time', '8')
+    if not config.has_option('PCHtrakt','refresh_time'):
+        config.set('PCHtrakt', 'refresh_time', '15')
+    if not config.has_option('PCHtrakt','log_file'):
+        config.set('PCHtrakt', 'log_file', 'pchtrakt.log')
+    if not config.has_option('PCHtrakt','enable_movie_scrobbling'):
+        config.set('PCHtrakt', 'enable_movie_scrobbling', 'true')
+    if not config.has_option('PCHtrakt','enable_tvshow_scrobbling'):
+        config.set('PCHtrakt', 'enable_tvshow_scrobbling', 'true')
+    
     
     with open(config_file, 'w') as configfile:
         config.write(configfile)
 
 if isfile(config_file):
-    pass
+    loadOldConfig()
     #todo save config and create new one
-else:
-    newConfig()
+newConfig()
