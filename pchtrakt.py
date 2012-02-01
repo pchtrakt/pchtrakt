@@ -188,8 +188,8 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::%s:::' % e.msg)
             pchtrakt.logger.error(e.msg)
-        # except BaseException as e:
-            # stopTrying()
-            # Debug( '::: %s :::' %(pchtrakt.lastPath))
-            # Debug( '::: %s :::' %(e))
-            # pchtrakt.logger.exception(e)
+        except BaseException as e:
+            stopTrying()
+            Debug( '::: %s :::' %(pchtrakt.lastPath))
+            Debug( '::: %s :::' %(e))
+            pchtrakt.logger.exception(e)

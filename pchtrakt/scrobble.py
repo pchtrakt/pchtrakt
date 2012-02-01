@@ -97,7 +97,7 @@ def videoStatusHandleMovie(myMedia):
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         if pchtrakt.lastPath != '':
             movieStarted(myMedia)
-    if myMedia.oStatus.currentTime > pchtrakt.currentTime + refreshTime*60:
+    if myMedia.oStatus.currentTime > pchtrakt.currentTime + int(refreshTime)*60:
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         movieStillRunning(myMedia)        
     elif myMedia.oStatus.percent > 90:
