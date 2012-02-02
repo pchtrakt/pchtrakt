@@ -45,7 +45,6 @@ install_defaults()
    chmod 777 /share/Apps/pchtrakt
    mkdir /share/tmp
    cd /share/tmp
-  # git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
    git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod 777 /share/Apps/pchtrakt
@@ -63,7 +62,6 @@ force_pchtrakt()
    wget https://raw.github.com/pchtrakt/pchtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
-   #git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
    git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod -R 777 /share/Apps/pchtrakt
@@ -132,7 +130,7 @@ case "$1" in
         start_pchtrakt;
     ;;
 
-    forcesb)
+    force)
     stop_pchtrakt;
     sleep 2
         force_pchtrakt;
