@@ -99,8 +99,6 @@ if [ -n "`ps | grep "pchtrakt" | grep -v "grep"`" ]; then
 fi
 }
 
-}
-
 #Main
 case "$1" in
     start)
