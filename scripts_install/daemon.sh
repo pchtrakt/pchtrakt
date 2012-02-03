@@ -59,14 +59,14 @@ force_pchtrakt()
 {
    chmod 777 /share/Apps/pchtrakt
    cd /share/Apps/pchtrakt
-   rm -r /share/Apps/pchtrakt/daemon.sh
-   wget https://raw.github.com/pchtrakt/pchtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
    #git clone -b release-0.1 git://github.com/pchtrakt/pchtrakt.git
    git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod -R 777 /share/Apps/pchtrakt
+   cp -f /share/Apps/pchtrakt/scripts_install/appinfo.json /share/Apps/pchtrakt/
+   cp -f /share/Apps/pchtrakt/scripts_install/daemon.sh /share/Apps/pchtrakt/
    cd
    rm -r /share/tmp
 }
