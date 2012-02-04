@@ -119,6 +119,8 @@ case "$1" in
     restart)
     stop_pchtrakt;
     sleep 2
+    force_pchtrakt;
+    sleep 2
     start_pchtrakt;
     ;;
 
@@ -127,14 +129,6 @@ case "$1" in
     sleep 2
         force_all;
     force_pchtrakt;
-    sleep 2
-        start_pchtrakt;
-    ;;
-
-    forcesb)
-    stop_pchtrakt;
-    sleep 2
-        force_pchtrakt;
     sleep 2
         start_pchtrakt;
     ;;
