@@ -2,8 +2,9 @@
 class Settings { 
     private static $instance; 
     private $settings; 
-    
+    private $ini_file;
     private function __construct($ini_file) { 
+		$this->ini_file  =$ini_file;
         $this->settings = parse_ini_file($ini_file, true); 
     } 
     
@@ -25,6 +26,25 @@ class Settings {
             } 
         } 
     } 
+	
+	public function write() { 
+		$content = '';
+		foreach($this->settings as $section => $values){
+			$content .= "[$section]\n";
+			foreach($values as $key => $val){
+				if(is_array($val)){
+					foreach($val as $k =>$v){
+						$content .= "{$key}[$k] = $v\n";
+					}
+				}
+				else
+					$content .= "$key = $val\n";
+			}
+			$content .= "\n";
+		}
+		file_put_contents($this->ini_file, $content);
+		unset($content);
+    }
 } 	
 ?>	
 	
