@@ -3,6 +3,7 @@ appinfo_format="1",
 name="pchtrakt",
 version="0.4",
 enabled="1",
+webui_path="#PATH#/www"
 daemon_script="daemon.sh",
 }
 
