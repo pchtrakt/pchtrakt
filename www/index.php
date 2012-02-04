@@ -33,38 +33,39 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 	if ($_SERVER['REQUEST_METHOD']=='POST' && ($_POST['Submit']) ) { 
 		$boolTV = true;
 		$boolFilm = true;
+		$save = true;
 		foreach ($_POST as $key => $value) { 
 			if (DEBUG) echo '<br />key.'.$key;
 			
 			switch ($key) {
 				case 'trakt_Login':
 					$trakt_Login=$value;
-					if (_empty($value)){print'login must be set<br />';}
+					if (_empty($value)){$save=false;print'login must be set<br />';}
 					break;
 				case 'trakt_Password':
 					$trakt_Password=$value;
-					if (_empty($value)){print'Password must be set<br />';}
+					if (_empty($value)){$save=false;print'Password must be set<br />';}
 					break;
 				case 'trakt_API':
 					$trakt_API=$value;
-					if (DEBUG && _empty($value)){print'Trakt API Key must be set<br />';}
+					if (DEBUG && _empty($value)){ $save=false; print'Trakt API Key must be set<br />';}
 					break;
 				case 'APP_IP':
 					$APP_IP=$value;
-					if (DEBUG && _empty($value)){print'IP must be set<br />';}
+					if (DEBUG && _empty($value)){ $save=false; print'IP must be set<br />';}
 					break;
 				case 'APP_SleepTime':
 					$APP_SleepTime=$value;
-					if (_empty($value)){print'Sleep Time  must be set<br />';}
+					if (_empty($value)){$save=false; print'Sleep Time  must be set<br />';}
 					else{
-						if(!is_numeric($value)){print'Sleep Time must be a numeric<br />';}
+						if(!is_numeric($value)){$save=false; print'Sleep Time must be a numeric<br />';}
 					}
 					break;
 				case 'APP_RefreshTime':
 					$APP_RefreshTime=$value;
-					if (_empty($value)){print'Refresh Time must be set<br />';}
+					if (_empty($value)){ $save=false; print'Refresh Time must be set<br />';}
 					else{
-						if(!is_numeric($value)){print'Refresh Time must be a numeric<br />';}
+						if(!is_numeric($value)){$save=false; print'Refresh Time must be a numeric<br />';}
 					}
 					break;
 				case 'APP_TVScrobble':
@@ -77,12 +78,19 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 					break;	
 				case 'APP_LogFile':
 					$APP_LogFile=$value;
-					if (DEBUG && _empty($value)){print'LogFile must be set<br />';}
+					if (DEBUG && _empty($value)){$save=false; print'LogFile must be set<br />';}
 					break;						
 			}
 		}	 
 		
-		if ( !$boolTV && !$boolFilm){ echo '<br />Why do you use the PCHTrakt App if you don\'t want to scrobble ????';}
+		if ( !$boolTV && !$boolFilm){ $save=false; echo '<br />Why do you use the PCHTrakt App if you don\'t want to scrobble ????';}			
+		
+		if ($save)
+		{
+			$conf->write();
+		}
+		else{ /* TODO display error message */
+		}
 	} 
 	?>
 	
