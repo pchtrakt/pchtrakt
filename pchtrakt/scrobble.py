@@ -116,28 +116,34 @@ def videoStatusHandleTVSeries(myMedia):
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         myMedia.idxEpisode = 0
         if pchtrakt.lastPath != '':
-            if doubleEpisode:
+            if myMedia.oStatus.percent > 90:
+                pchtrakt.watched  = 1
+                Debug('Started at more than 90%! I''m not doing anything!')
+            elif doubleEpisode:
                 while myMedia.oStatus.percent > (myMedia.idxEpisode + 1) * 90.0/len(myMedia.parsedInfo.episode_numbers):
                     myMedia.idxEpisode += 1
                 showStarted(myMedia)
                 pchtrakt.currentTime = myMedia.oStatus.currentTime
             else:
                 showStarted(myMedia)
-                
-    if not pchtrakt.watched and myMedia.oStatus.currentTime > pchtrakt.currentTime + int(refreshTime)*60:
-        pchtrakt.currentTime = myMedia.oStatus.currentTime
-        showStillRunning(myMedia)        
-    elif doubleEpisode and myMedia.oStatus.percent > (myMedia.idxEpisode+1) * 90.0/len(myMedia.parsedInfo.episode_numbers) and myMedia.idxEpisode+1 < len(myMedia.parsedInfo.episode_numbers):
-        showIsEnding(myMedia)
-        sleep(5)
-        myMedia.idxEpisode += 1
+    if not pchtrakt.watched:    
+        if myMedia.oStatus.currentTime > pchtrakt.currentTime + int(refreshTime)*60:
+            pchtrakt.currentTime = myMedia.oStatus.currentTime
+            showStillRunning(myMedia)        
+        elif doubleEpisode and myMedia.oStatus.percent > (myMedia.idxEpisode+1) * 90.0/len(myMedia.parsedInfo.episode_numbers) and myMedia.idxEpisode+1 < len(myMedia.parsedInfo.episode_numbers):
+            showIsEnding(myMedia)
+            myMedia.idxEpisode += 1
+            showStarted(myMedia)
+        elif myMedia.oStatus.percent > 90:
+            if not pchtrakt.watched:
+                if doubleEpisode:
+                    pchtrakt.watched = showIsEnding(myMedia)
+                else:
+                     pchtrakt.watched = showIsEnding(myMedia)
+    elif myMedia.oStatus.percent < 10:
+        Debug('It seems you came back at the begining of the video... so I say to trakt it''s playing')
+        pchtrakt.watched = 0
         showStarted(myMedia)
-    elif myMedia.oStatus.percent > 90:
-        if not pchtrakt.watched:
-            if doubleEpisode:
-                pchtrakt.watched = showIsEnding(myMedia)
-            else:
-                 pchtrakt.watched = showIsEnding(myMedia)
 
 def videoStatusHandle(myMedia):
     if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):

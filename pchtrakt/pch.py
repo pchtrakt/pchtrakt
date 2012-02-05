@@ -49,6 +49,7 @@ class PchRequestor:
     def parseResponse(self, response):
         oPchStatus = PchStatus()
         try:
+            response = response.replace('&','')
             oXml = ElementTree.XML(response) 
             if oXml.tag == "theDavidBox": # theDavidBox should be the root
                 if oXml.find("returnValue").text == '0':
