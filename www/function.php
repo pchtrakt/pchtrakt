@@ -1,4 +1,7 @@
 <?php
+if (!defined('PCHTRAKT'))
+	exit;
+
 	function _empty() 
 	{ 
 		foreach(func_get_args() as $args) 
@@ -17,4 +20,10 @@
 		} 
 		return false; 
 	} 	
+	
+	function _checkfile($file,$content)
+	{
+		if (!file_exists($file))
+			file_put_contents($file, $content);
+	}
 ?>
