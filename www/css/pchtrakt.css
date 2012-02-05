@@ -2,6 +2,12 @@ body{
 	background-color:#e4dab8;
 }
 
+.debug {
+	border:1px dashed red; 
+	background-color:#EFE;
+}
+
+
 form fieldset{
 	background-color:#fff9e7;
 	top: 25%;
@@ -14,7 +20,7 @@ form fieldset{
 	font-size:12px;
 		
 	margin:20px 0px 20px 0px;
-	width:350px;
+	width:450px;
 	position:relative;
 	display:block;
 	padding: 0px 10px 10px 10px;
@@ -48,7 +54,7 @@ label{
 	
 	display:block;
 	float:left;
-	width:110px;
+	width:130px;
 	text-align:right;
 	margin:6px 5px 0px 0px;
 }
@@ -66,4 +72,37 @@ label{
 p
 {
 text-align:center;
+}
+
+.info, .success, .warning, .error, .validation {
+    border: 1px solid;
+    margin: 10px 0px;
+    padding:15px 10px 15px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+.info {
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('images/info.png');
+}
+.success {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+    background-image:url('images/success.png');
+}
+.warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+    background-image: url('images/warning.png');
+}
+.error {
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('images/error.png');
+}
+.validation {
+    color: #D63301;
+    background-color: #FFCCBA;
+    background-image: url('images/validation.png');
 }
