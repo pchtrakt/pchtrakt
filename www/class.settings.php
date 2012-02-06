@@ -45,7 +45,7 @@ class Settings {
 		try {
 			$content = $this->getMasterSection();
 			foreach( $this->settings as $key => $value ) {
-				$content .= "$key=$value\n";
+				$content .= "$key = $value\n";
 			}
 			$content .= "\n";
 			file_put_contents($this->ini_file,$content);
