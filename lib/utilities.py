@@ -48,30 +48,11 @@ def Debug(msg, force=False):
             print msg.encode( "utf-8", "ignore" )
 
 def checkSettings(daemon=False):
-    if username == "":
-        if daemon:
-            notification("Trakt Utilities", __language__(1106).encode( "utf-8", "ignore" )) # please enter your Username and Password in settings
-        else:
-            xbmcgui.Dialog().ok("Trakt Utilities", __language__(1106).encode( "utf-8", "ignore" )) # please enter your Username and Password in settings
-            __settings__.openSettings()
-        return False
-    elif __settings__.getSetting("password") == "":
-        if daemon:
-            notification("Trakt Utilities", __language__(1107).encode( "utf-8", "ignore" )) # please enter your Password in settings
-        else:
-            xbmcgui.Dialog().ok("Trakt Utilities", __language__(1107).encode( "utf-8", "ignore" )) # please enter your Password in settings
-            __settings__.openSettings()
-        return False
-    
+       
     data = traktJsonRequest('POST', '/account/test/%%API_KEY%%', silent=True)
     if data == None: #Incorrect trakt login details
-        if daemon:
-            notification("Trakt Utilities", __language__(1110).encode( "utf-8", "ignore" )) # please enter your Password in settings
-        else:
-            xbmcgui.Dialog().ok("Trakt Utilities", __language__(1110).encode( "utf-8", "ignore" )) # please enter your Password in settings
-            __settings__.openSettings()
         return False
-        
+    print('True')  
     return True
 
 # SQL string quote escaper

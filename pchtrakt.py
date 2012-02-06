@@ -60,7 +60,7 @@ def printHelp():
 
 def getParams():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "dh", ['daemon','help']) #@UnusedVariable
+        opts, args = getopt.getopt(sys.argv[1:], "dht", ['daemon','help']) #@UnusedVariable
     except getopt.GetoptError:
         print("Available options: -d, --daemon")
         sys.exit()
@@ -77,6 +77,14 @@ def getParams():
         if o in ('-h', '--help'):
             printHelp()
             sys.exit()
+        
+        if o in ('-t'):
+            try:
+                utils.checkSettings()
+            except util.AuthenticationTraktError:
+                pass
+            finally:
+                sys.exit()
         
 def daemonize():
     """
