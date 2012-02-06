@@ -19,8 +19,8 @@ $lang = array_merge($lang, array(
 'Empty_SleepTime'				=>	'Le temps d\'attente ne peut être vide.',
 'Empty_RefreshTime'				=>	'Le temps de rafraichissement ne peut être vide',
 
-'NotNumeric_SleepTime'			=>	'Le temps d\'attente doit être un entier (en minutes).',
-'NotNumeric_RefreshTime'		=>	'Le temps de rafraichissement doit être un entier (en secondes).',
+'NotNumeric_SleepTime'			=>	'Le temps d\'attente doit être un entier >= '. SEC_LOW .'.',
+'NotNumeric_RefreshTime'		=>	'Le temps de rafraichissement doit être un entier >= ' . MIN_LOW .'.',
 
 'Save'							=>	'Configuration mise à jour...',
 'Error'							=>	'Une erreur grave est survenue..',
@@ -41,5 +41,8 @@ $lang = array_merge($lang, array(
 
 'Submit'						=>	'Mettre à jour la configuration',
 'Page_Title'					=>	'PchTrakt Configurator',
+
+'sec'						=>	'secondes',
+'min'					=>	 'minutes',
 ));
 ?>

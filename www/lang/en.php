@@ -19,8 +19,8 @@ $lang = array_merge($lang, array(
 'Empty_SleepTime'				=>	'Sleep time must be set.',
 'Empty_RefreshTime'				=>	'Refresh Time must be set.',
 
-'NotNumeric_SleepTime'			=>	'Sleep time must be a numeric (in minutes).',
-'NotNumeric_RefreshTime'		=>	'Refresh Time must be a numeric (in seconds).',
+'NotNumeric_SleepTime'			=>	'Sleep time must be a numeric >= '. SEC_LOW .'.',
+'NotNumeric_RefreshTime'		=>	'Refresh Time must be a numeric >= ' . MIN_LOW .'.',
 
 'Save'							=>	'Configuration is updated...',
 'Error'							=>	'OOps something is broken...',
@@ -41,5 +41,8 @@ $lang = array_merge($lang, array(
 
 'Submit'						=>	'Update my configuration',
 'Page_Title'					=>	'PchTrakt Configurator',
+
+'sec'						=>	'seconds',
+'min'					=>	 'minutes',
 ));
 ?>
