@@ -26,4 +26,6 @@ if (!defined('PCHTRAKT'))
 		if (!file_exists($file))
 			file_put_contents($file, $content);
 	}
+	
+	
 ?>

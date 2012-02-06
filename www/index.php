@@ -1,8 +1,10 @@
 <?php
 // define some constant 
-define('PCHTRAKT','0.4');
+define('PCHTRAKT','PHP');
+define('SEC_LOW',5);
+define('MIN_LOW',15);
 define('DEBUG',(false || $_GET['debug']==1) );
-
+define('APP_URL','https://github.com/pchtrakt/pchtrakt');
 define('VIEW',strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)));
 IF (!DEBUG)
 {
@@ -18,6 +20,7 @@ else
 define('SHOWPHPINFO',(false || $_GET['phpinfo']==1));
 define('INI_PATH','../../pchtrakt/');
 define('INI_FILE','pchtrakt.ini');
+define('JSON_FILE','appinfo.json');
 define('CSS_FILE','css/pchtrakt.css');
 define('APIKEY','def6943c09e19dccb4df715bd4c9c6c74bc3b6d7');
 
@@ -27,10 +30,11 @@ require_once 'function.php';
 require_once 'class.settings.php';
 
 
-
 // load settings from the ini file
-$conf = Settings::getInstance(INI_PATH.''.INI_FILE); 
-
+$conf = Settings::getInstance(INI_PATH.''.INI_FILE);
+// load json app file
+$fcontent = file_get_contents(INI_PATH.''.JSON_FILE);
+$json = json_decode($fcontent); 
 ?>
 <html>
 <head>
@@ -90,7 +94,7 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 					if (_empty($value))
 						$ErrorArray[] = $lang['Empty_SleepTime'];	
 					else
-						if(!is_numeric($value))
+						if(!is_numeric($value) || $value < SEC_LOW)
 							$ErrorArray[] = $lang['NotNumeric_SleepTime'];
 						else 
 							$conf->sleep_time = $value;
@@ -101,7 +105,7 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 					if (_empty($value))
 						$ErrorArray[] = $lang['Empty_RefreshTime'];
 					else
-						if(!is_numeric($value))
+						if(!is_numeric($value) || $value < MIN_LOW)
 							$ErrorArray[] = $lang['NotNumeric_RefreshTime'];
 						else 			
 							$conf->refresh_time = $value;		
@@ -150,9 +154,14 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 			echo '</ul></div>';
 		}
 	} 
-	?>
+?>
 	
-	
+  <fieldset>
+  <legend><?php echo $json->name;?></legend>
+	<label for="pchtrakt_version">Version : <a target="blank" href="<?php echo APP_URL ?>"><?php echo  $json->version; ?></a> </label>  
+  </fieldset> 
+
+  
   <fieldset>
   <legend><?php echo $lang['Field_Trakt']?></legend>
   <label for="trakt_login"><?php echo $lang['Login']?> :</label> 
@@ -167,7 +176,7 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
 
   <?php } ?>  
   </fieldset> 
-  <br />  <br />
+
   <fieldset>
  
   <legend><?php echo $lang['Field_Config']?></legend>
@@ -177,11 +186,11 @@ $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
   <br />  <br />
   <?php } ?>
   
-  <label for="APP_SleepTime"><?php echo $lang['SleepTime']?> :</label>
+  <label for="APP_SleepTime"><?php echo $lang['SleepTime']?> (<?php echo $lang['sec'] ?>) :</label>
   <input type="text" name="APP_SleepTime" id="APP_SleepTime" value="<?php  if(isset($APP_SleepTime)){ print $APP_SleepTime; }else{echo $conf->sleep_time;}?>"/>
   <br />  <br />
   
-  <label for="APP_RefreshTime"><?php echo $lang['RefreshTime']?> :</label>
+  <label for="APP_RefreshTime"><?php echo $lang['RefreshTime']?> (<?php echo $lang['min'] ?>) :</label>
   <input type="text" name="APP_RefreshTime" id="APP_RefreshTime" value="<?php  if(isset($APP_RefreshTime)){ print $APP_RefreshTime; }else{echo $conf->refresh_time;}?>"/>
   <br />  <br />
   
