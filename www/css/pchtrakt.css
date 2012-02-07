@@ -84,25 +84,25 @@ text-align:center;
 .info {
     color: #00529B;
     background-color: #BDE5F8;
-    background-image: url('images/info.png');
+    background-image: url('image/info.png');
 }
 .success {
     color: #4F8A10;
     background-color: #DFF2BF;
-    background-image:url('images/success.png');
+    background-image:url('image/success.png');
 }
 .warning {
     color: #9F6000;
     background-color: #FEEFB3;
-    background-image: url('images/warning.png');
+    background-image: url('image/warning.png');
 }
 .error {
     color: #D8000C;
     background-color: #FFBABA;
-    background-image: url('images/error.png');
+    background-image: url('image/error.png');
 }
 .validation {
     color: #D63301;
     background-color: #FFCCBA;
-    background-image: url('images/validation.png');
+    background-image: url('image/validation.png');
 }
