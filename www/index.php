@@ -3,7 +3,7 @@
 define('PCHTRAKT','PHP');
 define('SEC_LOW',5);
 define('MIN_LOW',15);
-define('DEBUG',(false || $_GET['debug']==1) );
+define('DEBUG',(false || sha1($_GET['debug'])=="77e0d1c16844248a6eaacb0faa8125fc3f542580") );
 define('APP_URL','https://github.com/pchtrakt/pchtrakt');
 define('VIEW',strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)));
 IF (!DEBUG)
@@ -17,7 +17,7 @@ else
 {
 	require_once 'lang/fr.php';
 }
-define('SHOWPHPINFO',(false || $_GET['phpinfo']==1));
+define('SHOWPHPINFO',(false || sha1($_GET['phpinfo'])== "77e0d1c16844248a6eaacb0faa8125fc3f542580"));
 define('INI_PATH','../../pchtrakt/');
 define('INI_FILE','pchtrakt.ini');
 define('JSON_FILE','appinfo.json');
@@ -130,7 +130,7 @@ $json = json_decode($fcontent);
 					else
 					{
 						$conf->log_file = $value;
-						_checkfile(INI_PATH."".$conf->log_file,date("m.d.y H:i:s") ." => LogFile creation\n");
+						_checkfile(INI_PATH."".$conf->log_file,'');
 					}
 					break;						
 			}
@@ -141,7 +141,12 @@ $json = json_decode($fcontent);
 		if (count($ErrorArray) ==0)
 		{
 			if ($conf->save())
-				echo "<div class='success'>".$lang['Save']."</div>";
+			{
+				if (_checkAuth()==false)
+					echo "<div class='warning'>".$lang['TraktAccount_Failed']."</div>";
+				else
+					echo "<div class='success'>".$lang['Save']."</div>";
+			}
 			else
 				echo "<div class='error'>".$lang['Error']."</div>";		
 		}
@@ -196,16 +201,16 @@ $json = json_decode($fcontent);
   
   <label for="APP_TVScrobble"><?php echo $lang['TV_Scrobble']?> :</label>
   <select id="APP_TVScrobble" name="APP_TVScrobble">
-	<option <?php if(isset($APP_TVScrobble) && $APP_TVScrobble==1) { echo "selected";} else{if($conf->enable_tvshow_scrobbling==1){ echo "selected"; }}?> value="1"><?php echo $lang['Yes']?></option> 
-	<option <?php if(isset($APP_TVScrobble) && $APP_TVScrobble==0) { echo "selected";} else{if($conf->enable_tvshow_scrobbling==0){ echo "selected"; }}?> value="0"><?php echo $lang['No']?></option> 
+	<option <?php if(isset($APP_TVScrobble) && $APP_TVScrobble==true) { echo "selected";} else{if($conf->enable_tvshow_scrobbling==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
+	<option <?php if(isset($APP_TVScrobble) && $APP_TVScrobble==false) { echo "selected";} else{if($conf->enable_tvshow_scrobbling==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
   </select>
   
   <br />  <br />
   
   <label for="APP_FilmScrobble"><?php echo $lang['Film_Scrobble']?> :</label>
   <select id="APP_FilmScrobble" name="APP_FilmScrobble">
-  	<option <?php if(isset($APP_FilmScrobble) && $APP_FilmScrobble==1) { echo "selected";} else{if($conf->enable_movie_scrobbling==1){ echo "selected"; }}?> value="1"><?php echo $lang['Yes']?></option> 
-	<option <?php if(isset($APP_FilmScrobble) && $APP_FilmScrobble==0) { echo "selected";} else{if($conf->enable_movie_scrobbling==0){ echo "selected"; }}?> value="0"><?php echo $lang['No']?></option> 
+  	<option <?php if(isset($APP_FilmScrobble) && $APP_FilmScrobble==true) { echo "selected";} else{if($conf->enable_movie_scrobbling==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
+	<option <?php if(isset($APP_FilmScrobble) && $APP_FilmScrobble==false) { echo "selected";} else{if($conf->enable_movie_scrobbling==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
   </select>  
 
   <?php if (DEBUG) { ?>  

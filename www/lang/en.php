@@ -42,7 +42,8 @@ $lang = array_merge($lang, array(
 'Submit'						=>	'Update my configuration',
 'Page_Title'					=>	'PchTrakt Configurator',
 
-'sec'						=>	'seconds',
-'min'					=>	 'minutes',
+'sec'							=>	'seconds',
+'min'							=>	'minutes',
+'TraktAccount_Failed'  			=>  'Connexion to Trakt.tv site is impossible. Check your login and password.',
 ));
 ?>

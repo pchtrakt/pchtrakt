@@ -27,5 +27,8 @@ if (!defined('PCHTRAKT'))
 			file_put_contents($file, $content);
 	}
 	
-	
+	function _checkAuth()
+	{
+		return ((exec('cd /share/Apps/pchtrakt && python pchtrakt.py -t')=="True")?true:false);
+	}
 ?>
