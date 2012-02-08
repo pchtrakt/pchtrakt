@@ -1,9 +1,8 @@
 {
-appinfo_format="1",
-name="pchtrakt",
-version="0.4",
-enabled="1",
-webui_path="#PATH#/www",
-daemon_script="daemon.sh"
+    "appinfo_format": "1",
+    "name": "pchtrakt",
+    "version": "0.4.1",
+    "enabled": "1",
+    "daemon_script": "daemon.sh",
+    "webui_path": "#PATH#/www"
 }
-
