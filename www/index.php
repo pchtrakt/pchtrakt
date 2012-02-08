@@ -144,8 +144,11 @@ $json = json_decode($fcontent);
 			{
 				if (_checkAuth()==false)
 					echo "<div class='warning'>".$lang['TraktAccount_Failed']."</div>";
-				else
+				else{
+					_execPy();
 					echo "<div class='success'>".$lang['Save']."</div>";
+				}
+					
 			}
 			else
 				echo "<div class='error'>".$lang['Error']."</div>";		
