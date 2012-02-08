@@ -2,6 +2,7 @@ from lib import utilities
 from lib.utilities import Debug
 import pchtrakt
 from pchtrakt import mediaparser as mp
+from pchtrakt import betaseries as bs
 from pchtrakt.config import *
 from time import sleep
 
@@ -17,6 +18,7 @@ def showStarted(myMedia):
     msg = 'Video playing: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
     pchtrakt.logger.info(msg)
+    pass
     
 def movieStarted(myMedia):
     responce = utilities.watchingMovieOnTrakt(myMedia.id,
@@ -34,7 +36,7 @@ def showStopped():
     msg = 'Video stopped: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
     pchtrakt.logger.info(msg)
-
+    pass
     
 def movieStopped():
     responce = utilities.cancelWatchingMovieOnTrakt()
@@ -53,7 +55,7 @@ def videoStopped():
 def showStillRunning(myMedia):
     showStarted(myMedia)
     Debug('Video still running!')
-
+    pass
     
 def movieStillRunning(myMedia):
     movieStarted(myMedia)
@@ -61,19 +63,33 @@ def movieStillRunning(myMedia):
     
     
 def showIsEnding(myMedia):
-    responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
-                                                myMedia.parsedInfo.series_name,
-                                                myMedia.year,
-                                                str(myMedia.parsedInfo.season_number),
-                                                str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
-                                                str(myMedia.oStatus.totalTime),
-                                                str(myMedia.oStatus.percent))
-    if responce != None:
-        msg = 'Video is ending: %s - %s ' %(responce['status'],responce['message'])
-        Debug(msg)
-        pchtrakt.logger.info(msg)
-        return 1
-    return 0
+    # responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
+                                                # myMedia.parsedInfo.series_name,
+                                                # myMedia.year,
+                                                # str(myMedia.parsedInfo.season_number),
+                                                # str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
+                                                # str(myMedia.oStatus.totalTime),
+                                                # str(myMedia.oStatus.percent))
+    # if responce != None:
+        # msg = 'Video is ending: %s - %s ' %(responce['status'],responce['message'])
+        # Debug(msg)
+        # pchtrakt.logger.info(msg)
+        # return 1
+    # return 0
+    serieXml = bs.getSerieUrl(myMedia.parsedInfo.series_name)
+    Debug(serieXml)
+    LOGIN = 'Dev023'
+    PASS = 'developer'
+    token = bs.getToken(LOGIN,PASS)
+    Debug(token)
+    Debug('Adding show: {0}'.format(bs.addShow(serieXml,token)))
+    Debug('BetaSerie Scrobble: {0}'.format(
+                bs.scrobbleEpisode(serieXml
+                        ,token,myMedia.parsedInfo.season_number,
+                        myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])))
+    bs.destroyToken(token)
+    return 1
+    
     
     
 def movieIsEnding(myMedia):

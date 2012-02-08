@@ -28,16 +28,17 @@ def getSerieUrl(SerieName):
                         BETASERIE_URL,
                         BETASERIE_API,
                         SerieName)
+    print(url)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read()) 
-    return quote('{0}.xml'.format(oXml.find("shows/show/title").text))
+    return quote('{0}.xml'.format(oXml.find("shows/show/url").text))
 
-def userAuth(l,p):
+def getToken(log,passw):
     url = '{0}/members/auth.xml?key={1}&login={2}&password={3}'.format(
                         BETASERIE_URL,
                         BETASERIE_API,
-                        l,
-                        md5(p).hexdigest())
+                        log,
+                        md5(passw).hexdigest())
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read()) 
     return oXml.find("member/token").text
@@ -53,7 +54,7 @@ def scrobbleEpisode(SerieXml,Token,Saison,Episode):
                         Token)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
-    if oXml.find("code").text:
+    if oXml.find("code").text == '1':
         return True
     else:
         pass
@@ -67,15 +68,15 @@ def addShow(SerieXml,Token):
                         Token)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
-    if oXml.find("code"):
+    if oXml.find("code").text == '1':
         return True
     else:
         return oXml.find("errors/error/content").text
         
-SerieXml = getSerieUrl('Sherlock')
-print SerieXml
-userToken = userAuth(LOGIN,PASS)
-print userToken
+# SerieXml = getSerieUrl('Sherlock')
+# print SerieXml
+# userToken = userAuth(LOGIN,PASS)
+# print userToken
 # print addShow(SerieXml,userToken)
-print scrobbleEpisode(SerieXml,userToken,2,1)
-destroyToken(userToken)
+# print scrobbleEpisode(SerieXml,userToken,2,1)
+# destroyToken(userToken)
