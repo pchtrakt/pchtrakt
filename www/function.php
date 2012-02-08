@@ -31,4 +31,9 @@ if (!defined('PCHTRAKT'))
 	{
 		return ((exec('cd /share/Apps/pchtrakt && python pchtrakt.py -t')=="True")?true:false);
 	}
+	
+	function _execPy()
+	{
+		exec('cd /share/Apps/pchtrakt && ./daemon.sh restart');
+	}	
 ?>
