@@ -18,7 +18,7 @@ else
 	require_once 'lang/fr.php';
 }
 define('SHOWPHPINFO',(false || sha1($_GET['phpinfo'])== "77e0d1c16844248a6eaacb0faa8125fc3f542580"));
-define('INI_PATH','../../pchtrakt/');
+define('INI_PATH','../');
 define('INI_FILE','pchtrakt.ini');
 define('JSON_FILE','appinfo.json');
 define('CSS_FILE','css/pchtrakt.css');
