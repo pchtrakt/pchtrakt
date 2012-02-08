@@ -49,7 +49,7 @@ class Settings {
 			}
 			$content .= "\n";
 			file_put_contents($this->ini_file,$content);
-			file_put_contents(rtrim(dirname($this->ini_file), "/\\")."/".$this->log_file,date("m.d.y H:i:s") ." => save the data\n", FILE_APPEND | LOCK_EX);
+			// Not important file_put_contents(rtrim(dirname($this->ini_file), "/\\")."/".$this->log_file,date("m.d.y H:i:s") ." => save the data\n", FILE_APPEND | LOCK_EX);
 			unset($content);
 			$this->reload();
 			return true;

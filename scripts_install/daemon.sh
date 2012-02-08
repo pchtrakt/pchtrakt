@@ -58,13 +58,13 @@ force_pchtrakt()
 {
    chmod 777 /share/Apps/pchtrakt
    cd /share/Apps/pchtrakt
-   rm -r /share/Apps/pchtrakt/daemon.sh
-   wget https://raw.github.com/pchtrakt/pchtrakt/master/scripts_install/daemon.sh --no-check-certificate
    mkdir /share/tmp
    cd /share/tmp
    git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod -R 777 /share/Apps/pchtrakt
+   cp -f /share/Apps/pchtrakt/scripts_install/appinfo.json /share/Apps/pchtrakt/
+   cp -f /share/Apps/pchtrakt/scripts_install/daemon.sh /share/Apps/pchtrakt/
    cd
    rm -r /share/tmp
 }
@@ -116,6 +116,8 @@ case "$1" in
     restart)
     stop_pchtrakt;
     sleep 2
+    force_pchtrakt;
+    sleep 2
     start_pchtrakt;
     ;;
 
@@ -124,14 +126,6 @@ case "$1" in
     sleep 2
         force_all;
     force_pchtrakt;
-    sleep 2
-        start_pchtrakt;
-    ;;
-
-    force)
-    stop_pchtrakt;
-    sleep 2
-        force_pchtrakt;
     sleep 2
         start_pchtrakt;
     ;;
