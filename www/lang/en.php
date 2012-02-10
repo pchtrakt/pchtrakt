@@ -11,39 +11,60 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 
-'Empty_Login'					=>	'Login must be set.',
-'Empty_Password'				=>	'Password must be set.',
-'Empty_LogFile'					=>	'LogFile must be set.',
-'Empty_TraktAPI'				=>	'Trakt API Key must be set.',
-'Empty_IP'						=>	'IP must be set.',
-'Empty_SleepTime'				=>	'Sleep time must be set.',
-'Empty_RefreshTime'				=>	'Refresh Time must be set.',
 
-'NotNumeric_SleepTime'			=>	'Sleep time must be a numeric >= '. SEC_LOW .'.',
-'NotNumeric_RefreshTime'		=>	'Refresh Time must be a numeric >= ' . MIN_LOW .'.',
+/* PCHTrakt Key */
+'PCHTrakt_Config'					=>	'PCHTrakt Configuration',
+'PCHTrakt_Empty_LogFile'			=>	'LogFile must be set.',
+'PCHTrakt_Empty_API'				=>	'Trakt API Key must be set.',
+'PCHTrakt_Empty_IP'					=>	'IP must be set.',
+'PCHTrakt_Empty_SleepTime'			=>	'Sleep time must be set.',
+'PCHTrakt_NotNumeric_SleepTime'		=>	'Sleep time must be a numeric >= '. SEC_LOW .'.',
 
-'Save'							=>	'Configuration is updated...',
-'Error'							=>	'OOps something is broken...',
-'Yes'							=> 	'Yes',
-'No'							=> 	'No',
-'Field_Config'					=>	'PCHTrakt Configuration',
-'Field_Trakt'					=>	'Trakt.tv Configuration',
+'PCHTrakt_API'						=>	'API Key',
+'PCHTrakt_IP'						=>	'IP',
+'PCHTrakt_SleepTime'				=>	'Sleep time',
+'PCHTrakt_LogFile'					=>	'Log file',
 
-'Login'							=>	'Login',
-'Pwd'							=>	'Password',
-'API_Key'						=>	'API Key',
-'IP'							=>	'IP',
-'SleepTime'						=>	'Sleep time',
-'RefreshTime'					=>	'Refresh time',
-'LogFile'						=>	'Log file',
-'TV_Scrobble'					=>	'TV-Show scrobble',
-'Film_Scrobble'					=>	'Film scrobble',
+/* Trakt Key */
+'Trakt_Config'						=>	'Trakt.tv Configuration',
+'Trakt_Empty_Login'					=>	'Trakt login must be set.',
+'Trakt_Empty_Password'				=>	'Trakt password must be set.',
+'Trakt_Empty_RefreshTime'			=>	'Refresh Time must be set.',
+'Trakt_NotNumeric_RefreshTime'		=>	'Refresh Time must be a numeric >= ' . MIN_LOW .'.',
+'Trakt_Failed'  					=>  'Connexion to Trakt.tv site is impossible. Check your login and password.',
+'Trakt_RefreshTime'					=>	'Refresh time',
 
-'Submit'						=>	'Update my configuration',
-'Page_Title'					=>	'PchTrakt Configurator',
+/* BetaSeries Key */
+'BetaSeries_Config'					=>	'BetaSeries.com Configuration',
+'BetaSeries_Empty_Login'			=>	'BetaSeries login must be set.',
+'BetaSeries_Empty_Password'			=>	'BetaSeries password must be set.',
+'BetaSeries_Failed'  				=>  'Connexion to BetaSeries.com site is impossible. Check your login and password.',
 
-'sec'							=>	'seconds',
-'min'							=>	'minutes',
-'TraktAccount_Failed'  			=>  'Connexion to Trakt.tv site is impossible. Check your login and password.',
+
+/*General Key */
+'Page_Title'						=>	'PchTrakt Configurator',
+
+'Save'								=>	'Configuration is updated...',
+'Error'								=>	'OOps something is broken...',
+
+'Yes'								=> 	'Yes',
+'No'								=> 	'No',
+
+'Login'								=>	'Login',
+'Pwd'								=>	'Password',
+
+
+
+
+'TV_Scrobble'						=>	'TV-Show scrobble',
+'Film_Scrobble'						=>	'Film scrobble',
+
+'Submit'							=>	'Update my configuration',
+
+'sec'								=>	'seconds',
+'min'								=>	'minutes',
+
+
+
 ));
 ?>
