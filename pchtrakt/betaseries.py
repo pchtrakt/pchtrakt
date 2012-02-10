@@ -1,8 +1,11 @@
 from urllib import quote
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib2 import urlopen
 from xml.etree import ElementTree 
-from HTMLParser import HTMLParser
 from hashlib import md5
+from pchtrakt.config import *
+
+login = BetaSeriesUsername
+pwdmd5 = md5(BetaSeriesPwd).hexdigest()
 
 BETASERIE_API = 'C244D9326837'
 BetaSerieUrl = 'http://api.betaseries.com/#path#?key={0}'.format(BETASERIE_API)
@@ -26,11 +29,11 @@ def getSerieUrl(SerieName):
     oXml = ElementTree.XML(oResponse.read()) 
     return quote('{0}.xml'.format(oXml.find("shows/show/url").text))
 
-def getToken(login,password):
+def getToken():
     url = (getUrl('members/auth.xml') 
                 + '&login={0}&password={1}'.format(
                                                 login,
-                                                md5(password).hexdigest()))
+                                                pwdmd5))
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read()) 
     return oXml.find("member/token").text
