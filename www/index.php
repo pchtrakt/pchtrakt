@@ -28,13 +28,12 @@ define('APIKEY','def6943c09e19dccb4df715bd4c9c6c74bc3b6d7');
 
 require_once 'function.php';
 require_once 'class.settings.php';
-
+require_once 'class.json.php';
 
 // load settings from the ini file
 $conf = Settings::getInstance(INI_PATH.''.INI_FILE);
-// load json app file
-$fcontent = file_get_contents(INI_PATH.''.JSON_FILE);
-$json = json_decode($fcontent); 
+
+$json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 ?>
 <html>
 <head>
