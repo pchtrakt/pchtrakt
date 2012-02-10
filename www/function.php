@@ -35,5 +35,5 @@ if (!defined('PCHTRAKT'))
 	function _execPy()
 	{
 		exec('cd /share/Apps/pchtrakt && ./daemon.sh restart');
-	}	
+	}		
 ?>
