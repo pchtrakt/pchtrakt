@@ -5,12 +5,15 @@ if (!defined('PCHTRAKT'))
 class Settings { 
 
     private static $instance; 
-    private $settings; 
+    private $settings;
     private $ini_file;
+	
+	
 	
 	private function __construct($ini_file) { 
 		$this->ini_file  = $ini_file;
-        $this->settings = parse_ini_file($ini_file, false); 
+		/* setting is a array with true  */
+        $this->settings = parse_ini_file($ini_file, true); 
     } 
     
     public static function getInstance($ini_file) { 
@@ -19,57 +22,73 @@ class Settings {
         } 
         return self::$instance; 
     } 
-    
-    public function __get($key) {
-		return $this->settings[$key];
-    } 
-    public function __set($key,$value) {
-        $this->settings[$key] = $value;
-    }
 	
-	/* get section name */	
-	private function getMasterSection() {
-        $match = '';
-        $file = fopen($this->ini_file, "r" );
-        $fdata = fread($file,filesize($this->ini_file));
-        preg_match('/\[(.*)\]/', $fdata, $match);
-        fclose($file);
-        return "[".$match[1]."]\n";
-    }
+    function getSection($key) { 
+        return $this->settings[$key]; 
+    } 
+     
+	 
+	function get($section,$key=NULL) { 
+        if(is_null($key)) return $this->getSection($section); 
+        return $this->getValue($section, $key); 
+    } 
+     
+    function setSection($section,$array) { 
+        if(!is_array($array)) return false; 
+        return $this->settings[$section] = $array; 
+    } 
+     
+	function setValue($section,$key,$value) { 
+        if($this->settings[$section][$key] = $value ) return true; 
+    } 
+     
+    function set($section,$key,$value=NULL) { 
+        if(is_array($key) && is_null($value)) return $this->setSection($section, $key); 
+        return $this->setValue($section, $key, $value); 
+    } 	 
+	
+	function getValue( $section, $key ) { 
+        if(!isset($this->settings[$section])) return false; 
+        return $this->settings[$section][$key]; 
+    } 		
+	
 	private function reload() { 
-        $this->settings = parse_ini_file($this->ini_file, false); 
+		self::$instance = new Settings($this->ini_file);
     }	
-
+		
 	/* save file after modification */
 	public function save() { 
-		try {
-			$content = $this->getMasterSection();
-			foreach( $this->settings as $key => $value ) {
-				$content .= "$key = $value\n";
-			}
-			$content .= "\n";
+		try {		
+			$content = '';
+			foreach($this->settings as $section => $array){ 
+				$content .= "[" . $section . "]\n"; 
+				foreach($array as $key => $value) { 
+					$content .= "$key = $value\n"; 
+				} 
+				$content .= "\n";
+			} 
 			file_put_contents($this->ini_file,$content);
-			// Not important file_put_contents(rtrim(dirname($this->ini_file), "/\\")."/".$this->log_file,date("m.d.y H:i:s") ." => save the data\n", FILE_APPEND | LOCK_EX);
 			unset($content);
-			$this->reload();
-			return true;
+			$this->reload();			
+			return true; 
 		} 
 		catch (Exception $e) {
 			return false;
 		}
     }
-	
-
-	
+		
 	/* easy debug */
 	public function debug()
 	{
 		print '<div class="info" id="info">';
-		foreach( $this->settings as $key => $value ) {
-			print "<strong>[$key]</strong> = <i>$value</i><br />";
-		}
+		foreach($this->settings as $section => $array){ 
+			print  "<strong><u>[" . $section . "]</u></strong><br />"; 
+			foreach($array as $key => $value) { 
+				print "<strong>[$key]</strong> = <i>$value</i><br />";
+			} 
+			print "<br />";
+		} 
 		print '</div>';
 	}
 } 	
 ?>	
-	
