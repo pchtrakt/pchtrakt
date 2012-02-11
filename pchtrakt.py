@@ -29,7 +29,7 @@ import getopt
 import pchtrakt
 import os
 
-from pchtrakt import media
+
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
