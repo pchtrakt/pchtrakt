@@ -26,8 +26,9 @@ __maintainer__ = "Ralph-Gordon Paul"
 __email__ = "ralph-gordon.paul@uni-duesseldorf.de"
 __status__ = "Production"
 
+username = TraktUsername
 apikey = 'def6943c09e19dccb4df715bd4c9c6c74bc3b6d7'
-pwdsha1 = sha1(pwd).hexdigest()
+pwdsha1 = sha1(TraktPwd).hexdigest()
 
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 

@@ -118,6 +118,7 @@ def daemonize():
     os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
 def main():
+    media.ScrobResult = 0
     media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
     if pchtrakt.lastPath != media.oStatus.fullPath:
         pchtrakt.StopTrying = 0
