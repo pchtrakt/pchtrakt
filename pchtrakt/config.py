@@ -28,13 +28,13 @@ sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
 #Trakt
 TraktUsername = config.get('Trakt', 'login') 
 TraktPwd = config.get('Trakt', 'password') 
-TraktScrobbleTvShow = config.get('Trakt', 'enable_tvshow_scrobbling') 
-TraktScrobbleMovie = config.get('Trakt', 'enable_movie_scrobbling') 
+TraktScrobbleTvShow = config.getboolean('Trakt', 'enable_tvshow_scrobbling') 
+TraktScrobbleMovie = config.getboolean('Trakt', 'enable_movie_scrobbling') 
 TraktRefreshTime = config.get('Trakt', 'refresh_time')
 
 # Betaseries
 BetaSeriesUsername = config.get('BetaSeries', 'login') 
 BetaSeriesPwd = config.get('BetaSeries', 'password') 
-BetaSeriesScrobbleTvShow = config.get('BetaSeries', 'enable_tvshow_scrobbling') 
+BetaSeriesScrobbleTvShow = config.getboolean('BetaSeries', 'enable_tvshow_scrobbling') 
 
 pathYAMJ='' #not used yet

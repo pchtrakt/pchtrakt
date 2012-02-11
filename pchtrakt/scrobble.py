@@ -7,6 +7,11 @@ from pchtrakt.config import *
 from time import sleep
 from pchtrakt.pch import EnumStatus
 
+class EnumScrobbleResult:
+    KO = 0
+    TRAKTOK = 1
+    BETASERIESOK= 2
+
 def showStarted(myMedia):
     if TraktScrobbleTvShow:
         responce = utilities.watchingEpisodeOnTrakt(myMedia.id,
@@ -62,17 +67,13 @@ def movieStillRunning(myMedia):
     
     
 def showIsEnding(myMedia):
-    result = 0
     if BetaSeriesScrobbleTvShow:
+        result = 0
         serieXml = bs.getSerieUrl(myMedia.parsedInfo.series_name)
-        Debug(serieXml)
         token = bs.getToken()
-        Debug(token)
         isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
-                                    ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])
-        result = True
+                                    ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
         if not isWatched:
-            Debug('Adding show: {0}'.format(bs.addShow(serieXml,token)))
             result = 'BetaSerie Scrobble: {0}'.format(
                             bs.scrobbleEpisode(serieXml
                                                 ,token,
@@ -81,10 +82,14 @@ def showIsEnding(myMedia):
             msg = '(BetaSeries) Video is ending'
             Debug(msg)
             pchtrakt.logger.info(msg)
-            result = 1
             bs.destroyToken(token)
+        if result or isWatched:
+            myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
+    else:
+        myMedia.ScrobResult |= EnumScrobbleResult.BETASERIESOK
     
     if TraktScrobbleTvShow:
+        result = 0
         responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
                                                     myMedia.parsedInfo.series_name,
                                                     myMedia.year,
@@ -92,13 +97,17 @@ def showIsEnding(myMedia):
                                                     str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
                                                     str(myMedia.oStatus.totalTime),
                                                     str(myMedia.oStatus.percent))
-        if responce != None:
+        if responce:
             msg = '(Trakt) Video is ending: %s - %s ' %(responce['status'],responce['message'])
             Debug(msg)
             pchtrakt.logger.info(msg)
             result = 1
-            
-    return result
+        
+        if result == 1:
+            myMedia.ScrobResult |= EnumScrobbleResult.TRAKTOK
+    else:  
+        myMedia.ScrobResult |= EnumScrobbleResult.TRAKTOK
+    return myMedia.ScrobResult == EnumScrobbleResult.TRAKTOK | EnumScrobbleResult.BETASERIESOK
     
     
 def movieIsEnding(myMedia):
@@ -122,7 +131,7 @@ def videoStatusHandleMovie(myMedia):
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         if pchtrakt.lastPath != '':
             movieStarted(myMedia)
-    if myMedia.oStatus.currentTime > pchtrakt.currentTime + int(refreshTime)*60:
+    if myMedia.oStatus.currentTime > pchtrakt.currentTime + int(TraktRefreshTime)*60:
         pchtrakt.currentTime = myMedia.oStatus.currentTime
         movieStillRunning(myMedia)        
     elif myMedia.oStatus.percent > 90:

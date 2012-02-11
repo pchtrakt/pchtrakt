@@ -9,7 +9,7 @@ pwdmd5 = md5(BetaSeriesPwd).hexdigest()
 
 BETASERIE_API = 'C244D9326837'
 BetaSerieUrl = 'http://api.betaseries.com/#path#?key={0}'.format(BETASERIE_API)
-                                        
+
 def getUrl(myPath):
     return BetaSerieUrl.replace('#path#', myPath)
 
@@ -39,7 +39,6 @@ def getToken():
     return oXml.find("member/token").text
     
 def scrobbleEpisode(SerieXml,Token,Saison,Episode):
-    #todo(jlauwers) check before if this episode is already seen.
     url = getUrl('members/watched/{0}'.format(SerieXml))
     url += '&season={0}&episode={1}&token={2}'.format(
                                                 Saison,
@@ -51,7 +50,7 @@ def scrobbleEpisode(SerieXml,Token,Saison,Episode):
     if oXml.find("code").text == '1':
         return True
     else:
-        pass
+        return False 
         #todo(jlauwers) error message
 
 def addShow(SerieXml,Token):
@@ -68,7 +67,7 @@ def isEpisodeWatched(SerieXml,Token,Saison,Episode):
     url += '&token={0}&season={1}&episode={2}'.format(Token,Saison,Episode)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
-    if oXml.find("seasons/season/episodes/episode/has_seen").text == 1:
+    if oXml.find("seasons/season/episodes/episode/has_seen").text == '1':
         return True
     else:
         return False
