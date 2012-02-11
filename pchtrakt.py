@@ -51,6 +51,10 @@ tvdb = tvdb_api.Tvdb()
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
 
+def media():   
+    def __init__():
+        pass #just a container
+
 def printHelp():
     print('Usage {0} <options>'.format('pchtrak.py'))
     print('Options:')
