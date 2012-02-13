@@ -1,8 +1,11 @@
+import json
+
 from urllib import quote
 from urllib2 import urlopen
 from xml.etree import ElementTree 
 from hashlib import md5
 from pchtrakt.config import *
+
 
 login = BetaSeriesUsername
 pwdmd5 = md5(BetaSeriesPwd).hexdigest()
@@ -24,10 +27,18 @@ def destroyToken(Token):
 
 def getSerieUrl(SerieName):
     SerieName = quote(SerieName)
-    url = getUrl('shows/search.xml') + '&title={0}'.format(SerieName)
+    url = getUrl('shows/search.json') + '&title={0}'.format(SerieName)
     oResponse = urlopen(url)
-    oXml = ElementTree.XML(oResponse.read()) 
-    return quote('{0}.xml'.format(oXml.find("shows/show/url").text))
+    myJson = json.loads(oResponse.read())
+    myKey=0
+    for key, subdict in myJson['root']['shows'].iteritems():
+        if (subdict['title'] == SerieName):
+            myKey = key
+            break
+    myUrl = myJson['root']['shows'][myKey]['url']
+    # oXml = ElementTree.XML(oResponse.read())
+    # print oXml.findall("shows/show")[1].find("title").text
+    return quote('{0}.xml'.format(myUrl))
 
 def getToken():
     url = (getUrl('members/auth.xml') 
@@ -44,6 +55,7 @@ def scrobbleEpisode(SerieXml,Token,Saison,Episode):
                                                 Saison,
                                                 Episode,
                                                 Token)
+    print url
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     
@@ -65,6 +77,7 @@ def addShow(SerieXml,Token):
 def isEpisodeWatched(SerieXml,Token,Saison,Episode):
     url = getUrl('shows/episodes/{0}'.format(SerieXml))
     url += '&token={0}&season={1}&episode={2}'.format(Token,Saison,Episode)
+    print url
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     if oXml.find("seasons/season/episodes/episode/has_seen").text == '1':

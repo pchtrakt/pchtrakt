@@ -74,16 +74,18 @@ def showIsEnding(myMedia):
         isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
                                     ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
         if not isWatched:
-            result = 'BetaSerie Scrobble: {0}'.format(
-                            bs.scrobbleEpisode(serieXml
+            result = bs.scrobbleEpisode(serieXml
                                                 ,token,
                                                 myMedia.parsedInfo.season_number,
-                                                myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]))
+                                                myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])
+            bs.destroyToken(token)
+            
+        print result
+        print isWatched        
+        if result or isWatched:
             msg = '(BetaSeries) Video is ending'
             Debug(msg)
             pchtrakt.logger.info(msg)
-            bs.destroyToken(token)
-        if result or isWatched:
             myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
     else:
         myMedia.ScrobResult |= EnumScrobbleResult.BETASERIESOK
