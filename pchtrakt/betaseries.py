@@ -1,5 +1,6 @@
 import json
 
+from lib.utilities import Debug
 from urllib import quote
 from urllib2 import urlopen
 from xml.etree import ElementTree 
@@ -55,7 +56,7 @@ def scrobbleEpisode(SerieXml,Token,Saison,Episode):
                                                 Saison,
                                                 Episode,
                                                 Token)
-    print url
+    Debug(url)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     
@@ -77,7 +78,7 @@ def addShow(SerieXml,Token):
 def isEpisodeWatched(SerieXml,Token,Saison,Episode):
     url = getUrl('shows/episodes/{0}'.format(SerieXml))
     url += '&token={0}&season={1}&episode={2}'.format(Token,Saison,Episode)
-    print url
+    Debug(url)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     if oXml.find("seasons/season/episodes/episode/has_seen").text == '1':

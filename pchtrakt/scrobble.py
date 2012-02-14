@@ -81,8 +81,8 @@ def showIsEnding(myMedia):
                                                 myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])
             bs.destroyToken(token)
             
-        print result
-        print isWatched        
+        Debug(result)
+        Debug(isWatched)
         if result or isWatched:
             msg = '(BetaSeries) Video is ending'
             Debug(msg)
