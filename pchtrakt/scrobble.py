@@ -74,6 +74,7 @@ def showIsEnding(myMedia):
         isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
                                     ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
         if not isWatched:
+            Debug('Adding show: {0}'.format(bs.addShow(serieXml,token)))
             result = bs.scrobbleEpisode(serieXml
                                                 ,token,
                                                 myMedia.parsedInfo.season_number,
