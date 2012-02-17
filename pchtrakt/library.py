@@ -48,9 +48,7 @@ class library:
             year = tvdb[serie]['firstaired'].split('-')[0]
             episodes = sorted(episodes, key=lambda student: student['episode'])
             episodes = sorted(episodes, key=lambda student: student['season'])
-            print '%s: %s %s' % (serie,id,year)
-            print episodes
-            # print utils.setEpisodesInLibraryOnTrakt(id,serie,year,episodes)
+            utils.setEpisodesInLibraryOnTrakt(id,serie,year,episodes)
 
 
     

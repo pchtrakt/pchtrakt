@@ -27,11 +27,11 @@ def destroyToken(Token):
         return oXml.find('errors/error/content').text
 
 def getSerieUrl(SerieName):
-    SerieName = quote(SerieName)
-    url = getUrl('shows/search.json') + '&title={0}'.format(SerieName)
+    quotedSerieName = quote(SerieName)
+    url = getUrl('shows/search.json') + '&title={0}'.format(quotedSerieName)
     oResponse = urlopen(url)
     myJson = json.loads(oResponse.read())
-    myKey=0
+    myKey= '0'
     for key, subdict in myJson['root']['shows'].iteritems():
         if (subdict['title'] == SerieName):
             myKey = key
