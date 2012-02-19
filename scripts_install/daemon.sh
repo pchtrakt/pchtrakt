@@ -42,14 +42,7 @@ install_defaults()
  if [ -d /share/Apps/pchtrakt/lib ] ; then
    echo "pchtrakt is installed"
    else
-   chmod 777 /share/Apps/pchtrakt
-   mkdir /share/tmp
-   cd /share/tmp
-   git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
-   cp -R pchtrakt/* /share/Apps/pchtrakt
-   chmod 777 /share/Apps/pchtrakt
-   cd /share/Apps/pchtrakt
-   rm -r /share/tmp
+   force_pchtrakt;
  fi
 
 }
@@ -115,8 +108,6 @@ case "$1" in
 
     restart)
     stop_pchtrakt;
-    sleep 2
-    force_pchtrakt;
     sleep 2
     start_pchtrakt;
     ;;
