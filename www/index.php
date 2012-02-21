@@ -41,56 +41,23 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 	<style type="text/css">@import url("<?php echo CSS_FILE;?>");</style>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript">
-	$.fn.collapse = function(options) {
-		var defaults = {
-			closed : false
-		}
-		settings = $.extend({}, defaults, options);
+		$(document).ready(function() {
+                $('legend').click(function(){
+                        $(this).parent().find('.content').slideToggle("slow");
+                });
+		});		
+		
+		<?php if ( $conf->get("Trakt","login") == "your_login") { ?>
+			$(document).ready(function() {
+				$('#Trakt_legend').parent().find('.content').slideToggle("hide");
+			});	
+		<?php } ?>
+		<?php if ( $conf->get("BetaSeries","login") == "your_login") { ?>
+			$(document).ready(function() {
+				$('#BetaSeries_legend').parent().find('.content').slideToggle("hide");
+			});	
+		<?php } ?>        
 
-		return this.each(function() {
-			var obj = $(this);
-			obj.find("legend").addClass('collapsible').click(function() {
-				if (obj.hasClass('collapsed'))
-					obj.removeClass('collapsed').addClass('collapsible');
-		
-				$(this).removeClass('collapsed');
-		
-				obj.children().not('legend').toggle("slow", function() {
-				 
-					 if ($(this).is(":visible"))
-						obj.find("legend").addClass('collapsible');
-					 else
-						obj.addClass('collapsed').find("legend").addClass('collapsed');
-				 });
-			});
-			if (settings.closed) {
-				obj.addClass('collapsed').find("legend").addClass('collapsed');
-				obj.children().filter("p,img,table,ul,div,span,h1,h2,h3,h4,h5,label,input,select").css('display', 'none');
-			}
-		});
-	};	
-	<?php if ( $conf->get("BetaSeries","login") == "your_login") { ?>
-	$(document).ready(function() {
-		$("fieldset.collapsible").collapse();
-		$("fieldset.startClosed1").collapse( { closed: true } );
-	});
-	<?php }else{ ?>
-	$(document).ready(function() {
-		$("fieldset.collapsible").collapse();
-		$("fieldset.startClosed1").collapse( { closed: false } );
-	});	
-	<?php } ?>
-	<?php if ( $conf->get("Trakt","login") == "your_login") { ?>
-	$(document).ready(function() {
-		$("fieldset.collapsible").collapse();
-		$("fieldset.startClosed2").collapse( { closed: true } );
-	});
-	<?php }else{ ?>
-	$(document).ready(function() {
-		$("fieldset.collapsible").collapse();
-		$("fieldset.startClosed2").collapse( { closed: false } );
-	});	
-	<?php } ?>	
   </script>
 </head>
 <body>
@@ -251,7 +218,7 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
   </fieldset> 
 
 <?php if (DEBUG){ ?>
-	<fieldset class="collapsible">
+	<fieldset>
  
 		<legend><?php echo $lang['PCHTrakt_Config']?></legend>
 
@@ -278,8 +245,9 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 <?php } ?>  
   
   
- <fieldset class="startClosed1">
-  <legend><?php echo $lang['Trakt_Config']?></legend>
+ <fieldset>
+  <legend id="Trakt_legend"><?php echo $lang['Trakt_Config']?></legend>
+  <div class="content">
   <label for="Trakt_Login"><?php echo $lang['Login']?> :</label> 
   <input type="text" name="Trakt_Login" id="Trakt_Login" value="<?php if(isset($Trakt_Login)){print $Trakt_Login;}else{print $conf->get("Trakt","login");} ?>" />
   <br />  <br />
@@ -303,13 +271,14 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
   	<option <?php if(isset($Trakt_FilmScrobble) && $Trakt_FilmScrobble=="true") {  echo "selected";} else{if($conf->get("Trakt","enable_movie_scrobbling")==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
 	<option <?php if(isset($Trakt_FilmScrobble) && $Trakt_FilmScrobble=="false") { echo "selected";} else{if($conf->get("Trakt","enable_movie_scrobbling")==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
   </select>   
-
+</div>
   </fieldset>   
  
 
  
-  <fieldset class="startClosed2">
-  <legend><?php echo $lang['BetaSeries_Config']?></legend>
+  <fieldset>
+  <legend id="BetaSeries_legend"><?php echo $lang['BetaSeries_Config']?></legend>
+    <div class="content">
   <label for="BetaSeries_Login"><?php echo $lang['Login']?> :</label> 
   <input type="text" name="BetaSeries_Login" id="BetaSeries_Login" value="<?php if(isset($BetaSeries_Login)){print $BetaSeries_Login;}else{print $conf->get("BetaSeries","login");} ?>" />
   <br />  <br />
@@ -322,6 +291,7 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 	<option <?php if(isset($BetaSeries_TVScrobble) && $BetaSeries_TVScrobble=="true") { echo "selected";} else{if($conf->get("BetaSeries","enable_tvshow_scrobbling")==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
 	<option <?php if(isset($BetaSeries_TVScrobble) && $BetaSeries_TVScrobble=="false") { echo "selected";} else{if($conf->get("BetaSeries","enable_tvshow_scrobbling")==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
   </select>
+  </div>
   </fieldset>   
   
   <p style="centering">
