@@ -7,8 +7,12 @@ body{
 	background-color:#EFE;
 }
 
+body {
+	font-size: 12px;
+}
 
-form fieldset{
+
+form fieldset,form fieldset.collapsible,form fieldset.collapsed  {
 	background-color:#fff9e7;
 	top: 25%;
 	left: 25%;	
