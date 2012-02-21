@@ -267,11 +267,11 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 		<input type="text" name="PCHTrakt_LogFile" id="PCHTrakt_LogFile" value="<?php  if(isset($PCHTrakt_LogFile)){ print $PCHTrakt_LogFile; }else{print $conf->get("PCHtrakt","log_file");}?>" />
 
 	  
-
+<?php if (DEBUG){ ?>
 		<br />  <br />
 		<label for="PCHTrakt_API"><?php echo $lang['PCHTrakt_API']?> :</label>
 		<input type="text" name="PCHTrakt_API" id="PCHTrakt_API" value="<?php echo APIKEY;?>" />
-
+<?php } ?>  
 	</fieldset>
 <?php //} ?>  
   
