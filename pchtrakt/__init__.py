@@ -43,9 +43,9 @@ def newConfig():
     if not config.has_option('Trakt','enable_tvshow_scrobbling'):
         config.set('Trakt', 'enable_tvshow_scrobbling', 'true')      
     if not config.has_option('Trakt','login'):
-        config.set('Trakt', 'login', 'put_your_trakt.tv_login_here')
+        config.set('Trakt', 'login', 'your_trakt_login')
     if not config.has_option('Trakt','password'):
-        config.set('Trakt', 'password', 'put_your_trakt.tv_pwd_here')
+        config.set('Trakt', 'password', 'your_password')
     if not config.has_option('Trakt','refresh_time'):
         config.set('Trakt', 'refresh_time', '15')
         
@@ -54,14 +54,13 @@ def newConfig():
     if not config.has_option('BetaSeries','enable_tvshow_scrobbling'):
         config.set('BetaSeries', 'enable_tvshow_scrobbling', 'false')   
     if not config.has_option('BetaSeries','login'):
-        config.set('BetaSeries', 'login', 'put_your_BetaSeries_login_here')
+        config.set('BetaSeries', 'login', 'your_login')
     if not config.has_option('BetaSeries','password'):
-        config.set('BetaSeries', 'password', 'put_your_BetaSeries_pwd_here')
+        config.set('BetaSeries', 'password', 'your_password')
     
     with open(config_file, 'w') as configfile:
         config.write(configfile)
 
 if isfile(config_file):
     loadOldConfig()
-    #todo save config and create new one
 newConfig()
