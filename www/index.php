@@ -47,11 +47,11 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
                 });
 		});		
 		
-		<?php if ( $conf->get("Trakt","login") == "your_login") { ?>
-			$(document).ready(function() {
+		<?php// if ( $conf->get("Trakt","login") == "your_login") { ?>
+			/*$(document).ready(function() {
 				$('#Trakt_legend').parent().find('.content').toggle(false);
-			});	
-		<?php } ?>
+			});	*/
+		<?php //} ?>
 		<?php if ( $conf->get("BetaSeries","login") == "your_login") { ?>
 			$(document).ready(function() {
 				$('#BetaSeries_legend').parent().find('.content').toggle(false);
@@ -201,16 +201,16 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 			{
 		?>	
 		<script type="text/javascript">	
-		<?php if ( $conf->get("Trakt","login") == "your_login") { ?>
-			$(document).ready(function() {
+		<?php// if ( $conf->get("Trakt","login") == "your_login") { ?>
+		/*	$(document).ready(function() {
 				$('#Trakt_legend').parent().find('.content').toggle(false);
-			});	
-		<?php }
-			else {?>
-			$(document).ready(function() {
+			});	*/
+		<?php //}
+			 //else {?>
+			/*$(document).ready(function() {
 				$('#Trakt_legend').parent().find('.content').toggle(true);
-			});	
-		<?php }?>
+			});	*/
+		<?php  //}?>
 		<?php if ( $conf->get("BetaSeries","login") == "your_login") { ?>
 			$(document).ready(function() {
 				$('#BetaSeries_legend').parent().find('.content').toggle(false);
