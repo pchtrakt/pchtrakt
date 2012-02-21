@@ -79,7 +79,6 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 		
 		$ErrorArray = array();
 		foreach ($_POST as $key => $value) { 
-			echo '<br />[KEY='.$key.']';
 			switch ($key) {
 				/*--------------------- BEGIN PCHTrakt Region --------------------- */	
 				case 'PCHTrakt_API':
