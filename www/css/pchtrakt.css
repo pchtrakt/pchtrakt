@@ -12,7 +12,7 @@ body {
 }
 
 
-form fieldset,form fieldset.collapsible,form fieldset.collapsed  {
+form fieldset {
 	background-color:#fff9e7;
 	top: 25%;
 	left: 25%;	
