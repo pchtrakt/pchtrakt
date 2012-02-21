@@ -16,6 +16,7 @@ Features:
 PchTrakt makes use of the following projects:
 
 * [tvdb_api][tvdb_api]
+* [TraktUtilities][TraktUtilities]
 
 ## Bug
 
@@ -24,3 +25,4 @@ If you find a bug please report it or it'll never get fixed.
 
 [trakt]: http://www.trakt.tv
 [tvdb_api]: http://github.com/dbr/tvdb_api
+[TraktUtilities]: https://github.com/Manromen/script.TraktUtilities
