@@ -242,7 +242,7 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 	<label for="pchtrakt_version">Version : <a target="blank" href="<?php echo APP_URL ?>"><?php echo  $json->version; ?></a> </label>  
   </fieldset> 
 
-<?php if (DEBUG){ ?>
+<?php //if (DEBUG){ ?>
 	<fieldset>
  
 		<legend><?php echo $lang['PCHTrakt_Config']?></legend>
@@ -267,7 +267,7 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 		<input type="text" name="PCHTrakt_API" id="PCHTrakt_API" value="<?php echo APIKEY;?>" />
 
 	</fieldset>
-<?php } ?>  
+<?php //} ?>  
   
   
  <fieldset>
