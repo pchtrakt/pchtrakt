@@ -49,12 +49,12 @@ def Debug(msg, force=False):
             print msg.encode( "utf-8", "ignore" )
 
 def checkSettings(daemon=False):
-       
-    data = traktJsonRequest('POST', '/account/test/%%API_KEY%%', silent=True)
-    if data == None: #Incorrect trakt login details
-        return False
-    print('True')  
-    return True
+    if username != 'your_login':
+        data = traktJsonRequest('POST', '/account/test/%%API_KEY%%', silent=True)
+        if data == None: #Incorrect trakt login details
+            return False
+        print('True')  
+        return True
 
 # SQL string quote escaper
 def xcp(s):
