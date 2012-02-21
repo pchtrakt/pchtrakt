@@ -20,13 +20,21 @@ import ConfigParser
 import pchtrakt
 config = ConfigParser.RawConfigParser()
 
+#PchTrakt
 config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
-username = config.get('PCHtrakt', 'trakt_login') 
-pwd = config.get('PCHtrakt', 'trakt_pwd') 
-scrobbleTvShow = config.get('PCHtrakt', 'enable_tvshow_scrobbling') 
-scrobbleMovie = config.get('PCHtrakt', 'enable_movie_scrobbling') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
-refreshTime = config.get('PCHtrakt', 'refresh_time')
+
+#Trakt
+TraktUsername = config.get('Trakt', 'login') 
+TraktPwd = config.get('Trakt', 'password') 
+TraktScrobbleTvShow = config.getboolean('Trakt', 'enable_tvshow_scrobbling') 
+TraktScrobbleMovie = config.getboolean('Trakt', 'enable_movie_scrobbling') 
+TraktRefreshTime = config.get('Trakt', 'refresh_time')
+
+# Betaseries
+BetaSeriesUsername = config.get('BetaSeries', 'login') 
+BetaSeriesPwd = config.get('BetaSeries', 'password') 
+BetaSeriesScrobbleTvShow = config.getboolean('BetaSeries', 'enable_tvshow_scrobbling') 
 
 pathYAMJ='' #not used yet

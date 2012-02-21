@@ -5,11 +5,13 @@ PchTrakt
 
 PchTrakt is a software you can install on your popcorn-hour or a linux server. It scrobbles what you are playing on your popcorn-hour to [trakt.tv][trakt].
 
+
 Features:
 
 * Tv shows scrobbling
 * Multi-episode scrobbling
 * Movies scrobbling
+* Add TvShows to Trakt.tv's library
 
 PchTrakt makes use of the following projects:
 

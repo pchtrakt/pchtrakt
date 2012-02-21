@@ -26,8 +26,9 @@ __maintainer__ = "Ralph-Gordon Paul"
 __email__ = "ralph-gordon.paul@uni-duesseldorf.de"
 __status__ = "Production"
 
+username = TraktUsername
 apikey = 'def6943c09e19dccb4df715bd4c9c6c74bc3b6d7'
-pwdsha1 = sha1(pwd).hexdigest()
+pwdsha1 = sha1(TraktPwd).hexdigest()
 
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
@@ -210,6 +211,13 @@ def setEpisodesSeenOnTrakt(tvdb_id, title, year, episodes):
         Debug("Error in request from 'setEpisodeSeenOnTrakt()'")
     return data
 
+# set episodes in library on trakt
+def setEpisodesInLibraryOnTrakt(tvdb_id, title, year, episodes):
+    data = traktJsonRequest('POST', '/show/episode/library/%%API_KEY%%', {'tvdb_id': tvdb_id, 'title': title, 'year': year, 'episodes': episodes})
+    if data == None:
+        Debug("Error in request from 'setEpisodesInLibraryOnTrakt()'")
+    return data    
+    
 # set episodes unseen on trakt
 def setEpisodesUnseenOnTrakt(tvdb_id, title, year, episodes):
     data = traktJsonRequest('POST', '/show/episode/unseen/%%API_KEY%%', {'tvdb_id': tvdb_id, 'title': title, 'year': year, 'episodes': episodes})
@@ -477,33 +485,6 @@ def getWatchingFromTraktForUser(name):
     if data == None:
         Debug("Error in request from 'getWatchingFromTraktForUser()'")
     return data
-
-def playMovieById(idMovie):
-    # httpapi till jsonrpc supports selecting a single movie
-    Debug("Play Movie requested for id: "+str(idMovie))
-    if idMovie == -1:
-        return # invalid movie id
-    else:
-        rpccmd = json.dumps({'jsonrpc': '2.0', 'method': 'Player.Open', 'params': {'item': {'movieid': int(idMovie)}}, 'id': 1})
-        result = xbmc.executeJSONRPC(rpccmd)
-        result = json.loads(result)
-        
-        # check for error
-        try:
-            error = result['error']
-            Debug("playMovieById, Player.Open: " + str(error))
-            return None
-        except KeyError:
-            pass # no error
-            
-        try:
-            if result['result'] == "OK":
-                if xbmc.Player().isPlayingVideo():
-                    return True
-            notification("Trakt Utilities", __language__(1302).encode( "utf-8", "ignore" )) # Unable to play movie
-        except KeyError:
-            Debug("playMovieById, VideoPlaylist.Play: KeyError")
-            return None
 
 ###############################
 ##### Scrobbling to trakt #####
