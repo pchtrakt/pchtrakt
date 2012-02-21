@@ -49,7 +49,7 @@ def Debug(msg, force=False):
             print msg.encode( "utf-8", "ignore" )
 
 def checkSettings(daemon=False):
-    if username != 'your_login':
+    if username != 'your_trakt_login':
         data = traktJsonRequest('POST', '/account/test/%%API_KEY%%', silent=True)
         if data == None: #Incorrect trakt login details
             return False
