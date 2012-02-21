@@ -248,7 +248,7 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 	<label for="pchtrakt_version">Version : <a target="blank" href="<?php echo APP_URL ?>"><?php echo  $json->version; ?></a> </label>  
   </fieldset> 
 
-<?php //if (DEBUG){ ?>
+<?php if (DEBUG){ ?>
 	<fieldset>
  
 		<legend><?php echo $lang['PCHTrakt_Config']?></legend>
@@ -267,13 +267,13 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 		<input type="text" name="PCHTrakt_LogFile" id="PCHTrakt_LogFile" value="<?php  if(isset($PCHTrakt_LogFile)){ print $PCHTrakt_LogFile; }else{print $conf->get("PCHtrakt","log_file");}?>" />
 
 	  
-<?php if (DEBUG){ ?>
+
 		<br />  <br />
 		<label for="PCHTrakt_API"><?php echo $lang['PCHTrakt_API']?> :</label>
 		<input type="text" name="PCHTrakt_API" id="PCHTrakt_API" value="<?php echo APIKEY;?>" />
-<?php } ?>  
+
 	</fieldset>
-<?php //} ?>  
+<?php } ?>  
   
   
  <fieldset>
