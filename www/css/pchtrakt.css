@@ -15,7 +15,6 @@ body {
 form fieldset {
 	background-color:#fff9e7;
 	top: 25%;
-	left: 25%;	
 	border-width:2px;
 	border-style:solid;
 	border-color:#7c5b47;
@@ -23,7 +22,10 @@ form fieldset {
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:12px;
 		
-	margin:20px 0px 20px 0px;
+	margin-top:20px;
+	margin-bottom :20px;
+    margin-left: auto;
+    margin-right: auto;	
 	width:450px;
 	position:relative;
 	display:block;
