@@ -1,7 +1,7 @@
 {
     appinfo_format = "1",
     name = "pchtrakt",
-    version = "0.4.2",
+    version = "0.4.3",
     enabled = "1",
     daemon_script = "daemon.sh",
     webui_path = "#PATH#/www"

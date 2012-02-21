@@ -112,6 +112,14 @@ case "$1" in
     start_pchtrakt;
     ;;
 
+    update)
+    stop_pchtrakt;
+    sleep 2
+    force_pchtrakt;
+    sleep 2
+    start_pchtrakt;
+    ;;
+    
     forceall)
     stop_pchtrakt;
     sleep 2
