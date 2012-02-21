@@ -17,6 +17,7 @@ PchTrakt makes use of the following projects:
 
 * [tvdb_api][tvdb_api]
 * [TraktUtilities][TraktUtilities]
+
 ## Bug
 
 If you find a bug please report it or it'll never get fixed.
