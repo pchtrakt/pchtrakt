@@ -69,10 +69,17 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 		
 	if ($_SERVER['REQUEST_METHOD']=='POST' && ($_POST['Submit']) ) 
 	{ 
-		$save = true;
+		$Trakt_TVScrobble=0;
+		$Trakt_FilmScrobble=0;
+		$BetaSeries_TVScrobble=0;
+		
+		$conf->setValue("Trakt","enable_tvshow_scrobbling", 0);
+		$conf->setValue("Trakt","enable_movie_scrobbling", 0);
+		$conf->setValue("BetaSeries","enable_tvshow_scrobbling", 0);
+		
 		$ErrorArray = array();
 		foreach ($_POST as $key => $value) { 
-			
+			echo '<br />[KEY='.$key.']';
 			switch ($key) {
 				/*--------------------- BEGIN PCHTrakt Region --------------------- */	
 				case 'PCHTrakt_API':
@@ -149,13 +156,13 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 							
 					break;
 				case 'Trakt_TVScrobble':
-					$Trakt_TVScrobble=(string)$value;					
-					$conf->setValue("Trakt","enable_tvshow_scrobbling", $Trakt_TVScrobble);
+					$Trakt_TVScrobble=1;					
+					$conf->setValue("Trakt","enable_tvshow_scrobbling",  1);
 					break;
 					
 				case 'Trakt_FilmScrobble':
-					$Trakt_FilmScrobble=(string)$value;			
-					$conf->setValue("Trakt","enable_movie_scrobbling", $Trakt_FilmScrobble);
+					$Trakt_FilmScrobble=1;			
+					$conf->setValue("Trakt","enable_movie_scrobbling", 1);
 					break;	
 				/*--------------------- END Trakt Region ----------------------- */
 				
@@ -180,8 +187,8 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
 					break;
 					
 				case 'BetaSeries_TVScrobble':
-					$BetaSeries_TVScrobble= (string)$value;
-					$conf->setValue("BetaSeries","enable_tvshow_scrobbling", $BetaSeries_TVScrobble);			
+					$BetaSeries_TVScrobble=1;		
+					$conf->setValue("BetaSeries","enable_tvshow_scrobbling", 1);		
 					break;
 				/*--------------------- END BetaSeries Region --------------------- */		
 			}
@@ -284,18 +291,15 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
   <br />  <br />
   
   <label for="Trakt_TVScrobble"><?php echo $lang['TV_Scrobble']?> :</label>
-  <select id="Trakt_TVScrobble" name="Trakt_TVScrobble">
-	<option <?php if(isset($Trakt_TVScrobble) && $Trakt_TVScrobble=="true") {  echo "selected";} else{if($conf->get("Trakt","enable_tvshow_scrobbling")==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
-	<option <?php if(isset($Trakt_TVScrobble) && $Trakt_TVScrobble=="false") { echo "selected";} else{if($conf->get("Trakt","enable_tvshow_scrobbling")==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
-  </select>
+
+  <input type="checkbox" name="Trakt_TVScrobble[]" value=1 <?php if(isset($Trakt_TVScrobble) && _bool($Trakt_TVScrobble)==1) {  echo "checked";} else{if( _bool($conf->get("Trakt","enable_tvshow_scrobbling"),true)==1){ echo "checked"; }}?> >
+  
   
   <br />  <br />
   
   <label for="Trakt_FilmScrobble"><?php echo $lang['Film_Scrobble']?> :</label>
-  <select id="Trakt_FilmScrobble" name="Trakt_FilmScrobble">
-  	<option <?php if(isset($Trakt_FilmScrobble) && $Trakt_FilmScrobble=="true") {  echo "selected";} else{if($conf->get("Trakt","enable_movie_scrobbling")==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
-	<option <?php if(isset($Trakt_FilmScrobble) && $Trakt_FilmScrobble=="false") { echo "selected";} else{if($conf->get("Trakt","enable_movie_scrobbling")==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
-  </select>   
+  <input type="checkbox" name="Trakt_FilmScrobble[]" value=1 <?php if(isset($Trakt_FilmScrobble) && _bool($Trakt_FilmScrobble)==1) {  echo "checked";} else{if( _bool($conf->get("Trakt","enable_movie_scrobbling"),true)==1){ echo "checked"; }}?> >
+  
 </div>
   </fieldset>   
  
@@ -312,10 +316,8 @@ $json = JSON::getInstance(INI_PATH.''.JSON_FILE);
    <br />  <br />
   
   <label for="BetaSeries_TVScrobble"><?php echo $lang['TV_Scrobble']?> :</label>
-  <select id="BetaSeries_TVScrobble" name="BetaSeries_TVScrobble">
-	<option <?php if(isset($BetaSeries_TVScrobble) && $BetaSeries_TVScrobble=="true") { echo "selected";} else{if($conf->get("BetaSeries","enable_tvshow_scrobbling")==true){ echo "selected"; }}?> value="true"><?php echo $lang['Yes']?></option> 
-	<option <?php if(isset($BetaSeries_TVScrobble) && $BetaSeries_TVScrobble=="false") { echo "selected";} else{if($conf->get("BetaSeries","enable_tvshow_scrobbling")==false){ echo "selected"; }}?> value="false"><?php echo $lang['No']?></option> 
-  </select>
+  <input type="checkbox" name="BetaSeries_TVScrobble[]" value=1 <?php if(isset($BetaSeries_TVScrobble) && _bool($BetaSeries_TVScrobble)==1) {  echo "checked";} else{if( _bool($conf->get("BetaSeries","enable_tvshow_scrobbling"),true)==1){ echo "checked"; }}?> >
+  
   </div>
   </fieldset>   
   
