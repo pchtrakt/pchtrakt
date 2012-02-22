@@ -39,9 +39,9 @@ def newConfig():
     if not config.has_section('Trakt'):
         config.add_section('Trakt')
     if not config.has_option('Trakt','enable_movie_scrobbling'):
-        config.set('Trakt', 'enable_movie_scrobbling', 'true')
+        config.set('Trakt', 'enable_movie_scrobbling', '1')
     if not config.has_option('Trakt','enable_tvshow_scrobbling'):
-        config.set('Trakt', 'enable_tvshow_scrobbling', 'true')      
+        config.set('Trakt', 'enable_tvshow_scrobbling', '1')      
     if not config.has_option('Trakt','login'):
         config.set('Trakt', 'login', 'your_trakt_login')
     if not config.has_option('Trakt','password'):
@@ -52,7 +52,7 @@ def newConfig():
     if not config.has_section('BetaSeries'):
         config.add_section('BetaSeries')
     if not config.has_option('BetaSeries','enable_tvshow_scrobbling'):
-        config.set('BetaSeries', 'enable_tvshow_scrobbling', 'false')   
+        config.set('BetaSeries', 'enable_tvshow_scrobbling', '0')   
     if not config.has_option('BetaSeries','login'):
         config.set('BetaSeries', 'login', 'your_login')
     if not config.has_option('BetaSeries','password'):
