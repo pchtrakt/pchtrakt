@@ -38,7 +38,6 @@ install_defaults()
  fi
 
 # install pchtrakt
-#verif version?
  if [ -d /share/Apps/pchtrakt/lib ] ; then
    echo "pchtrakt is installed"
    else
@@ -92,27 +91,12 @@ if [ -n "`ps | grep "pchtrakt" | grep -v "grep"`" ]; then
 fi
 }
 
-link_webui()
-{
-    if [ -d "${LOCAL_DIR}/web" ];then
-        cd ${LOCAL_DIR}/web
-        for webui in `ls -1`
-        do
-            if [ ! -L /share/Apps/AppInit/websites/${webui}_web ];then
-                ln -s ${LOCAL_DIR}/web/${webui} /share/Apps/AppInit/websites/${webui}_web
-            fi
-        done
-
-    fi
-}
-
 #Main
 case "$1" in
     start)
     install_defaults;
     sleep 2
 	start_pchtrakt;
-    link_webui
     ;;
 
 
