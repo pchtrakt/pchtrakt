@@ -24,7 +24,7 @@
 #    - nbrhttpconnection (another project)
 #     - some classes from Sick Beard (http://sickbeard.com/)
 
-import sys 
+import sys
 import getopt
 import pchtrakt
 import os
@@ -35,7 +35,7 @@ from pchtrakt.scrobble import *
 from pchtrakt.config import *
 from pchtrakt import mediaparser as mp
 from time import sleep
-from lib.tvdb_api import tvdb_api 
+from lib.tvdb_api import tvdb_api
 from lib.tvdb_api import tvdb_exceptions
 from lib import parser
 from lib import regexes
@@ -51,22 +51,26 @@ tvdb = tvdb_api.Tvdb()
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
 
-def media():   
+
+def media():
     def __init__():
-        pass #just a container
+        pass  # just a container
+
 
 def printHelp():
     print('Usage {0} <options>'.format('pchtrak.py'))
     print('Options:')
     print('    -h,--help    :    display this message')
     print('    -d,--daemon  :    launches pchtrakt in the background')
-    print('''    -l,--library :    pchtrakt is going to add to the trakt library
-                      whatever it finds''')
+    print('    -l,--library :    pchtrakt is going to add' \
+          ' to the trakt library whatever it finds')
 
 
 def getParams():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "dhtl:", ['daemon','help','library=']) #@UnusedVariable
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   "dhtl:",
+                                   ['daemon', 'help', 'library='])
     except getopt.GetoptError:
         print("Available options: -d, --daemon")
         sys.exit()
@@ -75,15 +79,16 @@ def getParams():
         # Run as a daemon
         if o in ('-d', '--daemon'):
             if sys.platform == 'win32':
-                print("Daemonize not supported under Windows, starting normally")
+                print('Daemonize not supported under Windows, ' \
+                      'starting normally')
             else:
                 pchtrakt.DAEMON = True
                 pchtrakt.debug = False
-        
+
         if o in ('-h', '--help'):
             printHelp()
             sys.exit()
-        
+
         if o in ('-t'):
             try:
                 utils.checkSettings()
@@ -91,14 +96,14 @@ def getParams():
                 pass
             finally:
                 sys.exit()
-        
+
         if o in ('-l', '--library'):
             from pchtrakt import library as li
             myLibrary = li.library()
             myLibrary.add(a)
             sys.exit()
-            
-            
+
+
 def daemonize():
     """
     Fork off as a daemon
@@ -106,14 +111,14 @@ def daemonize():
 
     # Make a non-session-leader child process
     try:
-        pid = os.fork() #@UndefinedVariable - only available in UNIX
+        pid = os.fork()  # @UndefinedVariable - only available in UNIX
         if pid != 0:
             sys.exit(0)
     except OSError as e:
         raise RuntimeError("1st fork failed: %s [%d]" %
                    (e.strerror, e.errno))
 
-    os.setsid() #@UndefinedVariable - only available in UNIX
+    os.setsid()  # @UndefinedVariable - only available in UNIX
 
     # Make sure I can read my own files and shut out others
     prev = os.umask(0)
@@ -121,7 +126,7 @@ def daemonize():
 
     # Make the child a session-leader by detaching from the terminal
     try:
-        pid = os.fork() #@UndefinedVariable - only available in UNIX
+        pid = os.fork()  # @UndefinedVariable - only available in UNIX
         if pid != 0:
             sys.exit(0)
     except OSError as e:
@@ -130,40 +135,43 @@ def daemonize():
     dev_null = file('/dev/null', 'r')
     os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
+
 def main():
     media.ScrobResult = 0
-    media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch,5)
+    media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
     if pchtrakt.lastPath != media.oStatus.fullPath:
         pchtrakt.StopTrying = 0
         pchtrakt.idOK = 0
     if not pchtrakt.StopTrying:
-        if media.oStatus.status != EnumStatus.NOPLAY and media.oStatus.status != EnumStatus.UNKNOWN:
+        if (media.oStatus.status != EnumStatus.NOPLAY
+                and media.oStatus.status != EnumStatus.UNKNOWN):
             if media.oStatus.status != EnumStatus.LOAD:
-                media.parsedInfo = pchtrakt.mediaparser.parse(media.oStatus.fileName)
-                if isinstance(media.parsedInfo,mp.MediaParserResultTVShow):
+                media.parsedInfo = pchtrakt.mediaparser.parse(
+                                        media.oStatus.fileName)
+                if isinstance(media.parsedInfo, mp.MediaParserResultTVShow):
                     if media.parsedInfo.season_number == 0:
-                        # anime = tvdb[media.parsedInfo.series_name].search(media.parsedInfo.episode_numbers[0], key = 'absolute_number')
-                        # Debug(anime[0]['episodenumber'])
-                        # Debug(anime[0]['seasonnumber'])
                         raise BaseException('No season - maybe anime?')
-                    Debug('TV Show : {0} - Season:{1} - Episode:{2} - {3}% - {4} - TvDB: {5}'.format( 
-                        media.parsedInfo.series_name,media.parsedInfo.season_number,
-                        media.parsedInfo.episode_numbers,media.oStatus.percent,
-                        media.oStatus.status,tvdb[media.parsedInfo.series_name]['id']))
+                    Debug('TV Show : {0} - Season:{1} - Episode:{2} - {3}% - {4} - TvDB: {5}'.format(
+                        media.parsedInfo.series_name,
+                        media.parsedInfo.season_number,
+                        media.parsedInfo.episode_numbers,
+                        media.oStatus.percent,
+                        media.oStatus.status,
+                        tvdb[media.parsedInfo.series_name]['id']))
                     media.id = tvdb[media.parsedInfo.series_name]['id']
                     media.year = (tvdb[media.parsedInfo.series_name]['firstaired']).split('-')[0]
                     videoStatusHandle(media)
-                elif isinstance(media.parsedInfo,mp.MediaParserResultMovie):
+                elif isinstance(media.parsedInfo, mp.MediaParserResultMovie):
                     if not pchtrakt.idOK:
-                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xml'
-                                            .format(quote(media.parsedInfo.movie_title),
-                                            media.parsedInfo.year))
+                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xml'.format(
+                                quote(media.parsedInfo.movie_title),
+                                media.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
                         media.id = oXml.find('movie').get('id')
                         media.year = media.parsedInfo.year
                         pchtrakt.idOK = 1
-                    Debug('Movie : {0} - Year : {1} - {2}% - IMDB: {3}'.format( 
+                    Debug('Movie : {0} - Year : {1} - {2}% - IMDB: {3}'.format(
                                             media.parsedInfo.movie_title,
                                                 media.parsedInfo.year,
                                                 media.oStatus.percent,
@@ -179,10 +187,11 @@ def main():
                 pchtrakt.isTvShow = 0
             Debug("PCH status = {0}".format(media.oStatus.status))
 
+
 def stopTrying():
     pchtrakt.StopTrying = 1
     pchtrakt.lastPath = media.oStatus.fullPath
-    
+
 
 if __name__ == '__main__':
     getParams()
@@ -195,12 +204,10 @@ if __name__ == '__main__':
         except (KeyboardInterrupt, SystemExit):
             Debug(':::Stopping pchtrakt:::')
             pchtrakt.stop = 1
-        # except parser.InvalidNameException:
-            # stopTrying()
-            # Debug(':::What is this movie? %s Stop trying:::' %(pchtrakt.lastPath))
         except tvdb_exceptions.tvdb_shownotfound as e:
             stopTrying()
-            msg = ':::TheTvDB - Show not found {0} :::'.format(pchtrakt.lastPath)
+            msg = (':::TheTvDB - Show not found ' \
+                   '{0} :::'.format(pchtrakt.lastPath))
             Debug(msg)
             pchtrakt.logger.warning(msg)
         except utils.AuthenticationTraktError as e:
@@ -211,8 +218,8 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::{0}:::'.format(e.msg))
             pchtrakt.logger.error(e.msg)
-        # except BaseException as e:
-            # stopTrying()
-            # Debug( '::: %s :::' %(pchtrakt.lastPath))
-            # Debug( '::: %s :::' %(e))
-            # pchtrakt.logger.exception(e)
+        except BaseException as e:
+            stopTrying()
+            Debug('::: %s :::'.format(pchtrakt.lastPath))
+            Debug('::: %s :::'.format(e))
+            pchtrakt.logger.exception(e)
