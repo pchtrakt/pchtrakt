@@ -37,8 +37,6 @@ def getSerieUrl(SerieName):
             myKey = key
             break
     myUrl = myJson['root']['shows'][myKey]['url']
-    # oXml = ElementTree.XML(oResponse.read())
-    # print oXml.findall("shows/show")[1].find("title").text
     return quote('{0}.xml'.format(myUrl))
 
 def getToken():

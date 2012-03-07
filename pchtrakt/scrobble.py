@@ -84,7 +84,11 @@ def showIsEnding(myMedia):
         Debug(result)
         Debug(isWatched)
         if result or isWatched:
-            msg = '(BetaSeries) Video is ending'
+            msg = '(BetaSeries) Video is ending :  \
+                   {0} {1}x{2}'.format(myMedia.parsedInfo.series_name,
+                                       myMedia.parsedInfo.season_number,
+                                       myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
+                                       )
             Debug(msg)
             pchtrakt.logger.info(msg)
             myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
