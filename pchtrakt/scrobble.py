@@ -1,3 +1,5 @@
+from os.path import isfile
+
 from lib import utilities
 from lib.utilities import Debug
 import pchtrakt
@@ -196,3 +198,12 @@ def videoStatusHandle(myMedia):
         if TraktScrobbleMovie:
             videoStatusHandleMovie(myMedia)
         pchtrakt.isMovie = 1
+
+def watchedFileCreation(myMedia):        
+    if YamjWatched and myMedia.oStatus.percent > 90:
+        path = '{0}{1}.watched'.format(YamjPath,
+                                       myMedia.oStatus.fileName.rsplit('.',1)[0])
+        if not isfile(path):
+            open(path, 'w')
+            Debug('I''ve created the file {0}'.format(path))
+        

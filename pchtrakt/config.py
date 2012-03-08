@@ -37,4 +37,6 @@ BetaSeriesUsername = config.get('BetaSeries', 'login')
 BetaSeriesPwd = config.get('BetaSeries', 'password') 
 BetaSeriesScrobbleTvShow = config.getboolean('BetaSeries', 'enable_tvshow_scrobbling') 
 
-pathYAMJ='' #not used yet
+#YAMJ
+YamjWatched = config.get('YAMJ', 'watched')
+YamjPath = config.get('YAMJ', 'path')

@@ -142,6 +142,8 @@ def main():
     if pchtrakt.lastPath != media.oStatus.fullPath:
         pchtrakt.StopTrying = 0
         pchtrakt.idOK = 0
+    if YamjWatched:
+        watchedFileCreation(media)
     if not pchtrakt.StopTrying:
         if (media.oStatus.status != EnumStatus.NOPLAY
                 and media.oStatus.status != EnumStatus.UNKNOWN):
@@ -220,6 +222,6 @@ if __name__ == '__main__':
             pchtrakt.logger.error(e.msg)
         except BaseException as e:
             stopTrying()
-            Debug('::: %s :::'.format(pchtrakt.lastPath))
-            Debug('::: %s :::'.format(e))
+            Debug('::: {0} :::'.format(pchtrakt.lastPath))
+            Debug('::: {0} :::'.format(e))
             pchtrakt.logger.exception(e)
