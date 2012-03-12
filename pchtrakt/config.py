@@ -18,12 +18,16 @@
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 import ConfigParser
 import pchtrakt
+import socket
+
 config = ConfigParser.RawConfigParser()
 
 #PchTrakt
 config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
+OnPCH = (socket.gethostname().startswith('PCH') 
+                or socket.gethostname().startswith('POPBOX'))
 
 #Trakt
 TraktUsername = config.get('Trakt', 'login') 
@@ -37,4 +41,8 @@ BetaSeriesUsername = config.get('BetaSeries', 'login')
 BetaSeriesPwd = config.get('BetaSeries', 'password') 
 BetaSeriesScrobbleTvShow = config.getboolean('BetaSeries', 'enable_tvshow_scrobbling') 
 
-pathYAMJ='' #not used yet
+#YAMJ
+YamjWatchedPath = config.get('YAMJ', 'path')
+YamJWatchedVithVideo = config.get('YAMJ', 'watched_with_video')
+YamjWatched = config.get('YAMJ', 'watched')
+

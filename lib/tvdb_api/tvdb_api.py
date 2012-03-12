@@ -15,7 +15,7 @@ Example usage:
 u'Cabin Fever'
 """
 __author__ = "dbr/Ben"
-__version__ = "1.5"
+__version__ = "1.6.1"
 
 import os
 import urllib
@@ -37,7 +37,7 @@ except ImportError:
     gzip = None
 
 
-from cache import CacheHandler
+from tvdb_cache import CacheHandler
 
 from tvdb_ui import BaseUI, ConsoleUI
 from tvdb_exceptions import (tvdb_error, tvdb_userabort, tvdb_shownotfound,
@@ -129,7 +129,7 @@ class Show(dict):
         To search Scrubs for all episodes with "mentor" in the episode name:
 
         >>> t['scrubs'].search('mentor', key = 'episodename')
-        [<Episode 00x38 - Will You Ever Be My Mentor>, <Episode 01x02 - My Mentor>, <Episode 03x15 - My Tormented Mentor>]
+        [<Episode 01x02 - My Mentor>, <Episode 03x15 - My Tormented Mentor>]
         >>>
 
         # Using search results
@@ -504,11 +504,13 @@ class Tvdb:
         """
         src = self._loadUrl(url)
         try:
-            return ElementTree.fromstring(src)
+            # TVDB doesn't sanitize \r (CR) from user input in some fields,
+            # remove it to avoid errors. Change from SickBeard, from will14m
+            return ElementTree.fromstring(src.rstrip("\r"))
         except SyntaxError:
             src = self._loadUrl(url, recache=True)
             try:
-                return ElementTree.fromstring(src)
+                return ElementTree.fromstring(src.rstrip("\r"))
             except SyntaxError, exceptionmsg:
                 errormsg = "There was an error with the XML retrieved from thetvdb.com:\n%s" % (
                     exceptionmsg

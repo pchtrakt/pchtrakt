@@ -37,8 +37,6 @@ def getSerieUrl(SerieName):
             myKey = key
             break
     myUrl = myJson['root']['shows'][myKey]['url']
-    # oXml = ElementTree.XML(oResponse.read())
-    # print oXml.findall("shows/show")[1].find("title").text
     return quote('{0}.xml'.format(myUrl))
 
 def getToken():
@@ -56,7 +54,6 @@ def scrobbleEpisode(SerieXml,Token,Saison,Episode):
                                                 Saison,
                                                 Episode,
                                                 Token)
-    Debug(url)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     
@@ -78,7 +75,6 @@ def addShow(SerieXml,Token):
 def isEpisodeWatched(SerieXml,Token,Saison,Episode):
     url = getUrl('shows/episodes/{0}'.format(SerieXml))
     url += '&token={0}&season={1}&episode={2}'.format(Token,Saison,Episode)
-    Debug(url)
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read())
     if oXml.find("seasons/season/episodes/episode/has_seen").text == '1':

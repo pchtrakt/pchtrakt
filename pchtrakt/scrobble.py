@@ -1,3 +1,5 @@
+from os.path import isfile
+
 from lib import utilities
 from lib.utilities import Debug
 import pchtrakt
@@ -84,7 +86,11 @@ def showIsEnding(myMedia):
         Debug(result)
         Debug(isWatched)
         if result or isWatched:
-            msg = '(BetaSeries) Video is ending'
+            msg = '(BetaSeries) Video is ending :  \
+                   {0} {1}x{2}'.format(myMedia.parsedInfo.series_name,
+                                       myMedia.parsedInfo.season_number,
+                                       myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
+                                       )
             Debug(msg)
             pchtrakt.logger.info(msg)
             myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
@@ -192,3 +198,22 @@ def videoStatusHandle(myMedia):
         if TraktScrobbleMovie:
             videoStatusHandleMovie(myMedia)
         pchtrakt.isMovie = 1
+
+def watchedFileCreation(myMedia):
+    if YamjWatched and myMedia.oStatus.percent > 90:
+        path = myMedia.oStatus.fileName
+        if YamJWatchedVithVideo:
+            path = myMedia.oStatus.fullPath
+            if not OnPCH:
+                path = path.replace('/opt/sybhttpd/localhost.drives/','')
+                path = path.split('/', 2)[2]
+                path = '{0}{1}'.format(YamjWatchedPath, path)
+        else:
+            path = '{0}{1}'.format(YamjWatchedPath, path)
+        path = '{0}.watched'.format(path)
+        
+        if not isfile(path):
+            open(path, 'w')
+            msg = 'I have created the file {0}'.format(path)
+            Debug(msg)
+            pchtrakt.logger.info(msg)

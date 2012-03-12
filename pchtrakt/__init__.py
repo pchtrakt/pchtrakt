@@ -57,7 +57,17 @@ def newConfig():
         config.set('BetaSeries', 'login', 'your_login')
     if not config.has_option('BetaSeries','password'):
         config.set('BetaSeries', 'password', 'your_password')
-    
+        
+    if not config.has_section('YAMJ'):
+        config.add_section('YAMJ')
+    if not config.has_option('YAMJ','watched'):
+        config.set('YAMJ', 'watched', '0')
+    if not config.has_option('YAMJ','path'):
+        config.set('YAMJ', 'path', '')
+    if not config.has_option('YAMJ','watched_with_video'):
+        config.set('YAMJ', 'watched_with_video', 1)
+        
+        
     with open(config_file, 'w') as configfile:
         config.write(configfile)
 
