@@ -143,7 +143,12 @@ def doWork():
         pchtrakt.StopTrying = 0
         pchtrakt.idOK = 0
     if YamjWatched:
-        watchedFileCreation(media)
+        try:
+            watchedFileCreation(media)
+        except BaseException as e:
+            Debug('::: {0} :::'.format(pchtrakt.lastPath))
+            Debug('::: {0} :::'.format(e))
+            pchtrakt.logger.error(e.msg)
     if not pchtrakt.StopTrying:
         if (media.oStatus.status != EnumStatus.NOPLAY
                 and media.oStatus.status != EnumStatus.UNKNOWN):
