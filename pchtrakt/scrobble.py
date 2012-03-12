@@ -199,11 +199,21 @@ def videoStatusHandle(myMedia):
             videoStatusHandleMovie(myMedia)
         pchtrakt.isMovie = 1
 
-def watchedFileCreation(myMedia):        
+def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:
-        path = '{0}{1}.watched'.format(YamjPath,
-                                       myMedia.oStatus.fileName.rsplit('.',1)[0])
+        path = myMedia.oStatus.fileName
+        if YamJWatchedVithVideo:
+            path = myMedia.oStatus.fullPath
+            if not OnPCH:
+                path = path.replace('/opt/sybhttpd/localhost.drives/','')
+                path = path.split('/', 2)[2]
+                path = '{0}{1}'.format(YamjWatchedPath, path)
+        else:
+            path = '{0}{1}'.format(YamjWatchedPath, path)
+        path = '{0}.watched'.format(path)
+        
         if not isfile(path):
             open(path, 'w')
-            Debug('I''ve created the file {0}'.format(path))
-        
+            msg = 'I have created the file {0}'.format(path)
+            Debug(msg)
+            pchtrakt.logger.info(msg)

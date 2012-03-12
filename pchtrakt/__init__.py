@@ -64,6 +64,9 @@ def newConfig():
         config.set('YAMJ', 'watched', '0')
     if not config.has_option('YAMJ','path'):
         config.set('YAMJ', 'path', '')
+    if not config.has_option('YAMJ','watched_with_video'):
+        config.set('YAMJ', 'watched_with_video', 1)
+        
         
     with open(config_file, 'w') as configfile:
         config.write(configfile)

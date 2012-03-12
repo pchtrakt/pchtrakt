@@ -58,7 +58,7 @@ def media():
 
 
 def printHelp():
-    print('Usage {0} <options>'.format('pchtrak.py'))
+    print('Usage {0} <options>'.format('pythpn pchtrak.py'))
     print('Options:')
     print('    -h,--help    :    display this message')
     print('    -d,--daemon  :    launches pchtrakt in the background')
@@ -136,7 +136,7 @@ def daemonize():
     os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
 
-def main():
+def doWork():
     media.ScrobResult = 0
     media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
     if pchtrakt.lastPath != media.oStatus.fullPath:
@@ -201,7 +201,7 @@ if __name__ == '__main__':
         daemonize()
     while not pchtrakt.stop:
         try:
-            main()
+            doWork()
             sleep(sleepTime)
         except (KeyboardInterrupt, SystemExit):
             Debug(':::Stopping pchtrakt:::')
