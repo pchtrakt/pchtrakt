@@ -148,7 +148,7 @@ def doWork():
         except BaseException as e:
             Debug('::: {0} :::'.format(pchtrakt.lastPath))
             Debug('::: {0} :::'.format(e))
-            pchtrakt.logger.error(e.msg)
+            pchtrakt.logger.error(e
     if not pchtrakt.StopTrying:
         if (media.oStatus.status != EnumStatus.NOPLAY
                 and media.oStatus.status != EnumStatus.UNKNOWN):
