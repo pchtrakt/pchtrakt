@@ -229,4 +229,4 @@ if __name__ == '__main__':
             stopTrying()
             Debug('::: {0} :::'.format(pchtrakt.lastPath))
             Debug('::: {0} :::'.format(e))
-            pchtrakt.logger.error(e.msg)
+            pchtrakt.logger.error(e)
