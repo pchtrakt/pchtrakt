@@ -26,8 +26,7 @@ config = ConfigParser.RawConfigParser()
 config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
-OnPCH = (socket.gethostname().startswith('PCH') 
-                or socket.gethostname().startswith('POPBOX'))
+OnPCH = (ipPch == '127.0.0.1')
 
 #Trakt
 TraktUsername = config.get('Trakt', 'login') 
