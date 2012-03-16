@@ -188,14 +188,26 @@ def videoStatusHandleTVSeries(myMedia):
         showStarted(myMedia)
 
 def videoStatusHandle(myMedia):
-    if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
-        if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
-            videoStatusHandleTVSeries(myMedia)
-        pchtrakt.isTvShow = 1
-    elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
-        if TraktScrobbleMovie:
-            videoStatusHandleMovie(myMedia)
-        pchtrakt.isMovie = 1
+    ignored = False
+    for el in myMedia.oStatus.fullPath.split('/'):
+        if el <> '' and el in ignored_repertory:
+            msg = 'This video is in a ignored repertory'
+            Debug(msg)
+            pchtrakt.logger.info(msg)
+            pchtrakt.StopTrying = 1
+            pchtrakt.lastPath = myMedia.oStatus.fullPath
+            ignored = 1
+            break
+            
+    if not ignored:
+        if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
+            if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
+                videoStatusHandleTVSeries(myMedia)
+            pchtrakt.isTvShow = 1
+        elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
+            if TraktScrobbleMovie:
+                videoStatusHandleMovie(myMedia)
+            pchtrakt.isMovie = 1
 
 def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:

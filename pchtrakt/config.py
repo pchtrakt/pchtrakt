@@ -26,6 +26,7 @@ config = ConfigParser.RawConfigParser()
 config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
+ignored_repertory = config.get('PCHtrakt', 'ignored_repertory').split(',')
 OnPCH = (ipPch == '127.0.0.1')
 
 #Trakt

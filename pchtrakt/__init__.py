@@ -35,7 +35,9 @@ def newConfig():
         config.set('PCHtrakt', 'sleep_time', '5')
     if not config.has_option('PCHtrakt','log_file'):
         config.set('PCHtrakt', 'log_file', 'pchtrakt.log')
-        
+    if not config.has_option('PCHtrakt','ignored_repertory'):
+        config.set('PCHtrakt', 'ignored_repertory', '')
+    
     if not config.has_section('Trakt'):
         config.add_section('Trakt')
     if not config.has_option('Trakt','enable_movie_scrobbling'):
