@@ -211,6 +211,7 @@ if __name__ == '__main__':
         except (KeyboardInterrupt, SystemExit):
             Debug(':::Stopping pchtrakt:::')
             pchtrakt.stop = 1
+            videoStopped()
         except tvdb_exceptions.tvdb_shownotfound as e:
             stopTrying()
             msg = (':::TheTvDB - Show not found ' \

@@ -1,4 +1,6 @@
 from os.path import isfile
+from os import listdir
+from xml.etree import ElementTree
 
 from lib import utilities
 from lib.utilities import Debug
@@ -8,6 +10,7 @@ from pchtrakt import betaseries as bs
 from pchtrakt.config import *
 from time import sleep
 from pchtrakt.pch import EnumStatus
+
 
 class EnumScrobbleResult:
     KO = 0
@@ -189,16 +192,37 @@ def videoStatusHandleTVSeries(myMedia):
 
 def videoStatusHandle(myMedia):
     ignored = False
-    for el in myMedia.oStatus.fullPath.split('/'):
-        if el <> '' and el in ignored_repertory:
-            msg = 'This video is in a ignored repertory'
-            Debug(msg)
-            pchtrakt.logger.info(msg)
-            pchtrakt.StopTrying = 1
-            pchtrakt.lastPath = myMedia.oStatus.fullPath
-            ignored = 1
-            break
-            
+    if ignored_repertory[0] != '':
+        for el in myMedia.oStatus.fullPath.split('/'):
+            if el <> '' and el in ignored_repertory:
+                msg = 'This video is in a ignored repertory'
+                Debug(msg)
+                pchtrakt.logger.info(msg)
+                pchtrakt.StopTrying = 1
+                pchtrakt.lastPath = myMedia.oStatus.fullPath
+                ignored = 1
+                break
+    
+    if ignored == 0 and YamjIgnoredCategory[0] != '':
+        files = listdir(YamjPath)
+        for file in files:
+            if file.endswith('xml'):
+                file = unicode(file, errors='replace')
+                if file.find(myMedia.parsedInfo.series_name) >= 0:
+                    oXml = ElementTree.parse(YamjPath + file)
+                    genres = oXml.findall('//genre')
+                    for genre in genres:
+                        if genre.text in YamjIgnoredCategory:
+                            msg = 'This video is in a ignored category'
+                            Debug(msg)
+                            pchtrakt.logger.info(msg)
+                            pchtrakt.StopTrying = 1
+                            pchtrakt.lastPath = myMedia.oStatus.fullPath
+                            ignored = 1
+                            break
+                    if ignored == 1:
+                        break
+   
     if not ignored:
         if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
             if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:

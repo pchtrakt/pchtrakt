@@ -64,11 +64,14 @@ def newConfig():
         config.add_section('YAMJ')
     if not config.has_option('YAMJ','watched'):
         config.set('YAMJ', 'watched', '0')
-    if not config.has_option('YAMJ','path'):
-        config.set('YAMJ', 'path', '')
+    if not config.has_option('YAMJ','watched_path'):
+        config.set('YAMJ', 'watched_path', '')
     if not config.has_option('YAMJ','watched_with_video'):
         config.set('YAMJ', 'watched_with_video', 1)
-        
+    if not config.has_option('YAMJ','ignored_category'):
+        config.set('YAMJ', 'ignored_category', '')
+    if not config.has_option('YAMJ','path'):
+        config.set('YAMJ', 'path', '')
         
     with open(config_file, 'w') as configfile:
         config.write(configfile)

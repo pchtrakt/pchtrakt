@@ -27,6 +27,8 @@ config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
 ignored_repertory = config.get('PCHtrakt', 'ignored_repertory').split(',')
+for el in ignored_repertory:
+    el.strip()
 OnPCH = (ipPch == '127.0.0.1')
 
 #Trakt
@@ -42,7 +44,10 @@ BetaSeriesPwd = config.get('BetaSeries', 'password')
 BetaSeriesScrobbleTvShow = config.getboolean('BetaSeries', 'enable_tvshow_scrobbling') 
 
 #YAMJ
-YamjWatchedPath = config.get('YAMJ', 'path')
+YamjWatchedPath = config.get('YAMJ', 'watched_path')
+YamjPath = config.get('YAMJ', 'path')
 YamJWatchedVithVideo = config.get('YAMJ', 'watched_with_video')
 YamjWatched = config.get('YAMJ', 'watched')
-
+YamjIgnoredCategory = config.get('YAMJ', 'ignored_category').split(',')
+for el in YamjIgnoredCategory:
+    el.strip()
