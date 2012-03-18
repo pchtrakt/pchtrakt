@@ -210,7 +210,7 @@ def videoStatusHandle(myMedia):
                 file = unicode(file, errors='replace')
                 if file.find(myMedia.parsedInfo.series_name) >= 0:
                     oXml = ElementTree.parse(YamjPath + file)
-                    genres = oXml.findall('//genre')
+                    genres = oXml.findall('.//genre')
                     for genre in genres:
                         if genre.text in YamjIgnoredCategory:
                             msg = 'This video is in a ignored category'
