@@ -202,7 +202,7 @@ def videoStatusHandle(myMedia):
                 pchtrakt.lastPath = myMedia.oStatus.fullPath
                 ignored = 1
                 break
-    
+
     if ignored == 0 and YamjIgnoredCategory[0] != '':
         files = listdir(YamjPath)
         for file in files:
@@ -212,7 +212,7 @@ def videoStatusHandle(myMedia):
                     oXml = ElementTree.parse(YamjPath + file)
                     genres = oXml.findall('.//genre')
                     for genre in genres:
-                        if genre.text in YamjIgnoredCategory:
+                        if genre.text.lower() in YamjIgnoredCategory:
                             msg = 'This video is in a ignored category'
                             Debug(msg)
                             pchtrakt.logger.info(msg)
