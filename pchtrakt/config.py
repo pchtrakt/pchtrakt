@@ -51,4 +51,3 @@ if YamjPath.endswith('/'):
 YamJWatchedVithVideo = config.get('YAMJ', 'watched_with_video')
 YamjWatched = config.get('YAMJ', 'watched')
 YamjIgnoredCategory = [x.strip().lower() for x in config.get('YAMJ', 'ignored_category').split(',')]
-print YamjIgnoredCategory
