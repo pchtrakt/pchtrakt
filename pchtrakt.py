@@ -168,7 +168,7 @@ def doWork():
                     media.id = tvdb[media.parsedInfo.series_name]['id']
                     year = tvdb[media.parsedInfo.series_name]['firstaired']
                     if year <> None:
-                        media.year = (year.split('-')[0]
+                        media.year = (year.split('-')[0])
                     videoStatusHandle(media)
                 elif isinstance(media.parsedInfo, mp.MediaParserResultMovie):
                     if not pchtrakt.idOK:
