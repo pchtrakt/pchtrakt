@@ -198,9 +198,12 @@ def doWork():
 
 
 def stopTrying():
-    pchtrakt.StopTrying = 1
-    pchtrakt.lastPath = media.oStatus.fullPath
-
+    try:
+        pchtrakt.StopTrying = 1
+        pchtrakt.lastPath = media.oStatus.fullPath
+    except BaseException as e:
+        pass
+        
 
 if __name__ == '__main__':
     getParams()
@@ -232,4 +235,4 @@ if __name__ == '__main__':
             stopTrying()
             Debug('::: {0} :::'.format(pchtrakt.lastPath))
             Debug('::: {0} :::'.format(e))
-            pchtrakt.logger.error(e)
+            pchtrakt.logger.exception(e)
