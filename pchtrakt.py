@@ -170,12 +170,14 @@ def doWork():
                     videoStatusHandle(media)
                 elif isinstance(media.parsedInfo, mp.MediaParserResultMovie):
                     if not pchtrakt.idOK:
-                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xml'.format(
+                        # ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xm
+                        ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
                                 quote(media.parsedInfo.movie_title),
                                 media.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
-                        media.id = oXml.find('movie').get('id')
+                        # media.id = oXml.find('movie').get('id')
+                        media.id = oXml.find('movie/imdbid')
                         media.year = media.parsedInfo.year
                         pchtrakt.idOK = 1
                     Debug('Movie : {0} - Year : {1} - {2}% - IMDB: {3}'.format(

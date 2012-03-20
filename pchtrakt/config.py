@@ -46,7 +46,7 @@ YamjWatchedPath = config.get('YAMJ', 'watched_path')
 if not YamjWatchedPath.endswith('/'):
     YamjWatchedPath += '/'
 YamjPath = config.get('YAMJ', 'path')
-if YamjPath.endswith('/'):
+if not YamjPath.endswith('/'):
     YamjPath += '/'
 YamJWatchedVithVideo = config.get('YAMJ', 'watched_with_video')
 YamjWatched = config.get('YAMJ', 'watched')

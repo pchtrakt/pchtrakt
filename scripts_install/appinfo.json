@@ -4,5 +4,5 @@
     version = "0.4.5",
     enabled = "1",
     daemon_script = "daemon.sh",
-    webui_path = "#PATH#/www"
+    crontab="0 */2 * * * pyhton #PATH#/update.py"
 }
