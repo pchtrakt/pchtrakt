@@ -33,6 +33,7 @@ import os
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
+from pchtrakt.exception import BetaSerieAuthenticationException
 from pchtrakt import mediaparser as mp
 from time import sleep
 from lib.tvdb_api import tvdb_api
@@ -233,7 +234,7 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::{0}:::'.format(e.msg))
             pchtrakt.logger.error(e.msg)
-        except BaseException as e:
+        except Exception as e:
             stopTrying()
             Debug('::: {0} :::'.format(pchtrakt.lastPath))
             Debug('::: {0} :::'.format(e))

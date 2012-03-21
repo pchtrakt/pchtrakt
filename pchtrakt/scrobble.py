@@ -72,31 +72,37 @@ def movieStillRunning(myMedia):
     
     
 def showIsEnding(myMedia):
-    if BetaSeriesScrobbleTvShow:
-        result = 0
-        serieXml = bs.getSerieUrl(myMedia.parsedInfo.series_name)
-        token = bs.getToken()
-        isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
-                                    ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
-        if not isWatched:
-            Debug('Adding show: {0}'.format(bs.addShow(serieXml,token)))
-            result = bs.scrobbleEpisode(serieXml
-                                                ,token,
-                                                myMedia.parsedInfo.season_number,
-                                                myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])
-            bs.destroyToken(token)
-            
-        if result or isWatched:
-            msg = '(BetaSeries) Video is ending :  ' \
-                   '{0} {1}x{2}'.format(myMedia.parsedInfo.series_name,
-                                       myMedia.parsedInfo.season_number,
-                                       myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
-                                       )
-            Debug(msg)
-            pchtrakt.logger.info(msg)
-            myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
-    else:
-        myMedia.ScrobResult |= EnumScrobbleResult.BETASERIESOK
+    try:
+        if BetaSeriesScrobbleTvShow:
+            result = 0
+            serieXml = bs.getSerieUrl(myMedia.parsedInfo.series_name)
+            token = bs.getToken()
+            isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
+                                        ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
+            if not isWatched:
+                result = bs.scrobbleEpisode(serieXml
+                                                    ,token,
+                                                    myMedia.parsedInfo.season_number,
+                                                    myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])
+                bs.destroyToken(token)
+                
+            if result or isWatched:
+                msg = '(BetaSeries) Video is ending :  ' \
+                       '{0} {1}x{2}'.format(myMedia.parsedInfo.series_name,
+                                           myMedia.parsedInfo.season_number,
+                                           myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
+                                           )
+                Debug(msg)
+                pchtrakt.logger.info(msg)
+                myMedia.ScrobResult |=  EnumScrobbleResult.BETASERIESOK
+        else:
+            myMedia.ScrobResult |= EnumScrobbleResult.BETASERIESOK
+    except BetaSerieAuthenticationException as e:
+        Debug(e)
+        pchtrakt.logger.info(e)
+    except Exception as e:
+        Debug(e)
+        pchtrakt.logger.info(e)
     
     if TraktScrobbleTvShow:
         result = 0

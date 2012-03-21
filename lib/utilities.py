@@ -36,10 +36,10 @@ class TraktError(Exception):
     pass
 class AuthenticationTraktError(TraktError):
     def __init__(self):
-        self.msg = 'Trakt.tv - Login or password incorrect'
+        Exception.__init__(self, 'Trakt.tv - Login or password incorrect')
 class MaxScrobbleError(TraktError):
 	def __init__(self):
-		self.msg = 'Trakt.tv - Shows per hour limit reached'
+		Exception.__init__(self, 'Trakt.tv - Shows per hour limit reached')
 
 def Debug(msg, force=False):
     if (pchtrakt.debug or force):

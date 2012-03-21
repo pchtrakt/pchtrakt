@@ -6,7 +6,7 @@ from urllib2 import urlopen
 from xml.etree import ElementTree 
 from hashlib import md5
 from pchtrakt.config import *
-
+from pchtrakt.exception import BetaSerieAuthenticationException
 
 login = BetaSeriesUsername
 pwdmd5 = md5(BetaSeriesPwd).hexdigest()
@@ -46,6 +46,8 @@ def getToken():
                                                 pwdmd5))
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read()) 
+    if not oXml.find("member/token"):
+        raise BetaSerieAuthenticationException('No token')
     return oXml.find("member/token").text
     
 def scrobbleEpisode(SerieXml,Token,Saison,Episode):

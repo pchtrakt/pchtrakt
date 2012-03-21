@@ -1,0 +1,2 @@
+class BetaSerieAuthenticationException(Exception):
+     pass
