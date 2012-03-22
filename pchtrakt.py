@@ -178,7 +178,6 @@ def doWork():
                                 quote(media.parsedInfo.name),
                                 media.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
-                        Debug(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
                         # media.id = oXml.find('movie').get('id')
                         media.id = oXml.find('imdbid').text
