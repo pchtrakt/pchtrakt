@@ -160,14 +160,14 @@ def doWork():
                     if media.parsedInfo.season_number == 0:
                         raise BaseException('No season - maybe anime?')
                     Debug('TV Show : {0} - Season:{1} - Episode:{2} - {3}% - {4} - TvDB: {5}'.format(
-                        media.parsedInfo.series_name,
+                        media.parsedInfo.name,
                         media.parsedInfo.season_number,
                         media.parsedInfo.episode_numbers,
                         media.oStatus.percent,
                         media.oStatus.status,
-                        tvdb[media.parsedInfo.series_name]['id']))
-                    media.id = tvdb[media.parsedInfo.series_name]['id']
-                    year = tvdb[media.parsedInfo.series_name]['firstaired']
+                        tvdb[media.parsedInfo.name]['id']))
+                    media.id = tvdb[media.parsedInfo.name]['id']
+                    year = tvdb[media.parsedInfo.name]['firstaired']
                     if year <> None:
                         media.year = (year.split('-')[0])
                     videoStatusHandle(media)
@@ -175,16 +175,17 @@ def doWork():
                     if not pchtrakt.idOK:
                         # ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xm
                         ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
-                                quote(media.parsedInfo.movie_title),
+                                quote(media.parsedInfo.name),
                                 media.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
+                        Debug(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
                         # media.id = oXml.find('movie').get('id')
-                        media.id = oXml.find('movie/imdbid')
+                        media.id = oXml.find('imdbid').text
                         media.year = media.parsedInfo.year
                         pchtrakt.idOK = 1
                     Debug('Movie : {0} - Year : {1} - {2}% - IMDB: {3}'.format(
-                                            media.parsedInfo.movie_title,
+                                            media.parsedInfo.name,
                                                 media.parsedInfo.year,
                                                 media.oStatus.percent,
                                                 media.id))
@@ -204,7 +205,7 @@ def stopTrying():
     try:
         pchtrakt.StopTrying = 1
         pchtrakt.lastPath = media.oStatus.fullPath
-    except BaseException as e:
+    except Exception as e:
         pass
         
 

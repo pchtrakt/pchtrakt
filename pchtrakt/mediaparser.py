@@ -25,22 +25,22 @@ class MediaParserResult():
     def __init__(self,file_name):
         self.file_name = file_name
 class MediaParserResultAnime(MediaParserResult):
-    def __init__(self,file_name,series_name,episode_numbers):
+    def __init__(self,file_name,name,episode_numbers):
         self.file_name = file_name
-        self.series_name = series_name
+        self.name = name
         self.episode_numbers = episode_numbers
         
 class MediaParserResultTVShow(MediaParserResult):
-    def __init__(self,file_name,series_name,season_number,episode_numbers):
+    def __init__(self,file_name,name,season_number,episode_numbers):
         self.file_name = file_name
-        self.series_name = series_name
+        self.name = name
         self.season_number = season_number
         self.episode_numbers = episode_numbers
         
 class MediaParserResultMovie(MediaParserResult):
-    def __init__(self,file_name,movie_title,year,imdbid):
+    def __init__(self,file_name,name,year,imdbid):
         self.file_name = file_name
-        self.movie_title = movie_title
+        self.name = name
         self.year = year
         self.imdbid = imdbid
         

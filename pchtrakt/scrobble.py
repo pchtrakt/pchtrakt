@@ -21,7 +21,7 @@ class EnumScrobbleResult:
 def showStarted(myMedia):
     if TraktScrobbleTvShow:
         responce = utilities.watchingEpisodeOnTrakt(myMedia.id,
-                                                    myMedia.parsedInfo.series_name,
+                                                    myMedia.parsedInfo.name,
                                                     myMedia.year,
                                                     str(myMedia.parsedInfo.season_number),
                                                     str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
@@ -34,7 +34,7 @@ def showStarted(myMedia):
     
 def movieStarted(myMedia):
     responce = utilities.watchingMovieOnTrakt(myMedia.id,
-                                               myMedia.parsedInfo.movie_title,
+                                               myMedia.parsedInfo.name,
                                                myMedia.year,
                                                str(myMedia.oStatus.totalTime),
                                                str(myMedia.oStatus.percent))
@@ -76,7 +76,7 @@ def showIsEnding(myMedia):
     try:
         if BetaSeriesScrobbleTvShow:
             result = 0
-            serieXml = bs.getSerieUrl(myMedia.parsedInfo.series_name)
+            serieXml = bs.getSerieUrl(myMedia.parsedInfo.name)
             token = bs.getToken()
             isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
                                         ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
@@ -89,7 +89,7 @@ def showIsEnding(myMedia):
                 
             if result or isWatched:
                 msg = '(BetaSeries) Video is ending :  ' \
-                       '{0} {1}x{2}'.format(myMedia.parsedInfo.series_name,
+                       '{0} {1}x{2}'.format(myMedia.parsedInfo.name,
                                            myMedia.parsedInfo.season_number,
                                            myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
                                            )
@@ -108,7 +108,7 @@ def showIsEnding(myMedia):
     if TraktScrobbleTvShow:
         result = 0
         responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
-                                                    myMedia.parsedInfo.series_name,
+                                                    myMedia.parsedInfo.name,
                                                     myMedia.year,
                                                     str(myMedia.parsedInfo.season_number),
                                                     str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
@@ -129,7 +129,7 @@ def showIsEnding(myMedia):
     
 def movieIsEnding(myMedia):
     responce = utilities.scrobbleMovieOnTrakt(myMedia.id,
-                                               myMedia.parsedInfo.movie_title,
+                                               myMedia.parsedInfo.name,
                                                myMedia.year,
                                                str(myMedia.oStatus.totalTime),
                                                str(myMedia.oStatus.percent))
@@ -199,36 +199,36 @@ def videoStatusHandleTVSeries(myMedia):
 
 def videoStatusHandle(myMedia):
     ignored = False
-    # if ignored_repertory[0] != '':
-        # for el in myMedia.oStatus.fullPath.split('/'):
-            # if el <> '' and el in ignored_repertory:
-                # msg = 'This video is in a ignored repertory'
-                # Debug(msg)
-                # pchtrakt.logger.info(msg)
-                # pchtrakt.StopTrying = 1
-                # pchtrakt.lastPath = myMedia.oStatus.fullPath
-                # ignored = 1
-                # break
+    if ignored_repertory[0] != '':
+        for el in myMedia.oStatus.fullPath.split('/'):
+            if el <> '' and el in ignored_repertory:
+                msg = 'This video is in a ignored repertory'
+                Debug(msg)
+                pchtrakt.logger.info(msg)
+                pchtrakt.StopTrying = 1
+                pchtrakt.lastPath = myMedia.oStatus.fullPath
+                ignored = 1
+                break
 
-    # if ignored == 0 and YamjIgnoredCategory[0] != '':
-        # files = listdir(YamjPath)
-        # for file in files:
-            # if file.endswith('xml'):
-                # file = unicode(file, errors='replace')
-                # if file.find(myMedia.parsedInfo.series_name) >= 0:
-                    # oXml = ElementTree.parse(YamjPath + file)
-                    # genres = oXml.findall('.//genre')
-                    # for genre in genres:
-                        # if genre.text.lower() in YamjIgnoredCategory:
-                            # msg = 'This video is in a ignored category'
-                            # Debug(msg)
-                            # pchtrakt.logger.info(msg)
-                            # pchtrakt.StopTrying = 1
-                            # pchtrakt.lastPath = myMedia.oStatus.fullPath
-                            # ignored = 1
-                            # break
-                    # if ignored == 1:
-                        # break
+    if ignored == 0 and YamjIgnoredCategory[0] != '':
+        files = listdir(YamjPath)
+        for file in files:
+            if file.endswith('xml'):
+                file = unicode(file, errors='replace')
+                if file.find(myMedia.parsedInfo.name) >= 0:
+                    oXml = ElementTree.parse(YamjPath + file)
+                    genres = oXml.findall('.//genre')
+                    for genre in genres:
+                        if genre.text.lower() in YamjIgnoredCategory:
+                            msg = 'This video is in a ignored category'
+                            Debug(msg)
+                            pchtrakt.logger.info(msg)
+                            pchtrakt.StopTrying = 1
+                            pchtrakt.lastPath = myMedia.oStatus.fullPath
+                            ignored = 1
+                            break
+                    if ignored == 1:
+                        break
    
     if not ignored:
         if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
