@@ -192,36 +192,36 @@ def videoStatusHandleTVSeries(myMedia):
 
 def videoStatusHandle(myMedia):
     ignored = False
-    if ignored_repertory[0] != '':
-        for el in myMedia.oStatus.fullPath.split('/'):
-            if el <> '' and el in ignored_repertory:
-                msg = 'This video is in a ignored repertory'
-                Debug(msg)
-                pchtrakt.logger.info(msg)
-                pchtrakt.StopTrying = 1
-                pchtrakt.lastPath = myMedia.oStatus.fullPath
-                ignored = 1
-                break
+    # if ignored_repertory[0] != '':
+        # for el in myMedia.oStatus.fullPath.split('/'):
+            # if el <> '' and el in ignored_repertory:
+                # msg = 'This video is in a ignored repertory'
+                # Debug(msg)
+                # pchtrakt.logger.info(msg)
+                # pchtrakt.StopTrying = 1
+                # pchtrakt.lastPath = myMedia.oStatus.fullPath
+                # ignored = 1
+                # break
 
-    if ignored == 0 and YamjIgnoredCategory[0] != '':
-        files = listdir(YamjPath)
-        for file in files:
-            if file.endswith('xml'):
-                file = unicode(file, errors='replace')
-                if file.find(myMedia.parsedInfo.series_name) >= 0:
-                    oXml = ElementTree.parse(YamjPath + file)
-                    genres = oXml.findall('.//genre')
-                    for genre in genres:
-                        if genre.text.lower() in YamjIgnoredCategory:
-                            msg = 'This video is in a ignored category'
-                            Debug(msg)
-                            pchtrakt.logger.info(msg)
-                            pchtrakt.StopTrying = 1
-                            pchtrakt.lastPath = myMedia.oStatus.fullPath
-                            ignored = 1
-                            break
-                    if ignored == 1:
-                        break
+    # if ignored == 0 and YamjIgnoredCategory[0] != '':
+        # files = listdir(YamjPath)
+        # for file in files:
+            # if file.endswith('xml'):
+                # file = unicode(file, errors='replace')
+                # if file.find(myMedia.parsedInfo.series_name) >= 0:
+                    # oXml = ElementTree.parse(YamjPath + file)
+                    # genres = oXml.findall('.//genre')
+                    # for genre in genres:
+                        # if genre.text.lower() in YamjIgnoredCategory:
+                            # msg = 'This video is in a ignored category'
+                            # Debug(msg)
+                            # pchtrakt.logger.info(msg)
+                            # pchtrakt.StopTrying = 1
+                            # pchtrakt.lastPath = myMedia.oStatus.fullPath
+                            # ignored = 1
+                            # break
+                    # if ignored == 1:
+                        # break
    
     if not ignored:
         if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
