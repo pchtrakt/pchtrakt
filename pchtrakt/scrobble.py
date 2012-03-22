@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 from lib import utilities
 from lib.utilities import Debug
 import pchtrakt
+from pchtrakt.exception import BetaSerieAuthenticationException
 from pchtrakt import mediaparser as mp
 from pchtrakt import betaseries as bs
 from pchtrakt.config import *

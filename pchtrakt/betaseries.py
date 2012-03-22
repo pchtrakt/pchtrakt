@@ -46,7 +46,8 @@ def getToken():
                                                 pwdmd5))
     oResponse = urlopen(url)
     oXml = ElementTree.XML(oResponse.read()) 
-    if not oXml.find("member/token"):
+    Debug(oXml.find("member/token"))
+    if oXml.find("member/token") == None:
         raise BetaSerieAuthenticationException('No token')
     return oXml.find("member/token").text
     

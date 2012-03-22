@@ -33,7 +33,7 @@ import os
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
-from pchtrakt.exception import BetaSerieAuthenticationException
+
 from pchtrakt import mediaparser as mp
 from time import sleep
 from lib.tvdb_api import tvdb_api
