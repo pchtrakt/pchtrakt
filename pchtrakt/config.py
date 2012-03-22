@@ -18,7 +18,6 @@
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 import ConfigParser
 import pchtrakt
-import socket
 
 config = ConfigParser.RawConfigParser()
 
