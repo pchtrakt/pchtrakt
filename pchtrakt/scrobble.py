@@ -202,11 +202,7 @@ def videoStatusHandle(myMedia):
     if ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
-                msg = 'This video is in a ignored repertory'
-                Debug(msg)
-                pchtrakt.logger.info(msg)
-                pchtrakt.StopTrying = 1
-                pchtrakt.lastPath = myMedia.oStatus.fullPath
+                msg = 'This video is in a ignored repertory: {0}'.format(el)
                 ignored = 1
                 break
 
@@ -220,11 +216,7 @@ def videoStatusHandle(myMedia):
                     genres = oXml.findall('.//genre')
                     for genre in genres:
                         if genre.text.lower() in YamjIgnoredCategory:
-                            msg = 'This video is in a ignored category'
-                            Debug(msg)
-                            pchtrakt.logger.info(msg)
-                            pchtrakt.StopTrying = 1
-                            pchtrakt.lastPath = myMedia.oStatus.fullPath
+                            msg = 'This video is in a ignored category: {0}'.format(genre.text)
                             ignored = 1
                             break
                     if ignored == 1:
@@ -239,6 +231,16 @@ def videoStatusHandle(myMedia):
             if TraktScrobbleMovie:
                 videoStatusHandleMovie(myMedia)
             pchtrakt.isMovie = 1
+    else:
+        msg += ' - {0} {1}x{2}'.format(myMedia.parsedInfo.name,
+                                           myMedia.parsedInfo.season_number,
+                                           myMedia.parsedInfo.episode_numbers[0]
+                                           )
+        Debug(msg)
+        pchtrakt.logger.info(msg)
+        pchtrakt.StopTrying = 1
+        pchtrakt.lastPath = myMedia.oStatus.fullPath
+
 
 def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:
