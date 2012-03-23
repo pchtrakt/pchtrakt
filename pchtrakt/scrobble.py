@@ -97,7 +97,7 @@ def showIsEnding(myMedia):
                                            myMedia.parsedInfo.season_number,
                                            myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
                                            )
-		Debug(msg)
+                Debug(msg)
                 pchtrakt.logger.info(msg)
                 
         else:
@@ -201,7 +201,23 @@ def videoStatusHandleTVSeries(myMedia):
         showStarted(myMedia)
 
 def videoStatusHandle(myMedia):
-    ignored = False
+    if not isIgnored(myMedia):
+        if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
+            if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
+                videoStatusHandleTVSeries(myMedia)
+            pchtrakt.isTvShow = 1
+        elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
+            if TraktScrobbleMovie:
+                videoStatusHandleMovie(myMedia)
+            pchtrakt.isMovie = 1
+    else:
+        pchtrakt.StopTrying = 1
+        pchtrakt.lastPath = myMedia.oStatus.fullPath
+
+
+def isIgnored(myMedia):
+    ignored = 0
+    
     if ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
@@ -224,27 +240,16 @@ def videoStatusHandle(myMedia):
                             break
                     if ignored == 1:
                         break
-   
-    if not ignored:
-        if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
-            if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
-                videoStatusHandleTVSeries(myMedia)
-            pchtrakt.isTvShow = 1
-        elif isinstance(myMedia.parsedInfo,mp.MediaParserResultMovie):
-            if TraktScrobbleMovie:
-                videoStatusHandleMovie(myMedia)
-            pchtrakt.isMovie = 1
-    else:
+                        
+    if ignored:
         msg += ' - {0} {1}x{2}'.format(myMedia.parsedInfo.name,
-                                           myMedia.parsedInfo.season_number,
-                                           myMedia.parsedInfo.episode_numbers[0]
-                                           )
+                                       myMedia.parsedInfo.season_number,
+                                       myMedia.parsedInfo.episode_numbers[0])
         Debug(msg)
         pchtrakt.logger.info(msg)
-        pchtrakt.StopTrying = 1
-        pchtrakt.lastPath = myMedia.oStatus.fullPath
-
-
+        
+    return ignored
+        
 def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:
         path = myMedia.oStatus.fileName
