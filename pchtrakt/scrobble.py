@@ -20,8 +20,6 @@ class EnumScrobbleResult:
 
 def showStarted(myMedia):
     if TraktScrobbleTvShow:
-        Debug('Trakt')
-        Debug('*****')
         responce = utilities.watchingEpisodeOnTrakt(myMedia.id,
                                                     myMedia.parsedInfo.name,
                                                     myMedia.year,
@@ -35,8 +33,6 @@ def showStarted(myMedia):
     
     
 def movieStarted(myMedia):
-    Debug('Trakt')
-    Debug('*****')
     responce = utilities.watchingMovieOnTrakt(myMedia.id,
                                                myMedia.parsedInfo.name,
                                                myMedia.year,
@@ -48,8 +44,6 @@ def movieStarted(myMedia):
     
     
 def showStopped():
-    Debug('Trakt')
-    Debug('*****')
     responce = utilities.cancelWatchingEpisodeOnTrakt()
     msg = 'Video stopped: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
@@ -57,8 +51,6 @@ def showStopped():
     
     
 def movieStopped():
-    Debug('Trakt')
-    Debug('*****')
     responce = utilities.cancelWatchingMovieOnTrakt()
     msg = 'Video stopped: %s - %s' %(responce['status'],responce['message'])
     Debug(msg)
@@ -83,14 +75,12 @@ def movieStillRunning(myMedia):
 def showIsEnding(myMedia):
     try:
         if BetaSeriesScrobbleTvShow:
-            Debug('BetaSerie')
-            Debug('*********')
             result = 0
             serieXml = bs.getSerieUrl(myMedia.parsedInfo.name)
             token = bs.getToken()
             isWatched = bs.isEpisodeWatched(serieXml,token,myMedia.parsedInfo.season_number
                                         ,myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode])      
-            Debug('Episode iswatched: {0}'.format(isWatched))
+            Debug('(BetaSeries) Is episode watched: {0}'.format(isWatched))
             msg = '(BetaSeries) Video is '
             if not isWatched:
                 result = bs.scrobbleEpisode(serieXml
@@ -107,7 +97,7 @@ def showIsEnding(myMedia):
                                            myMedia.parsedInfo.season_number,
                                            myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]
                                            )
-                Debug(msg)
+		Debug(msg)
                 pchtrakt.logger.info(msg)
                 
         else:
@@ -118,10 +108,7 @@ def showIsEnding(myMedia):
     except Exception as e:
         Debug(e)
         pchtrakt.logger.info(e)
-    Debug(myMedia.ScrobResult)
     if TraktScrobbleTvShow:
-        Debug('Trakt')
-        Debug('*****')
         result = 0
         responce = utilities.scrobbleEpisodeOnTrakt(myMedia.id,
                                                     myMedia.parsedInfo.name,
@@ -140,7 +127,6 @@ def showIsEnding(myMedia):
             myMedia.ScrobResult |= EnumScrobbleResult.TRAKTOK
     else:  
         myMedia.ScrobResult |= EnumScrobbleResult.TRAKTOK
-    Debug(myMedia.ScrobResult)
     return myMedia.ScrobResult == EnumScrobbleResult.TRAKTOK | EnumScrobbleResult.BETASERIESOK
     
     
