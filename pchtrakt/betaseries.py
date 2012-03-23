@@ -75,6 +75,7 @@ def addShow(SerieXml,Token):
         return oXml.find("errors/error/content").text
 
 def isEpisodeWatched(SerieXml,Token,Saison,Episode):
+    addShow(SerieXml,Token)
     url = getUrl('shows/episodes/{0}'.format(SerieXml))
     url += '&token={0}&season={1}&episode={2}'.format(Token,Saison,Episode)
     oResponse = urlopen(url)
