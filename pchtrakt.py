@@ -53,9 +53,28 @@ pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
 
 
-def media():
-    def __init__():
-        pass  # just a container
+class media():
+    def __init__(self):
+        pass
+        
+    def __str__(self):
+        if isinstance(self.parsedInfo, mp.MediaParserResultTVShow):
+            msg = 'TV Show : {0} - Season:{1} - Episode:{2} ' \
+                    '- {3}% - {4} - TvDB: {5}'.format(
+                    self.parsedInfo.name,
+                    self.parsedInfo.season_number,
+                    self.parsedInfo.episode_numbers,
+                    self.oStatus.percent,
+                    self.oStatus.status,
+                    tvdb[self.parsedInfo.name]['id'])
+        else:
+            msg = 'Movie : {0} - Year : {1} - ' \
+                    '{2}% - IMDB: {3}'.format(
+                    self.parsedInfo.name,
+                    self.parsedInfo.year,
+                    self.oStatus.percent,
+                    self.id)
+        return msg
 
 
 def printHelp():
@@ -138,57 +157,48 @@ def daemonize():
 
 
 def doWork():
-    media.ScrobResult = 0
-    media.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
-    if pchtrakt.lastPath != media.oStatus.fullPath:
+    myMedia = media()
+    myMedia.ScrobResult = 0
+    myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
+    if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
         pchtrakt.idOK = 0
     if YamjWatched:
         try:
-            watchedFileCreation(media)
+            watchedFileCreation(myMedia)
         except BaseException as e:
             Debug('::: {0} :::'.format(pchtrakt.lastPath))
             Debug('::: {0} :::'.format(e))
             pchtrakt.logger.error(e)
     if not pchtrakt.StopTrying:
-        if (media.oStatus.status != EnumStatus.NOPLAY
-                and media.oStatus.status != EnumStatus.UNKNOWN):
-            if media.oStatus.status != EnumStatus.LOAD:
-                media.parsedInfo = pchtrakt.mediaparser.parse(
-                                        media.oStatus.fileName)
-                if isinstance(media.parsedInfo, mp.MediaParserResultTVShow):
-                    if media.parsedInfo.season_number == 0:
+        if (myMedia.oStatus.status != EnumStatus.NOPLAY
+                and myMedia.oStatus.status != EnumStatus.UNKNOWN):
+            if myMedia.oStatus.status != EnumStatus.LOAD:
+                myMedia.parsedInfo = pchtrakt.mediaparser.parse(
+                                        myMedia.oStatus.fileName)
+                if isinstance(myMedia.parsedInfo, mp.MediaParserResultTVShow):
+                    if myMedia.parsedInfo.season_number == 0:
                         raise BaseException('No season - maybe anime?')
-                    Debug('TV Show : {0} - Season:{1} - Episode:{2} - {3}% - {4} - TvDB: {5}'.format(
-                        media.parsedInfo.name,
-                        media.parsedInfo.season_number,
-                        media.parsedInfo.episode_numbers,
-                        media.oStatus.percent,
-                        media.oStatus.status,
-                        tvdb[media.parsedInfo.name]['id']))
-                    media.id = tvdb[media.parsedInfo.name]['id']
-                    year = tvdb[media.parsedInfo.name]['firstaired']
+                    myMedia.id = tvdb[myMedia.parsedInfo.name]['id']
+                    year = tvdb[myMedia.parsedInfo.name]['firstaired']
                     if year <> None:
-                        media.year = (year.split('-')[0])
-                    videoStatusHandle(media)
-                elif isinstance(media.parsedInfo, mp.MediaParserResultMovie):
+                        myMedia.year = (year.split('-')[0])
+                    Debug(myMedia)
+                    videoStatusHandle(myMedia)
+                elif isinstance(myMedia.parsedInfo, mp.MediaParserResultMovie):
                     if not pchtrakt.idOK:
                         # ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xm
                         ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
-                                quote(media.parsedInfo.name),
-                                media.parsedInfo.year))
+                                quote(myMedia.parsedInfo.name),
+                                myMedia.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
-                        # media.id = oXml.find('movie').get('id')
-                        media.id = oXml.find('imdbid').text
-                        media.year = media.parsedInfo.year
+                        # myMedia.id = oXml.find('movie').get('id')
+                        myMedia.id = oXml.find('imdbid').text
+                        myMedia.year = myMedia.parsedInfo.year
                         pchtrakt.idOK = 1
-                    Debug('Movie : {0} - Year : {1} - {2}% - IMDB: {3}'.format(
-                                            media.parsedInfo.name,
-                                                media.parsedInfo.year,
-                                                media.oStatus.percent,
-                                                media.id))
-                    videoStatusHandle(media)
+                    Debug(myMedia)
+                    videoStatusHandle(myMedia)
         else:
             if pchtrakt.lastPath != '':
                 if not pchtrakt.watched:
@@ -197,13 +207,13 @@ def doWork():
                 pchtrakt.lastPath = ''
                 pchtrakt.isMovie = 0
                 pchtrakt.isTvShow = 0
-            Debug("PCH status = {0}".format(media.oStatus.status))
+            Debug("PCH status = {0}".format(myMedia.oStatus.status))
 
 
 def stopTrying():
     try:
         pchtrakt.StopTrying = 1
-        pchtrakt.lastPath = media.oStatus.fullPath
+        pchtrakt.lastPath = myMedia.oStatus.fullPath
     except Exception as e:
         pass
         
@@ -235,7 +245,7 @@ if __name__ == '__main__':
             Debug(':::{0}:::'.format(e.msg))
             pchtrakt.logger.error(e.msg)
         except Exception as e:
-            stopTrying()
-            Debug('::: {0} :::'.format(pchtrakt.lastPath))
-            Debug('::: {0} :::'.format(e))
-            pchtrakt.logger.exception(e)
+           stopTrying()
+           Debug('::: {0} :::'.format(pchtrakt.lastPath))
+           Debug('::: {0} :::'.format(e))
+           pchtrakt.logger.exception(e)
