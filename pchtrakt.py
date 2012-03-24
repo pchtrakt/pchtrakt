@@ -51,12 +51,7 @@ tvdb = tvdb_api.Tvdb()
 
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
-
-
-class media():
-    def __init__(self):
-        pass
-        
+class media(): 
     def __str__(self):
         if isinstance(self.parsedInfo, mp.MediaParserResultTVShow):
             msg = 'TV Show : {0} - Season:{1} - Episode:{2} ' \
@@ -76,6 +71,7 @@ class media():
                     self.id)
         return msg
 
+myMedia = media()
 
 def printHelp():
     print('Usage {0} <options>'.format('pythpn pchtrak.py'))
@@ -157,7 +153,6 @@ def daemonize():
 
 
 def doWork():
-    myMedia = media()
     myMedia.ScrobResult = 0
     myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
