@@ -257,6 +257,10 @@ if __name__ == '__main__':
             stopTrying()
             Debug(':::{0}:::'.format(e.msg))
             pchtrakt.logger.error(e.msg)
+        except MovieResultNotFound as e:
+            stopTrying()
+            Debug(':::Movie not found - {0}:::'.format(e.file_name))
+            pchtrakt.logger.error(e.msg)
         except Exception as e:
            stopTrying()
            Debug('::: {0} :::'.format(pchtrakt.lastPath))
