@@ -262,9 +262,11 @@ def watchedFileCreation(myMedia):
         else:
             path = '{0}{1}'.format(YamjWatchedPath, path)
         path = '{0}.watched'.format(path)
-        
         if not isfile(path):
-            open(path, 'w')
+            f = open(path, 'w')
+            f.close()
             msg = 'I have created the file {0}'.format(path)
-            Debug(msg)
-            pchtrakt.logger.info(msg)
+        else:
+            msg = 'Watched file already existing'
+        Debug(msg)
+        pchtrakt.logger.info(msg)
