@@ -48,7 +48,7 @@ from urllib import quote
 
 
 tvdb = tvdb_api.Tvdb()
-pchtrakt.dictSerie = {}
+
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
 class media(): 
@@ -233,8 +233,11 @@ if __name__ == '__main__':
     getParams()
     if pchtrakt.DAEMON:
         daemonize()
-    with open('cache.json','r+') as f:
-        pchtrakt.dictSerie = json.load(f)
+    if os.path.isfile('cache.json'):
+        with open('cache.json','r+') as f:
+            pchtrakt.dictSerie = json.load(f)
+    else:
+        pchtrakt.dictSerie = {}
     while not pchtrakt.stop:
         try:
             doWork()
