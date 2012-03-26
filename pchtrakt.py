@@ -233,7 +233,7 @@ if __name__ == '__main__':
     getParams()
     if pchtrakt.DAEMON:
         daemonize()
-    with open('cache.json','r') as f:
+    with open('cache.json','r+') as f:
         pchtrakt.dictSerie = json.load(f)
     while not pchtrakt.stop:
         try:
