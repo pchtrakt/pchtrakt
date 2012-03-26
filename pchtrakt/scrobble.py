@@ -201,7 +201,9 @@ def videoStatusHandleTVSeries(myMedia):
         showStarted(myMedia)
 
 def videoStatusHandle(myMedia):
-    if not isIgnored(myMedia):
+    if pchtrakt.lastPath != myMedia.oStatus.fullPath:
+        pchtrakt.Ignored = isIgnored(myMedia)
+    if not pchtrakt.Ignored:
         if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
             if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
                 videoStatusHandleTVSeries(myMedia)
@@ -216,16 +218,16 @@ def videoStatusHandle(myMedia):
 
 
 def isIgnored(myMedia):
-    ignored = 0
+    ignored = False
     
     if ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
                 msg = 'This video is in a ignored repertory: {0}'.format(el)
-                ignored = 1
+                ignored = True
                 break
 
-    if ignored == 0 and YamjIgnoredCategory[0] != '':
+    if not ignored and YamjIgnoredCategory[0] != '':
         files = listdir(YamjPath)
         for file in files:
             if file.endswith('xml'):
@@ -234,11 +236,16 @@ def isIgnored(myMedia):
                     oXml = ElementTree.parse(YamjPath + file)
                     genres = oXml.findall('.//genre')
                     for genre in genres:
-                        if genre.text.lower() in YamjIgnoredCategory:
+                        txt = 'The ignored genres are :{0}'.format(YamjIgnoredCategory)
+                        txt += ' this genre is {0}'.format(genre.text.strip().lower())
+                        txt += ' is it ignored? {0}'.format(genre.text.strip().lower() in YamjIgnoredCategory)
+                        Debug(txt)
+                        pchtrakt.logger.info(txt)
+                        if genre.text.strip().lower() in YamjIgnoredCategory:
                             msg = 'This video is in a ignored category: {0}'.format(genre.text)
-                            ignored = 1
+                            ignored = True
                             break
-                    if ignored == 1:
+                    if ignored:
                         break
                         
     if ignored:
@@ -266,7 +273,5 @@ def watchedFileCreation(myMedia):
             f = open(path, 'w')
             f.close()
             msg = 'I have created the file {0}'.format(path)
-        else:
-            msg = 'Watched file already existing'
-        Debug(msg)
-        pchtrakt.logger.info(msg)
+            Debug(msg)
+            pchtrakt.logger.info(msg)
