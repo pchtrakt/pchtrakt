@@ -2,8 +2,6 @@
 ######################
 *.py[co]
 
-config.py
-
 #vim files
 *sw?
 
@@ -20,6 +18,7 @@ lib/tvdb_api/tests/
 #local_config
 local_config.py
 pchtrakt.log
+cache.json
 
 #ignore rep
 ignore
@@ -27,3 +26,5 @@ ignore
 *.log
 
 images
+
+scripts_install/TEST
