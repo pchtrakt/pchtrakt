@@ -258,8 +258,8 @@ if __name__ == '__main__':
             pchtrakt.logger.error(e)
         except utils.MaxScrobbleError as e:
             stopTrying()
-            Debug(':::{0}:::'.format(e.msg))
-            pchtrakt.logger.error(e.msg)
+            Debug(':::{0}:::'.format(e))
+            pchtrakt.logger.error(e)
         except MovieResultNotFound as e:
             stopTrying()
             msg = ':::Movie not found - {0}:::'.format(e.file_name)
