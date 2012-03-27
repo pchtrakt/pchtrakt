@@ -220,6 +220,10 @@ def videoStatusHandle(myMedia):
 def isIgnored(myMedia):
     ignored = False
     
+    msg = 'File: {0}'.format(myMedia.oStatus.fileName)
+    Debug(msg)
+    pchtrakt.logger.info(msg)
+    
     if ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
@@ -228,33 +232,41 @@ def isIgnored(myMedia):
                 break
 
     if not ignored and YamjIgnoredCategory[0] != '':
-        files = listdir(YamjPath)
-        for file in files:
-            if file.endswith('xml'):
-                file = unicode(file, errors='replace')
-                if file.find(myMedia.parsedInfo.name) >= 0:
-                    oXml = ElementTree.parse(YamjPath + file)
-                    genres = oXml.findall('.//genre')
-                    for genre in genres:
-                        txt = 'The ignored genres are :{0}'.format(YamjIgnoredCategory)
-                        txt += ' this genre is {0}'.format(genre.text.strip().lower())
-                        txt += ' is it ignored? {0}'.format(genre.text.strip().lower() in YamjIgnoredCategory)
-                        Debug(txt)
-                        pchtrakt.logger.info(txt)
-                        if genre.text.strip().lower() in YamjIgnoredCategory:
-                            msg = 'This video is in a ignored category: {0}'.format(genre.text)
-                            ignored = True
+        if isinstance(myMedia.parsedInfo, mp.MediaParserResultTVShow):
+            files = listdir(YamjPath)
+            for file in files:
+                if file.endswith('xml'):
+                    file = unicode(file, errors='replace')
+                    if file.find(myMedia.parsedInfo.name) >= 0:
+                        oXml = ElementTree.parse(YamjPath + file)
+                        ignored = isGenreIgnored(oXml.findall('.//genre'))
+                        if ignored:
                             break
-                    if ignored:
-                        break
-                        
-    if ignored:
-        msg += ' - {0}'.format(myMedia.oStatus.fileName)
-        Debug(msg)
-        pchtrakt.logger.info(msg)
-        
+        else:
+            file = unicode(myMedia.oStatus.fileName.rsplit('.',1)[0] + '.xml', errors='replace')
+            oXml = ElementTree.parse(YamjPath + file)
+            genres = oXml.findall('.//genre')
+            
+            ignored = isGenreIgnored(genres)
     return ignored
-        
+
+def isGenreIgnored(genres):
+    txt = 'The ignored genres are :{0}'.format(YamjIgnoredCategory)
+    Debug(txt)
+    pchtrakt.logger.info(txt)
+    for genre in genres:
+        genre = genre.text.strip().lower()
+        txt = 'This genre is {0}'.format(genre)
+        txt += ' --- Should it be ignored? {0}'.format(genre in YamjIgnoredCategory)
+        Debug(txt)
+        pchtrakt.logger.info(txt)
+        if genre in YamjIgnoredCategory:
+            txt = 'This video is in the ignored genre {0}'.format(genre)
+            Debug(txt)
+            pchtrakt.logger.info(txt)
+            return True
+    return False
+    
 def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:
         path = myMedia.oStatus.fileName

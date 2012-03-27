@@ -34,6 +34,8 @@ from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
 
+from pchtrakt.movieparser import MovieResultNotFound
+
 from pchtrakt import mediaparser as mp
 from time import sleep
 from lib.tvdb_api import tvdb_api
@@ -202,7 +204,6 @@ def doWork():
                         # ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
                                 # quote(myMedia.parsedInfo.name),
                                 # myMedia.parsedInfo.year))
-                        Debug(ImdbAPIurl)
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
                         myMedia.id = oXml.find('movie').get('id')
