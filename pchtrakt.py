@@ -254,8 +254,8 @@ if __name__ == '__main__':
             pchtrakt.logger.warning(msg)
         except utils.AuthenticationTraktError as e:
             stopTrying()
-            Debug(':::{0}::'.format(e.msg))
-            pchtrakt.logger.error(e.msg)
+            Debug(':::{0}::'.format(e))
+            pchtrakt.logger.error(e)
         except utils.MaxScrobbleError as e:
             stopTrying()
             Debug(':::{0}:::'.format(e.msg))
