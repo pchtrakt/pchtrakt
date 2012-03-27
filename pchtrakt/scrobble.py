@@ -249,9 +249,7 @@ def isIgnored(myMedia):
                         break
                         
     if ignored:
-        msg += ' - {0} {1}x{2}'.format(myMedia.parsedInfo.name,
-                                       myMedia.parsedInfo.season_number,
-                                       myMedia.parsedInfo.episode_numbers[0])
+        msg += ' - {0}'.format(myMedia.oStatus.fileName)
         Debug(msg)
         pchtrakt.logger.info(msg)
         
