@@ -47,6 +47,6 @@ if not YamjWatchedPath.endswith('/'):
 YamjPath = config.get('YAMJ', 'path')
 if not YamjPath.endswith('/'):
     YamjPath += '/'
-YamJWatchedVithVideo = config.get('YAMJ', 'watched_with_video')
-YamjWatched = config.get('YAMJ', 'watched')
+YamJWatchedVithVideo = config.getboolean('YAMJ', 'watched_with_video')
+YamjWatched = config.getboolean('YAMJ', 'watched')
 YamjIgnoredCategory = [x.strip().lower() for x in config.get('YAMJ', 'ignored_category').split(',')]
