@@ -52,35 +52,42 @@ force_pchtrakt()
    cd /share/Apps/pchtrakt
    mkdir /share/tmp
    cd /share/tmp
-   git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+   
+    if [ -f /share/Apps/pchtrakt/TEST ]; then
+        git clone -b testing git://github.com/pchtrakt/pchtrakt.git pchtrakt
+        else 
+        git clone git://github.com/pchtrakt/pchtrakt.git pchtrakt
+    fi  
+ 
    cp -R pchtrakt/* /share/Apps/pchtrakt
    chmod -R 777 /share/Apps/pchtrakt
    cp -f /share/Apps/pchtrakt/scripts_install/update.py /share/Apps/pchtrakt/
    cp -f /share/Apps/pchtrakt/scripts_install/appinfo.json /share/Apps/pchtrakt/
    cp -f /share/Apps/pchtrakt/scripts_install/daemon.sh /share/Apps/pchtrakt/
+   rm -fr /share/Apps/pchtrakt/scripts_install/
    cd
    rm -r /share/tmp
 }
 
 force_all()
 {
-opkg update
-opkg install python2.7-dev -force-depends -force-overwrite
-opkg install git -force-depends -force-overwrite
-cd /share/Apps/pchtrakt/
+    opkg update
+    opkg install python2.7-dev -force-depends -force-overwrite
+    opkg install git -force-depends -force-overwrite
+    cd /share/Apps/pchtrakt/
 }
 
 start_pchtrakt()
 {
-# start pchtrakt
-ps | grep "[p]chtrakt.py --daemon" > /dev/null
-if [ $? -ne 0 ];
-then
-echo "pchtrakt.py is not running, Starting processes"
-cd /share/Apps/pchtrakt
-python2.7 pchtrakt.py --daemon
-cd
-fi
+    # start pchtrakt
+    ps | grep "[p]chtrakt.py --daemon" > /dev/null
+    if [ $? -ne 0 ];
+    then
+        echo "pchtrakt.py is not running, Starting processes"
+        cd /share/Apps/pchtrakt
+        python2.7 pchtrakt.py --daemon
+        cd
+    fi
 }
 
 stop_pchtrakt()

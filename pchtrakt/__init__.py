@@ -41,9 +41,9 @@ def newConfig():
     if not config.has_section('Trakt'):
         config.add_section('Trakt')
     if not config.has_option('Trakt','enable_movie_scrobbling'):
-        config.set('Trakt', 'enable_movie_scrobbling', '1')
+        config.set('Trakt', 'enable_movie_scrobbling', True)
     if not config.has_option('Trakt','enable_tvshow_scrobbling'):
-        config.set('Trakt', 'enable_tvshow_scrobbling', '1')      
+        config.set('Trakt', 'enable_tvshow_scrobbling', True)      
     if not config.has_option('Trakt','login'):
         config.set('Trakt', 'login', 'your_trakt_login')
     if not config.has_option('Trakt','password'):
@@ -54,7 +54,7 @@ def newConfig():
     if not config.has_section('BetaSeries'):
         config.add_section('BetaSeries')
     if not config.has_option('BetaSeries','enable_tvshow_scrobbling'):
-        config.set('BetaSeries', 'enable_tvshow_scrobbling', '0')   
+        config.set('BetaSeries', 'enable_tvshow_scrobbling', False)   
     if not config.has_option('BetaSeries','login'):
         config.set('BetaSeries', 'login', 'your_login')
     if not config.has_option('BetaSeries','password'):
@@ -63,11 +63,11 @@ def newConfig():
     if not config.has_section('YAMJ'):
         config.add_section('YAMJ')
     if not config.has_option('YAMJ','watched'):
-        config.set('YAMJ', 'watched', '0')
+        config.set('YAMJ', 'watched', False)
     if not config.has_option('YAMJ','watched_path'):
         config.set('YAMJ', 'watched_path', '')
     if not config.has_option('YAMJ','watched_with_video'):
-        config.set('YAMJ', 'watched_with_video', 1)
+        config.set('YAMJ', 'watched_with_video', True)
     if not config.has_option('YAMJ','ignored_category'):
         config.set('YAMJ', 'ignored_category', '')
     if not config.has_option('YAMJ','path'):

@@ -201,7 +201,9 @@ def videoStatusHandleTVSeries(myMedia):
         showStarted(myMedia)
 
 def videoStatusHandle(myMedia):
-    if not isIgnored(myMedia):
+    if pchtrakt.lastPath != myMedia.oStatus.fullPath:
+        pchtrakt.Ignored = isIgnored(myMedia)
+    if not pchtrakt.Ignored:
         if isinstance(myMedia.parsedInfo,mp.MediaParserResultTVShow):
             if TraktScrobbleTvShow or BetaSeriesScrobbleTvShow:
                 videoStatusHandleTVSeries(myMedia)
@@ -216,40 +218,55 @@ def videoStatusHandle(myMedia):
 
 
 def isIgnored(myMedia):
-    ignored = 0
+    ignored = False
+    
+    msg = 'File: {0}'.format(myMedia.oStatus.fileName)
+    Debug(msg)
+    pchtrakt.logger.info(msg)
     
     if ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
                 msg = 'This video is in a ignored repertory: {0}'.format(el)
-                ignored = 1
+                ignored = True
                 break
 
-    if ignored == 0 and YamjIgnoredCategory[0] != '':
-        files = listdir(YamjPath)
-        for file in files:
-            if file.endswith('xml'):
-                file = unicode(file, errors='replace')
-                if file.find(myMedia.parsedInfo.name) >= 0:
-                    oXml = ElementTree.parse(YamjPath + file)
-                    genres = oXml.findall('.//genre')
-                    for genre in genres:
-                        if genre.text.lower() in YamjIgnoredCategory:
-                            msg = 'This video is in a ignored category: {0}'.format(genre.text)
-                            ignored = 1
+    if not ignored and YamjIgnoredCategory[0] != '':
+        if isinstance(myMedia.parsedInfo, mp.MediaParserResultTVShow):
+            files = listdir(YamjPath)
+            for file in files:
+                if file.endswith('xml'):
+                    file = unicode(file, errors='replace')
+                    if file.find(myMedia.parsedInfo.name) >= 0:
+                        oXml = ElementTree.parse(YamjPath + file)
+                        ignored = isGenreIgnored(oXml.findall('.//genre'))
+                        if ignored:
                             break
-                    if ignored == 1:
-                        break
-                        
-    if ignored:
-        msg += ' - {0} {1}x{2}'.format(myMedia.parsedInfo.name,
-                                       myMedia.parsedInfo.season_number,
-                                       myMedia.parsedInfo.episode_numbers[0])
-        Debug(msg)
-        pchtrakt.logger.info(msg)
-        
+        else:
+            file = unicode(myMedia.oStatus.fileName.rsplit('.',1)[0] + '.xml', errors='replace')
+            oXml = ElementTree.parse(YamjPath + file)
+            genres = oXml.findall('.//genre')
+            
+            ignored = isGenreIgnored(genres)
     return ignored
-        
+
+def isGenreIgnored(genres):
+    txt = 'The ignored genres are :{0}'.format(YamjIgnoredCategory)
+    Debug(txt)
+    pchtrakt.logger.info(txt)
+    for genre in genres:
+        genre = genre.text.strip().lower()
+        txt = 'This genre is {0}'.format(genre)
+        txt += ' --- Should it be ignored? {0}'.format(genre in YamjIgnoredCategory)
+        Debug(txt)
+        pchtrakt.logger.info(txt)
+        if genre in YamjIgnoredCategory:
+            txt = 'This video is in the ignored genre {0}'.format(genre)
+            Debug(txt)
+            pchtrakt.logger.info(txt)
+            return True
+    return False
+    
 def watchedFileCreation(myMedia):
     if YamjWatched and myMedia.oStatus.percent > 90:
         path = myMedia.oStatus.fileName
@@ -262,9 +279,9 @@ def watchedFileCreation(myMedia):
         else:
             path = '{0}{1}'.format(YamjWatchedPath, path)
         path = '{0}.watched'.format(path)
-        
         if not isfile(path):
-            open(path, 'w')
+            f = open(path, 'w')
+            f.close()
             msg = 'I have created the file {0}'.format(path)
             Debug(msg)
             pchtrakt.logger.info(msg)

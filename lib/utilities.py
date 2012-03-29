@@ -66,7 +66,7 @@ def getTraktConnection():
         conn = NBHTTPConnection('api.trakt.tv')
     except socket.timeout:
         Debug("getTraktConnection: can't connect to trakt - timeout")
-        notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" ) + ": timeout") # can't connect to trakt
+        # notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" ) + ": timeout") # can't connect to trakt
         return None
     return conn
     
@@ -116,7 +116,7 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
         # print "json: " + jdata
     except socket.error:
         Debug("traktQuery: can't connect to trakt")
-        if not silent: notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" )) # can't connect to trakt
+        # if not silent: notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" )) # can't connect to trakt
         if returnStatus:
             data = {}
             data['status'] = 'failure'
@@ -147,7 +147,7 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             data['status'] = 'failure'
             data['error'] = 'Bad responce from trakt'
             return data
-        if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": Bad responce from trakt") # Error
+        # if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": Bad responce from trakt") # Error
         return None
 
     if 'status' in data:
@@ -354,10 +354,10 @@ def rateMovieOnTrakt(imdbid, title, year, rating):
     if data == None:
         Debug("Error in request from 'rateMovieOnTrakt()'")
     
-    if (rating == "unrate"):
-        notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
-    else :
-        notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
+    # if (rating == "unrate"):
+        # notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
+    # else :
+        # notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
     
     return data
 
@@ -390,10 +390,10 @@ def rateEpisodeOnTrakt(tvdbid, title, year, season, episode, rating):
     if data == None:
         Debug("Error in request from 'rateEpisodeOnTrakt()'")
     
-    if (rating == "unrate"):
-        notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
-    else :
-        notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
+    # if (rating == "unrate"):
+        # notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
+    # else :
+        # notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
     
     return data
     
@@ -426,10 +426,10 @@ def rateShowOnTrakt(tvdbid, title, year, rating):
     if data == None:
         Debug("Error in request from 'rateShowOnTrakt()'")
     
-    if (rating == "unrate"):
-        notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
-    else :
-        notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
+    # if (rating == "unrate"):
+        # notification("Trakt Utilities", __language__(1166).encode( "utf-8", "ignore" )) # Rating removed successfully
+    # else :
+        # notification("Trakt Utilities", __language__(1167).encode( "utf-8", "ignore" )) # Rating submitted successfully
     
     return data
 

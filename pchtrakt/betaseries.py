@@ -27,16 +27,20 @@ def destroyToken(Token):
         return oXml.find('errors/error/content').text
 
 def getSerieUrl(SerieName):
-    quotedSerieName = quote(SerieName)
-    url = getUrl('shows/search.json') + '&title={0}'.format(quotedSerieName)
-    oResponse = urlopen(url)
-    myJson = json.loads(oResponse.read())
-    myKey= '0'
-    for key, subdict in myJson['root']['shows'].iteritems():
-        if (subdict['title'] == SerieName):
-            myKey = key
-            break
-    myUrl = myJson['root']['shows'][myKey]['url']
+    if pchtrakt.dictSerie[SerieName]['Betaseries'] == '':
+        quotedSerieName = quote(SerieName)
+        url = getUrl('shows/search.json') + '&title={0}'.format(quotedSerieName)
+        oResponse = urlopen(url)
+        myJson = json.loads(oResponse.read())
+        myKey= '0'
+        for key, subdict in myJson['root']['shows'].iteritems():
+            if (subdict['title'] == SerieName):
+                myKey = key
+                break
+        myUrl = myJson['root']['shows'][myKey]['url']
+        pchtrakt.dictSerie[SerieName]['Betaseries'] = myUrl
+    else:
+        myUrl = pchtrakt.dictSerie[SerieName]['Betaseries']
     return quote('{0}.xml'.format(myUrl))
 
 def getToken():

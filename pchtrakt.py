@@ -28,11 +28,13 @@ import sys
 import getopt
 import pchtrakt
 import os
-
+import json
 
 from pchtrakt.pch import *
 from pchtrakt.scrobble import *
 from pchtrakt.config import *
+
+from pchtrakt.movieparser import MovieResultNotFound
 
 from pchtrakt import mediaparser as mp
 from time import sleep
@@ -157,7 +159,9 @@ def doWork():
     myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
-        pchtrakt.idOK = 0
+        myMedia.id = None
+        with open('cache.json','w') as f:
+            json.dump(pchtrakt.dictSerie, f, separators=(',',':'), indent=4)
     if YamjWatched:
         try:
             watchedFileCreation(myMedia)
@@ -172,26 +176,39 @@ def doWork():
                 myMedia.parsedInfo = pchtrakt.mediaparser.parse(
                                         myMedia.oStatus.fileName)
                 if isinstance(myMedia.parsedInfo, mp.MediaParserResultTVShow):
-                    if myMedia.parsedInfo.season_number == 0:
-                        raise BaseException('No season - maybe anime?')
-                    myMedia.id = tvdb[myMedia.parsedInfo.name]['id']
-                    year = tvdb[myMedia.parsedInfo.name]['firstaired']
-                    if year <> None:
-                        myMedia.year = (year.split('-')[0])
+                    if myMedia.id == None:
+                        if myMedia.parsedInfo.season_number == 0:
+                            raise BaseException('No season - maybe anime?')
+                        if not myMedia.parsedInfo.name in pchtrakt.dictSerie:
+                            Debug('Added to cache!')
+                            myMedia.id = tvdb[myMedia.parsedInfo.name]['id']
+                            year = tvdb[myMedia.parsedInfo.name]['firstaired']
+                            myMedia.year = ''
+                            if year <> None:
+                                myMedia.year = (year.split('-')[0])
+                            pchtrakt.dictSerie[myMedia.parsedInfo.name]={'Year':myMedia.year,
+                                                                         'TvDbId':myMedia.id,
+                                                                         'Betaseries':''} 
+                        else:
+                            Debug('Cached!')
+                            myMedia.id = pchtrakt.dictSerie[myMedia.parsedInfo.name]['TvDbId']
+                            myMedia.year = pchtrakt.dictSerie[myMedia.parsedInfo.name]['Year']
+
                     Debug(myMedia)
                     videoStatusHandle(myMedia)
                 elif isinstance(myMedia.parsedInfo, mp.MediaParserResultMovie):
-                    if not pchtrakt.idOK:
-                        # ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xm
-                        ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
-                                quote(myMedia.parsedInfo.name),
-                                myMedia.parsedInfo.year))
+                    if myMedia.id == None:
+                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xml'.format(
+                                                        quote(myMedia.parsedInfo.name),
+                                                            myMedia.parsedInfo.year))
+                        # ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
+                                # quote(myMedia.parsedInfo.name),
+                                # myMedia.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
-                        # myMedia.id = oXml.find('movie').get('id')
-                        myMedia.id = oXml.find('imdbid').text
+                        myMedia.id = oXml.find('movie').get('id')
+                        # myMedia.id = oXml.find('imdbid').text
                         myMedia.year = myMedia.parsedInfo.year
-                        pchtrakt.idOK = 1
                     Debug(myMedia)
                     videoStatusHandle(myMedia)
         else:
@@ -217,6 +234,11 @@ if __name__ == '__main__':
     getParams()
     if pchtrakt.DAEMON:
         daemonize()
+    if os.path.isfile('cache.json'):
+        with open('cache.json','r+') as f:
+            pchtrakt.dictSerie = json.load(f)
+    else:
+        pchtrakt.dictSerie = {}
     while not pchtrakt.stop:
         try:
             doWork()
@@ -233,12 +255,17 @@ if __name__ == '__main__':
             pchtrakt.logger.warning(msg)
         except utils.AuthenticationTraktError as e:
             stopTrying()
-            Debug(':::{0}::'.format(e.msg))
-            pchtrakt.logger.error(e.msg)
+            Debug(':::{0}::'.format(e))
+            pchtrakt.logger.error(e)
         except utils.MaxScrobbleError as e:
             stopTrying()
-            Debug(':::{0}:::'.format(e.msg))
-            pchtrakt.logger.error(e.msg)
+            Debug(':::{0}:::'.format(e))
+            pchtrakt.logger.error(e)
+        except MovieResultNotFound as e:
+            stopTrying()
+            msg = ':::Movie not found - {0}:::'.format(e.file_name)
+            Debug(msg)
+            pchtrakt.logger.error(msg)
         except Exception as e:
            stopTrying()
            Debug('::: {0} :::'.format(pchtrakt.lastPath))
