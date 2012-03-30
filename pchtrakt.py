@@ -173,7 +173,7 @@ def doWork():
         if myMedia.oStatus.status not in   [EnumStatus.NOPLAY, 
                                             EnumStatus.UNKNOWN,
                                             EnumStatus.PAUSE]:
-            pchtrakt.allowedPauseTime = 900
+            pchtrakt.allowedPauseTime = TraktMaxPauseTime
             if myMedia.oStatus.status != EnumStatus.LOAD:
                 myMedia.parsedInfo = pchtrakt.mediaparser.parse(
                                         myMedia.oStatus.fileName)
@@ -216,11 +216,16 @@ def doWork():
         elif (myMedia.oStatus.status == EnumStatus.PAUSE 
             and pchtrakt.allowedPauseTime > 0):
             pchtrakt.allowedPauseTime -= sleepTime
-            Debug(pchtrakt.allowedPauseTime)
+            Debug(myMedia)
         else:
             if pchtrakt.lastPath != '':
                 if not pchtrakt.watched:
                     videoStopped()
+                if pchtrakt.allowedPauseTime <= 0:
+                    pchtrakt.logger.info('It seems you paused ' \
+                                         'the video for more than {0} minutes: ' \
+                                         'I say to trakt you stopped watching ' \
+                                         'your video'.format(TraktMaxPauseTime/60))
                 pchtrakt.watched = 0
                 pchtrakt.lastPath = ''
                 pchtrakt.isMovie = 0

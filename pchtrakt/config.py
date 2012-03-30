@@ -34,6 +34,7 @@ TraktPwd = config.get('Trakt', 'password')
 TraktScrobbleTvShow = config.getboolean('Trakt', 'enable_tvshow_scrobbling') 
 TraktScrobbleMovie = config.getboolean('Trakt', 'enable_movie_scrobbling') 
 TraktRefreshTime = config.get('Trakt', 'refresh_time')
+TraktMaxPauseTime = 60*15
 
 # Betaseries
 BetaSeriesUsername = config.get('BetaSeries', 'login') 
