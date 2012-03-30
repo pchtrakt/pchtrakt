@@ -239,6 +239,7 @@ if __name__ == '__main__':
             pchtrakt.dictSerie = json.load(f)
     else:
         pchtrakt.dictSerie = {}
+    pchtrakt.logger.warning('Pchtrakt START')
     while not pchtrakt.stop:
         try:
             try:
@@ -274,3 +275,4 @@ if __name__ == '__main__':
            pchtrakt.logger.exception('This should never happend! Please contact me with the error if you read this')
            pchtrakt.logger.exception(pchtrakt.lastPath)
            pchtrakt.logger.exception(e)
+    pchtrakt.logger.warning('Pchtrakt STOP')
