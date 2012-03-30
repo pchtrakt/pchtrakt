@@ -80,15 +80,13 @@ def printHelp():
     print('Options:')
     print('    -h,--help    :    display this message')
     print('    -d,--daemon  :    launches pchtrakt in the background')
-    print('    -l,--library :    pchtrakt is going to add' \
-          ' to the trakt library whatever it finds')
 
 
 def getParams():
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   "dhtl:",
-                                   ['daemon', 'help', 'library='])
+                                   "dht:",
+                                   ['daemon', 'help'])
     except getopt.GetoptError:
         print("Available options: -d, --daemon")
         sys.exit()
@@ -115,13 +113,7 @@ def getParams():
             finally:
                 sys.exit()
 
-        if o in ('-l', '--library'):
-            from pchtrakt import library as li
-            myLibrary = li.library()
-            myLibrary.add(a)
-            sys.exit()
-
-
+                
 def daemonize():
     """
     Fork off as a daemon
