@@ -170,8 +170,10 @@ def doWork():
             Debug('::: {0} :::'.format(e))
             pchtrakt.logger.error(e)
     if not pchtrakt.StopTrying:
-        if (myMedia.oStatus.status != EnumStatus.NOPLAY
-                and myMedia.oStatus.status != EnumStatus.UNKNOWN):
+        if myMedia.oStatus.status not in   [EnumStatus.NOPLAY, 
+                                            EnumStatus.UNKNOWN,
+                                            EnumStatus.PAUSE]:
+            pchtrakt.allowedPauseTime = 900
             if myMedia.oStatus.status != EnumStatus.LOAD:
                 myMedia.parsedInfo = pchtrakt.mediaparser.parse(
                                         myMedia.oStatus.fileName)
@@ -211,6 +213,10 @@ def doWork():
                         myMedia.year = myMedia.parsedInfo.year
                     Debug(myMedia)
                     videoStatusHandle(myMedia)
+        elif (myMedia.oStatus.status == EnumStatus.PAUSE 
+            and pchtrakt.allowedPauseTime > 0):
+            pchtrakt.allowedPauseTime -= sleepTime
+            Debug(pchtrakt.allowedPauseTime)
         else:
             if pchtrakt.lastPath != '':
                 if not pchtrakt.watched:
@@ -239,7 +245,7 @@ if __name__ == '__main__':
             pchtrakt.dictSerie = json.load(f)
     else:
         pchtrakt.dictSerie = {}
-    pchtrakt.logger.warning('Pchtrakt START')
+    pchtrakt.logger.info('Pchtrakt START')
     while not pchtrakt.stop:
         try:
             try:
@@ -275,4 +281,4 @@ if __name__ == '__main__':
            pchtrakt.logger.exception('This should never happend! Please contact me with the error if you read this')
            pchtrakt.logger.exception(pchtrakt.lastPath)
            pchtrakt.logger.exception(e)
-    pchtrakt.logger.warning('Pchtrakt STOP')
+    pchtrakt.logger.info('Pchtrakt STOP')
