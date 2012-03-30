@@ -241,33 +241,35 @@ if __name__ == '__main__':
         pchtrakt.dictSerie = {}
     while not pchtrakt.stop:
         try:
-            doWork()
-            sleep(sleepTime)
-        except (KeyboardInterrupt, SystemExit):
-            Debug(':::Stopping pchtrakt:::')
-            pchtrakt.stop = 1
-            videoStopped()
-        except tvdb_exceptions.tvdb_shownotfound as e:
-            stopTrying()
-            msg = (':::TheTvDB - Show not found ' \
-                   '{0} :::'.format(pchtrakt.lastPath))
-            Debug(msg)
-            pchtrakt.logger.warning(msg)
-        except utils.AuthenticationTraktError as e:
-            stopTrying()
-            Debug(':::{0}::'.format(e))
-            pchtrakt.logger.error(e)
-        except utils.MaxScrobbleError as e:
-            stopTrying()
-            Debug(':::{0}:::'.format(e))
-            pchtrakt.logger.error(e)
-        except MovieResultNotFound as e:
-            stopTrying()
-            msg = ':::Movie not found - {0}:::'.format(e.file_name)
-            Debug(msg)
-            pchtrakt.logger.error(msg)
+            try:
+                doWork()
+                sleep(sleepTime)
+            except (KeyboardInterrupt, SystemExit):
+                Debug(':::Stopping pchtrakt:::')
+                pchtrakt.stop = 1
+                videoStopped()
+            except tvdb_exceptions.tvdb_shownotfound as e:
+                stopTrying()
+                msg = (':::TheTvDB - Show not found ' \
+                       '{0} :::'.format(pchtrakt.lastPath))
+                Debug(msg)
+                pchtrakt.logger.warning(msg)
+            except utils.AuthenticationTraktError as e:
+                stopTrying()
+                Debug(':::{0}::'.format(e))
+                pchtrakt.logger.error(e)
+            except utils.MaxScrobbleError as e:
+                stopTrying()
+                Debug(':::{0}:::'.format(e))
+                pchtrakt.logger.error(e)
+            except MovieResultNotFound as e:
+                stopTrying()
+                msg = ':::Movie not found - {0}:::'.format(e.file_name)
+                Debug(msg)
+                pchtrakt.logger.error(msg)
         except Exception as e:
            stopTrying()
+           Debug('This should never happend! Please contact me with the error if you read this')
            Debug('::: {0} :::'.format(pchtrakt.lastPath))
            Debug('::: {0} :::'.format(e))
            pchtrakt.logger.exception(e)
