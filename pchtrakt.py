@@ -269,7 +269,8 @@ if __name__ == '__main__':
                 pchtrakt.logger.error(msg)
         except Exception as e:
            stopTrying()
-           Debug('This should never happend! Please contact me with the error if you read this')
            Debug('::: {0} :::'.format(pchtrakt.lastPath))
            Debug('::: {0} :::'.format(e))
+           pchtrakt.logger.exception('This should never happend! Please contact me with the error if you read this')
+           pchtrakt.logger.exception(pchtrakt.lastPath)
            pchtrakt.logger.exception(e)
