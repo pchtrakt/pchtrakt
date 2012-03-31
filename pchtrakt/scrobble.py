@@ -268,7 +268,7 @@ def isGenreIgnored(genres):
     return False
     
 def watchedFileCreation(myMedia):
-    if YamjWatched and myMedia.oStatus.percent > 90:
+    if myMedia.oStatus.percent > 90:
         path = myMedia.oStatus.fileName
         if YamJWatchedVithVideo:
             path = myMedia.oStatus.fullPath
