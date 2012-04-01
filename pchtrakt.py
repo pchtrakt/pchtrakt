@@ -154,7 +154,7 @@ def doWork():
         myMedia.id = None
         with open('cache.json','w') as f:
             json.dump(pchtrakt.dictSerie, f, separators=(',',':'), indent=4)
-    if YamjWatched:
+    if YamjWatched == True:
         try:
             watchedFileCreation(myMedia)
         except BaseException as e:
