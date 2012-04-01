@@ -214,7 +214,7 @@ def videoStatusHandle(myMedia):
             pchtrakt.isMovie = 1
     else:
         pchtrakt.StopTrying = 1
-        pchtrakt.lastPath = myMedia.oStatus.fullPath
+    pchtrakt.lastPath = myMedia.oStatus.fullPath
 
 
 def isIgnored(myMedia):
