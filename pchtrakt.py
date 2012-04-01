@@ -162,7 +162,9 @@ def doWork():
         myMedia.id = None
         with open('cache.json','w') as f:
             json.dump(pchtrakt.dictSerie, f, separators=(',',':'), indent=4)
-    if YamjWatched:
+        pchtrakt.logger.info('YamjWatched = {0}'.format(YamjWatched))
+    if YamjWatched == True:
+        pchtrakt.logger.info('If YamjWatched is false I shouldnt print this : YamjWatched = {0}'.format(YamjWatched))
         try:
             watchedFileCreation(myMedia)
         except BaseException as e:
