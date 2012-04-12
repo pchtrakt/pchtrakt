@@ -48,6 +48,8 @@ from xml.etree import ElementTree
 from urllib2 import Request, urlopen, URLError, HTTPError
 from urllib import quote
 
+class PchTraktException(Exception):
+    pass
 
 tvdb = tvdb_api.Tvdb()
 
@@ -200,9 +202,12 @@ def doWork():
                                 # myMedia.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
                         oXml = ElementTree.XML(oResponse.read())
-                        myMedia.id = oXml.find('movie').get('id')
-                        # myMedia.id = oXml.find('imdbid').text
-                        myMedia.year = myMedia.parsedInfo.year
+                        if oXml.find('movie') == None:
+                            raise PchTraktException('Can\'t find the movie ID on: {0}'.format(ImdbAPIurl))
+                        else:
+                            myMedia.id = oXml.find('movie').get('id')
+                            # myMedia.id = oXml.find('imdbid').text
+                            myMedia.year = myMedia.parsedInfo.year
                     Debug(myMedia)
                     videoStatusHandle(myMedia)
         elif (myMedia.oStatus.status == EnumStatus.PAUSE 
@@ -258,19 +263,29 @@ if __name__ == '__main__':
                        '{0} :::'.format(pchtrakt.lastPath))
                 Debug(msg)
                 pchtrakt.logger.warning(msg)
+                sleep(sleepTime)
             except utils.AuthenticationTraktError as e:
                 stopTrying()
                 Debug(':::{0}::'.format(e))
                 pchtrakt.logger.error(e)
+                sleep(sleepTime)
             except utils.MaxScrobbleError as e:
                 stopTrying()
                 Debug(':::{0}:::'.format(e))
                 pchtrakt.logger.error(e)
+                sleep(sleepTime)
             except MovieResultNotFound as e:
                 stopTrying()
                 msg = ':::Movie not found - {0}:::'.format(e.file_name)
                 Debug(msg)
                 pchtrakt.logger.error(msg)
+                sleep(sleepTime)
+            except PchTraktException as e:
+                stopTrying()
+                msg = ':::PchTraktException - {0}:::'.format(e)
+                Debug(msg)
+                pchtrakt.logger.error(msg)
+                sleep(sleepTime)
         except Exception as e:
            stopTrying()
            Debug('::: {0} :::'.format(pchtrakt.lastPath))
@@ -278,4 +293,5 @@ if __name__ == '__main__':
            pchtrakt.logger.exception('This should never happend! Please contact me with the error if you read this')
            pchtrakt.logger.exception(pchtrakt.lastPath)
            pchtrakt.logger.exception(e)
+           sleep(sleepTime)
     pchtrakt.logger.info('Pchtrakt STOP')

@@ -54,7 +54,6 @@ class MediaParser():
         self.MovieParser = MovieParser()
         
     def parse(self, file_name):
-        #TODO(achtus): try to detect tv show with 00x00 or 0x00 or s00e00 or s0e0 or s0e00
         try:
             parsedResult = self.TVShowParser.parse(file_name)
             oResultTVShow = MediaParserResultTVShow(file_name,parsedResult.series_name,parsedResult.season_number,parsedResult.episode_numbers)
