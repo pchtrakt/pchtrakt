@@ -201,7 +201,11 @@ def doWork():
                                 # quote(myMedia.parsedInfo.name),
                                 # myMedia.parsedInfo.year))
                         oResponse = urlopen(ImdbAPIurl)
-                        oXml = ElementTree.XML(oResponse.read())
+                        try:
+                            oXml = ElementTree.XML(oResponse.read())
+                        except sys.exc_type as e:
+                            raise PchTraktException('Can\'t parse response: {0}'.format(ImdbAPIurl))
+                            
                         if oXml.find('movie') == None:
                             raise PchTraktException('Can\'t find the movie ID on: {0}'.format(ImdbAPIurl))
                         else:
