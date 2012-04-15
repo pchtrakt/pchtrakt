@@ -18,6 +18,11 @@
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 import ConfigParser
 import pchtrakt
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("gmail.com",80))
+myIp = s.getsockname()[0]
+s.close()
 
 config = ConfigParser.RawConfigParser()
 
@@ -26,7 +31,8 @@ config.read(pchtrakt.config_file)
 ipPch = config.get('PCHtrakt', 'pch_ip') 
 sleepTime = float(config.get('PCHtrakt', 'sleep_time'))
 ignored_repertory = [x.strip() for x in config.get('PCHtrakt', 'ignored_repertory').split(',')]
-OnPCH = (ipPch == '127.0.0.1')
+
+OnPCH = (ipPch in ['127.0.0.1',myIp])
 
 #Trakt
 TraktUsername = config.get('Trakt', 'login') 

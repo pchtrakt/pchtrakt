@@ -180,7 +180,7 @@ def doWork():
                             myMedia.id = tvdb[myMedia.parsedInfo.name]['id']
                             year = tvdb[myMedia.parsedInfo.name]['firstaired']
                             myMedia.year = ''
-                            if year <> None:
+                            if year != None:
                                 myMedia.year = (year.split('-')[0])
                             pchtrakt.dictSerie[myMedia.parsedInfo.name]={'Year':myMedia.year,
                                                                          'TvDbId':myMedia.id,
@@ -194,12 +194,19 @@ def doWork():
                     videoStatusHandle(myMedia)
                 elif isinstance(myMedia.parsedInfo, mp.MediaParserResultMovie):
                     if myMedia.id == None:
-                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}&r=xml'.format(
-                                                        quote(myMedia.parsedInfo.name),
-                                                            myMedia.parsedInfo.year))
-                        # ImdbAPIurl = ('http://www.deanclatworthy.com/imdb/?q={0}&year={1}&type=xml'.format(
-                                # quote(myMedia.parsedInfo.name),
-                                # myMedia.parsedInfo.year))
+                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&r=xml'.format(
+                                                        quote(myMedia.parsedInfo.name)))
+                        if myMedia.parsedInfo.year != None:
+                            print 'ok01'
+                            ImdbAPIurl = ImdbAPIurl + '&y={0}'.format(myMedia.parsedInfo.year)
+                        else:
+                            print 'ok2'
+                            # try to read NFO?
+                            if os.path.exists(myMedia.oStatus.fullPath):
+                                print 'ok'
+                                f = open('', 'r')
+                                oXml = ElementTree.XML()
+                        
                         oResponse = urlopen(ImdbAPIurl)
                         try:
                             oXml = ElementTree.XML(oResponse.read())
@@ -210,7 +217,6 @@ def doWork():
                             raise PchTraktException('Can\'t find the movie ID on: {0}'.format(ImdbAPIurl))
                         else:
                             myMedia.id = oXml.find('movie').get('id')
-                            # myMedia.id = oXml.find('imdbid').text
                             myMedia.year = myMedia.parsedInfo.year
                     Debug(myMedia)
                     videoStatusHandle(myMedia)

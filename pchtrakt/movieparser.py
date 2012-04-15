@@ -22,13 +22,6 @@ import re
 import mediaparser
 
 regexes_movies = [ 
-                    ("imdbid", # not works
-                        # foobar.[ID ttxxxxxx]
-                        """
-                        ^[\[]ID[ ](?P<imdbid>.+?[.])[\]]
-                        """
-                    )
-                    ,                
                     ("movie_year", # bug sometimes 1080 = year 
                         # Movie.Title.(year) or Movie.Title.[year]
                         """
@@ -36,6 +29,8 @@ regexes_movies = [
                         [\(\[]{0,1}(?P<year>[0-9]{4})[\)\]]{0,1}
                         """
                     )
+                    ,
+                    ("movie_only", "^(?P<movie_title>.+).[A-Za-z]{3,4}$")
                 ]
 
 class MovieParser():
@@ -63,7 +58,7 @@ class MovieParser():
             tmp_year = None
             tmp_imdbid = None
             named_groups = match.groupdict().keys()
-            
+
             if 'movie_title' in named_groups:
                 tmp_movie_title = self.clean_movie_name(match.group('movie_title'))
                 
