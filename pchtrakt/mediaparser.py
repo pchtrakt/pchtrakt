@@ -17,6 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 
+from os.path import basename, isfile
+from urllib import quote
+from urllib2 import urlopen, HTTPError
+import json
 from lib import parser
 from movieparser import *
 from lib.tvdb_api import tvdb_exceptions
@@ -24,11 +28,6 @@ from lib.tvdb_api import tvdb_exceptions
 class MediaParserResult():
     def __init__(self,file_name):
         self.file_name = file_name
-class MediaParserResultAnime(MediaParserResult):
-    def __init__(self,file_name,name,episode_numbers):
-        self.file_name = file_name
-        self.name = name
-        self.episode_numbers = episode_numbers
         
 class MediaParserResultTVShow(MediaParserResult):
     def __init__(self,file_name,name,season_number,episode_numbers):
@@ -36,13 +35,50 @@ class MediaParserResultTVShow(MediaParserResult):
         self.name = name
         self.season_number = season_number
         self.episode_numbers = episode_numbers
+        if self.name in cacheSerie.dictSerie:
+            self.id = cacheSerie.dictSerie[self.name]['TvDbId']
+            self.year = cacheSerie.dictSerie[self.name]['Year']
+        else:
+            self.id = tvdb[self.name]['id']
+            if tvdb[self.name]['firstaired'] != None:
+                self.year = tvdb[self.name]['firstaired'].split('-')[0]
+            else:
+                self.year = None
+            cacheSerie.dictSerie[self.name]={'Year':self.year,
+                                                        'TvDbId':self.id}
+
+            with open('cache.json','w') as f:
+                json.dump(cacheSerie.dictSerie, f, separators=(',',':'), indent=4)
         
 class MediaParserResultMovie(MediaParserResult):
     def __init__(self,file_name,name,year,imdbid):
         self.file_name = file_name
         self.name = name
         self.year = year
-        self.imdbid = imdbid
+        
+        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}'.format(
+                                        quote(self.name),
+                                        self.year))
+                        
+        try:
+            oResponse = urlopen(ImdbAPIurl,None,5)
+            myMovieJson = json.loads(oResponse.read())
+            self.id = myMovieJson['ID']
+        except HTTPError as e:
+            ImdbAPIurl = ('http://www.deanclatworthy.com/' \
+                          'imdb/?q={0}&year={1}'.format(
+                                quote(self.name),
+                                self.year))
+
+            try:
+                oResponse = urlopen(ImdbAPIurl,None,5)
+                myMovieJson = json.loads(oResponse.read())
+                self.id = myMovieJson['imdbid']
+            except HTTPError as e:
+                pass
+        # except Exception as e:
+            # Debug(e)
+            # pass
         
 class MediaParserUnableToParse(Exception):
     def __init__(self, file_name):

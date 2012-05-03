@@ -153,7 +153,7 @@ def doWork():
     myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
-        myMedia.id = None
+        myMedia.parsedInfo = None
         with open('cache.json','w') as f:
             json.dump(pchtrakt.dictSerie, f, separators=(',',':'), indent=4)
     if YamjWatched == True:
@@ -169,57 +169,11 @@ def doWork():
                                             EnumStatus.PAUSE]:
             pchtrakt.allowedPauseTime = TraktMaxPauseTime
             if myMedia.oStatus.status != EnumStatus.LOAD:
-                myMedia.parsedInfo = pchtrakt.mediaparser.parse(
-                                        myMedia.oStatus.fileName)
-                if isinstance(myMedia.parsedInfo, mp.MediaParserResultTVShow):
-                    if myMedia.id == None:
-                        if myMedia.parsedInfo.season_number == 0:
-                            raise BaseException('No season - maybe anime?')
-                        if not myMedia.parsedInfo.name in pchtrakt.dictSerie:
-                            Debug('Added to cache!')
-                            myMedia.id = tvdb[myMedia.parsedInfo.name]['id']
-                            year = tvdb[myMedia.parsedInfo.name]['firstaired']
-                            myMedia.year = ''
-                            if year != None:
-                                myMedia.year = (year.split('-')[0])
-                            pchtrakt.dictSerie[myMedia.parsedInfo.name]={'Year':myMedia.year,
-                                                                         'TvDbId':myMedia.id,
-                                                                         'Betaseries':''} 
-                        else:
-                            Debug('Cached!')
-                            myMedia.id = pchtrakt.dictSerie[myMedia.parsedInfo.name]['TvDbId']
-                            myMedia.year = pchtrakt.dictSerie[myMedia.parsedInfo.name]['Year']
-
-                    Debug(myMedia)
-                    videoStatusHandle(myMedia)
-                elif isinstance(myMedia.parsedInfo, mp.MediaParserResultMovie):
-                    if myMedia.id == None:
-                        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&r=xml'.format(
-                                                        quote(myMedia.parsedInfo.name)))
-                        if myMedia.parsedInfo.year != None:
-                            print 'ok01'
-                            ImdbAPIurl = ImdbAPIurl + '&y={0}'.format(myMedia.parsedInfo.year)
-                        else:
-                            print 'ok2'
-                            # try to read NFO?
-                            if os.path.exists(myMedia.oStatus.fullPath):
-                                print 'ok'
-                                f = open('', 'r')
-                                oXml = ElementTree.XML()
-                        
-                        oResponse = urlopen(ImdbAPIurl)
-                        try:
-                            oXml = ElementTree.XML(oResponse.read())
-                        except sys.exc_type as e:
-                            raise PchTraktException('Can\'t parse response: {0}'.format(ImdbAPIurl))
-                            
-                        if oXml.find('movie') == None:
-                            raise PchTraktException('Can\'t find the movie ID on: {0}'.format(ImdbAPIurl))
-                        else:
-                            myMedia.id = oXml.find('movie').get('id')
-                            myMedia.year = myMedia.parsedInfo.year
-                    Debug(myMedia)
-                    videoStatusHandle(myMedia)
+                if myMedia.parsedInfo == None:
+                    myMedia.parsedInfo = pchtrakt.mediaparser.parse(
+                                            myMedia.oStatus.fileName)
+                Debug(myMedia)
+                videoStatusHandle(myMedia)
         elif (myMedia.oStatus.status == EnumStatus.PAUSE 
             and pchtrakt.allowedPauseTime > 0):
             pchtrakt.allowedPauseTime -= sleepTime
