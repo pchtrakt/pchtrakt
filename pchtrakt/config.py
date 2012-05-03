@@ -18,6 +18,8 @@
 # along with pchtrakt.  If not, see <http://www.gnu.org/licenses/>.
 import ConfigParser
 import pchtrakt
+import json
+from os.path import isfile
 import socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("gmail.com",80))
@@ -25,6 +27,15 @@ myIp = s.getsockname()[0]
 s.close()
 
 config = ConfigParser.RawConfigParser()
+
+class cacheSerie: #Errkk... need to change this
+    pass
+
+if isfile('cache.json'):
+    with open('cache.json','r+') as f:
+        cacheSerie.dictSerie = json.load(f)
+else:
+    cacheSerie.dictSerie = {}    
 
 #PchTrakt
 config.read(pchtrakt.config_file)

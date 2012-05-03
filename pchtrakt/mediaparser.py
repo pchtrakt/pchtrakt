@@ -24,6 +24,10 @@ import json
 from lib import parser
 from movieparser import *
 from lib.tvdb_api import tvdb_exceptions
+from pchtrakt.config import *
+from lib.tvdb_api import tvdb_api,tvdb_exceptions
+
+tvdb = tvdb_api.Tvdb()
 
 class MediaParserResult():
     def __init__(self,file_name):
