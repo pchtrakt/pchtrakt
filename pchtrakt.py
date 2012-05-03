@@ -65,14 +65,14 @@ class media():
                     self.parsedInfo.episode_numbers,
                     self.oStatus.percent,
                     self.oStatus.status,
-                    tvdb[self.parsedInfo.name]['id'])
+                    self.parsedInfo.id)
         else:
             msg = 'Movie : {0} - Year : {1} - ' \
                     '{2}% - IMDB: {3}'.format(
                     self.parsedInfo.name,
                     self.parsedInfo.year,
                     self.oStatus.percent,
-                    self.id)
+                    self.parsedInfo.id)
         return msg
 
 myMedia = media()
