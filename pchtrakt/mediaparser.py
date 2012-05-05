@@ -19,13 +19,14 @@
 
 from os.path import basename, isfile
 from urllib import quote
-from urllib2 import urlopen, HTTPError
+from urllib2 import urlopen, HTTPError,URLError
 import json
 from lib import parser
 from movieparser import *
 from lib.tvdb_api import tvdb_exceptions
 from pchtrakt.config import *
 from lib.tvdb_api import tvdb_api,tvdb_exceptions
+from lib.utilities import Debug
 
 tvdb = tvdb_api.Tvdb()
 
@@ -68,7 +69,7 @@ class MediaParserResultMovie(MediaParserResult):
             oResponse = urlopen(ImdbAPIurl,None,5)
             myMovieJson = json.loads(oResponse.read())
             self.id = myMovieJson['ID']
-        except HTTPError as e:
+        except URLError,HTTPError:
             ImdbAPIurl = ('http://www.deanclatworthy.com/' \
                           'imdb/?q={0}&year={1}'.format(
                                 quote(self.name),
@@ -79,10 +80,12 @@ class MediaParserResultMovie(MediaParserResult):
                 myMovieJson = json.loads(oResponse.read())
                 self.id = myMovieJson['imdbid']
             except HTTPError as e:
+		self.id = None
                 pass
-        # except Exception as e:
-            # Debug(e)
-            # pass
+            except Exception as e:
+		Debug(myMovieJson)
+                Debug(e)
+		self.id = None
         
 class MediaParserUnableToParse(Exception):
     def __init__(self, file_name):
