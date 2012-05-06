@@ -27,7 +27,7 @@ def destroyToken(Token):
         return oXml.find('errors/error/content').text
 
 def getSerieUrl(SerieName):
-    if pchtrakt.dictSerie[SerieName]['Betaseries'] == '':
+    if 'Betaseries' not in cacheSerie.dictSerie[SerieName].keys():
         quotedSerieName = quote(SerieName)
         url = getUrl('shows/search.json') + '&title={0}'.format(quotedSerieName)
         oResponse = urlopen(url)
