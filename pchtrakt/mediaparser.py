@@ -50,7 +50,7 @@ class MediaParserResultTVShow(MediaParserResult):
             else:
                 self.year = None
             cacheSerie.dictSerie[self.name]={'Year':self.year,
-                                                        'TvDbId':self.id}
+                                            'TvDbId':self.id}
 
             with open('cache.json','w') as f:
                 json.dump(cacheSerie.dictSerie, f, separators=(',',':'), indent=4)

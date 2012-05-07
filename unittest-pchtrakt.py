@@ -46,9 +46,9 @@ TVShows = [
 
 Movies = [
             # Filename [I should inform the majors that theses files are some examples taken from the net ! ;-)]
-             ("Home.(2009).1080p") 
-            ,("Home (2009) 1080p")
-            ,("Home_(2009)_1080p")    
+             ("Home.(2009).1080p.mkv") 
+            ,("Home (2009) 1080p.mkv")
+            ,("Home_(2009)_1080p.mkv")    
             ,("Inception.BDRip.1080p.mkv")
             ,("indiana jones and the last crusade 1989 1080p x264 dd5.1-m794.mkv")
             ,("Indiana.Jones.and.the.Temple.of.Doom.[1984].HDTV.1080p.mkv")
@@ -65,9 +65,10 @@ Movies = [
             ,("300.(2006).BDRip.1080p.mkv")
             ,("Big.Fish.2003.1080p.BluRay.DTS.x264-DON")
             ,("inf-fast5-1080p[ID tt1596343].mkv") # Who are looking this shit ?
-            ,("Le.Fabuleux.Destin.d'Amélie.Poulain.2001.1080p.BluRay.DTS.x264-CtrlHD")
-            ,("avchd-paul.2011.extended.1080p.x264")
-            ,("twiz-unknown-1080p")
+            ,("Le.Fabuleux.Destin.d'Amélie.Poulain.2001.1080p.BluRay.DTS.x264-CtrlHD.mkv")
+            ,("avchd-paul.2011.extended.1080p.x264.mkv")
+            ,("twiz-unknown-1080p.mkv")
+	    ,("Hostel.Part.III.2011.Dvdrip.avi")
         ]                
                 
 class TestPchRequestor(unittest.TestCase):
@@ -115,14 +116,14 @@ class TestMediaParser(unittest.TestCase):
     def test_TVShows(self):
         for (fileName,serie_name,season,episode_numbers) in TVShows:
             self.assertEqual(isinstance(self.mediaparser.parse(fileName),MediaParserResultTVShow),True)
-            self.assertEqual(self.mediaparser.parse(fileName).series_name,serie_name)
+            self.assertEqual(self.mediaparser.parse(fileName).name,serie_name)
             self.assertEqual(self.mediaparser.parse(fileName).season_number,season)
             self.assertEqual(self.mediaparser.parse(fileName).episode_numbers,episode_numbers)
             
     def test_Movies(self):
         for (fileName) in Movies:
             self.assertEqual(isinstance(self.mediaparser.parse(fileName),MediaParserResultMovie),True)
-            #Debug("Title=" + self.mediaparser.parse(fileName).movie_title +" (" + str(self.mediaparser.parse(fileName).year + ") - IMDB=" + str(self.mediaparser.parse(fileName).imdbid)))
+            Debug("Title=" + str(self.mediaparser.parse(fileName).name) +" (" + str(self.mediaparser.parse(fileName).year) + ") - IMDB=" + str(self.mediaparser.parse(fileName).id))
 
 class TestTVDBAPIUsage(unittest.TestCase):
     

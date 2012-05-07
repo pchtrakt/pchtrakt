@@ -154,8 +154,6 @@ def doWork():
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
         myMedia.parsedInfo = None
-        with open('cache.json','w') as f:
-            json.dump(pchtrakt.dictSerie, f, separators=(',',':'), indent=4)
     if YamjWatched == True:
         try:
             watchedFileCreation(myMedia)
@@ -206,11 +204,6 @@ if __name__ == '__main__':
     getParams()
     if pchtrakt.DAEMON:
         daemonize()
-    if os.path.isfile('cache.json'):
-        with open('cache.json','r+') as f:
-            pchtrakt.dictSerie = json.load(f)
-    else:
-        pchtrakt.dictSerie = {}
     pchtrakt.logger.info('Pchtrakt START')
     while not pchtrakt.stop:
         try:
