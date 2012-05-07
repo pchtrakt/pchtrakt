@@ -19,7 +19,7 @@
 
 from os.path import basename, isfile
 from urllib import quote
-from urllib2 import urlopen, HTTPError
+from urllib2 import urlopen, HTTPError, URLError
 import json
 from lib import parser
 from movieparser import *
@@ -68,7 +68,7 @@ class MediaParserResultMovie(MediaParserResult):
             oResponse = urlopen(ImdbAPIurl,None,5)
             myMovieJson = json.loads(oResponse.read())
             self.id = myMovieJson['ID']
-        except HTTPError as e:
+        except URLError, HTTPError:
             ImdbAPIurl = ('http://www.deanclatworthy.com/' \
                           'imdb/?q={0}&year={1}'.format(
                                 quote(self.name),
@@ -78,11 +78,8 @@ class MediaParserResultMovie(MediaParserResult):
                 oResponse = urlopen(ImdbAPIurl,None,5)
                 myMovieJson = json.loads(oResponse.read())
                 self.id = myMovieJson['imdbid']
-            except HTTPError as e:
+            except URLError, HTTPError:
                 pass
-        # except Exception as e:
-            # Debug(e)
-            # pass
         
 class MediaParserUnableToParse(Exception):
     def __init__(self, file_name):
