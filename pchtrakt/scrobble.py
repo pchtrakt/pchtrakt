@@ -129,7 +129,7 @@ def showIsEnding(myMedia):
         pchtrakt.logger.info(e)
     except Exception as e:
         Debug(e)
-        pchtrakt.logger.info(e)
+        pchtrakt.logger.exception(e)
     if TraktScrobbleTvShow:
         result = 0
         response = utilities.scrobbleEpisodeOnTrakt(myMedia.parsedInfo.id,
