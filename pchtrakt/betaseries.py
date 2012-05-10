@@ -27,7 +27,7 @@ def destroyToken(Token):
         return oXml.find('errors/error/content').text
 
 def getSerieUrl(SerieName):
-    if pchtrakt.dictSerie[SerieName]['Betaseries'] == '':
+    if 'Betaseries' not in cacheSerie.dictSerie[SerieName].keys():
         quotedSerieName = quote(SerieName)
         url = getUrl('shows/search.json') + '&title={0}'.format(quotedSerieName)
         oResponse = urlopen(url)
@@ -39,6 +39,8 @@ def getSerieUrl(SerieName):
                 break
         myUrl = myJson['root']['shows'][myKey]['url']
         pchtrakt.dictSerie[SerieName]['Betaseries'] = myUrl
+        with open('cache.json','w') as f:
+            json.dump(cacheSerie.dictSerie, f, separators=(',',':'), indent=4)
     else:
         myUrl = pchtrakt.dictSerie[SerieName]['Betaseries']
     return quote('{0}.xml'.format(myUrl))
