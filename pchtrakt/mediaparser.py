@@ -63,11 +63,11 @@ class MediaParserResultMovie(MediaParserResult):
         ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}'.format(
                                         quote(self.name),
                                         self.year))
-                        
+
         try:
             oResponse = urlopen(ImdbAPIurl,None,5)
             myMovieJson = json.loads(oResponse.read())
-            self.id = myMovieJson['ID']
+            self.id = myMovieJson['imdbID']
         except URLError, HTTPError:
             ImdbAPIurl = ('http://www.deanclatworthy.com/' \
                           'imdb/?q={0}&year={1}'.format(
