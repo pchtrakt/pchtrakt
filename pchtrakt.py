@@ -58,7 +58,7 @@ pchtrakt.mediaparser = mp.MediaParser()
 class media(): 
     def __str__(self):
         if isinstance(self.parsedInfo, mp.MediaParserResultTVShow):
-            msg = 'TV Show : {0} - Season:{1} - Episode:{2} ' \
+            msg = u'TV Show : {0} - Season:{1} - Episode:{2} ' \
                     '- {3}% - {4} - TvDB: {5}'.format(
                     self.parsedInfo.name,
                     self.parsedInfo.season_number,
@@ -67,7 +67,7 @@ class media():
                     self.oStatus.status,
                     self.parsedInfo.id)
         else:
-            msg = 'Movie : {0} - Year : {1} - ' \
+            msg = u'Movie : {0} - Year : {1} - ' \
                     '{2}% - IMDB: {3}'.format(
                     self.parsedInfo.name,
                     self.parsedInfo.year,
@@ -172,12 +172,12 @@ def doWork():
                 if myMedia.parsedInfo == None:
                     myMedia.parsedInfo = pchtrakt.mediaparser.parse(
                                             myMedia.oStatus.fileName)
-                Debug(myMedia)
+                Debug(myMedia.__str__())
                 videoStatusHandle(myMedia)
         elif (myMedia.oStatus.status == EnumStatus.PAUSE 
             and pchtrakt.allowedPauseTime > 0):
             pchtrakt.allowedPauseTime -= sleepTime
-            Debug(myMedia)
+            Debug(myMedia.__str__())
         else:
             if pchtrakt.lastPath != '':
                 if not pchtrakt.watched:
@@ -252,8 +252,8 @@ if __name__ == '__main__':
                 sleep(sleepTime)
         except Exception as e:
            stopTrying()
-           Debug('::: {0} :::'.format(pchtrakt.lastPath))
-           Debug('::: {0} :::'.format(e))
+           Debug(u'::: {0} :::'.format(pchtrakt.lastPath))
+           Debug(u'::: {0} :::'.format(e))
            pchtrakt.logger.exception('This should never happend! Please contact me with the error if you read this')
            pchtrakt.logger.exception(pchtrakt.lastPath)
            pchtrakt.logger.exception(e)

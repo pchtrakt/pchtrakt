@@ -34,8 +34,8 @@ class EnumStatus:
 class PchStatus:
     def __init__(self):
         self.status=EnumStatus.NOPLAY
-        self.fullPath = ""
-        self.fileName = ""
+        self.fullPath = u""
+        self.fileName = u""
         self.currentTime = 0
         self.totalTime = 0
         self.percent = 0
@@ -54,13 +54,13 @@ class PchRequestor:
             if oXml.tag == "theDavidBox": # theDavidBox should be the root
                 if oXml.find("returnValue").text == '0':
                     oPchStatus.status = oXml.find("response/currentStatus").text
-                    oPchStatus.fullPath = oXml.find("response/fullPath").text
+                    oPchStatus.fullPath = unicode(oXml.find("response/fullPath").text)
                     oPchStatus.currentTime = int(oXml.find("response/currentTime").text)
                     oPchStatus.totalTime = int(oXml.find("response/totalTime").text)
                     if oXml.find("response/mediatype")!= None:
                         self.mediaType = oXml.find("response/mediatype").text
                     if(self.mediaType == "BD"): # Blu-ray Disc are not handle like .mkv or .avi files
-                        oPchStatus.fileName = oPchStatus.fullPath.split('/')[::-1][1] # add a / on last position when ISO
+                        oPchStatus.fileName = unicode(oPchStatus.fullPath.split('/')[::-1][1]) # add a / on last position when ISO
                         oPchStatus.currentChapter = int(oXml.find("response/currentchapter").text)
                         oPchStatus.totalChapter = int(oXml.find("response/totalchapter").text)
                         if oPchStatus.totalChapter!= 0:
