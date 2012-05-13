@@ -42,11 +42,12 @@ class MaxScrobbleError(TraktError):
 		Exception.__init__(self, 'Trakt.tv - Shows per hour limit reached')
 
 def Debug(msg, force=False):
+    myMsg = unicode(msg)
     if (pchtrakt.debug or force):
         try:
-            print msg
+            print myMsg
         except UnicodeEncodeError:
-            print msg.encode( "utf-8", "ignore" )
+            print myMsg.encode( "utf-8", "replace" )
 
 def checkSettings(daemon=False):
     if username != 'your_trakt_login':

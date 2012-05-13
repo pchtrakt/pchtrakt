@@ -27,7 +27,7 @@ def showStarted(myMedia):
                                                     str(myMedia.parsedInfo.episode_numbers[myMedia.idxEpisode]),
                                                     str(myMedia.oStatus.totalTime),
                                                     str(myMedia.oStatus.percent))
-        msg = 'Sending play: {0} {1} {2} {3}' \
+        msg = u'Sending play: {0} {1} {2} {3}' \
               ' {4} {5} {6}'.format(myMedia.parsedInfo.id,
                                     myMedia.parsedInfo.name,
                                     myMedia.parsedInfo.year,
@@ -247,7 +247,7 @@ def videoStatusHandle(myMedia):
 def isIgnored(myMedia):
     ignored = False
     
-    msg = 'File: {0}'.format(myMedia.oStatus.fileName)
+    msg = u'File: {0}'.format(myMedia.oStatus.fileName)
     Debug(msg)
     pchtrakt.logger.info(msg)
     
