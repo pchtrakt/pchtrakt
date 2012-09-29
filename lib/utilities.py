@@ -64,7 +64,7 @@ def xcp(s):
 # get a connection to trakt
 def getTraktConnection():
     try:
-        conn = NBHTTPConnection('api.trakt.tv')
+        conn = httplib.HTTPConnection('api.trakt.tv')
     except socket.timeout:
         Debug("getTraktConnection: can't connect to trakt - timeout")
         # notification("Trakt Utilities", __language__(1108).encode( "utf-8", "ignore" ) + ": timeout") # can't connect to trakt
@@ -94,7 +94,6 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             data['error'] = 'Unable to connect to trakt'
             return data
         return None
-
     try:
         req = req.replace("%%API_KEY%%",apikey)
         req = req.replace("%%USERNAME%%",username)
@@ -109,6 +108,7 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
                 args['media_center_date'] = '10/01/2012' 
             jdata = json.dumps(args)
             conn.request('POST', req, jdata)
+            
         elif method == 'GET':
             conn.request('GET', req)
         else:
@@ -124,19 +124,8 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
             data['error'] = 'Socket error, unable to connect to trakt'
             return data;
         return None
-     
-    conn.go()
-    
-    while True:
-        if conn.hasResult():
-            if closeConnection:
-                conn.close()
-            break
-        time.sleep(1)
-    
-    response = conn.getResult()
-    if closeConnection:
-        conn.close()
+   
+    response = conn.getresponse()
     
     try:
         raw = response.read()
@@ -151,6 +140,9 @@ def traktJsonRequest(method, req, args={}, returnStatus=False, anon=False, conn=
         # if not silent: notification("Trakt Utilities", __language__(1109).encode( "utf-8", "ignore" ) + ": Bad responce from trakt") # Error
         return None
 
+    if closeConnection:
+        conn.close()        
+        
     if 'status' in data:
         if data['status'] == 'failure':
             print "traktQuery: Error: " + str(data['error'])
@@ -494,6 +486,7 @@ def getWatchingFromTraktForUser(name):
 #tell trakt that the user is watching a movie
 def watchingMovieOnTrakt(imdb_id, title, year, duration, percent):
     responce = traktJsonRequest('POST', '/movie/watching/%%API_KEY%%', {'imdb_id': imdb_id, 'title': title, 'year': year, 'duration': duration, 'progress': percent}, passVersions=True)
+    print responce
     if responce == None:
         Debug("Error in request from 'watchingMovieOnTrakt()'")
     return responce
