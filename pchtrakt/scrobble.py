@@ -251,7 +251,9 @@ def isIgnored(myMedia):
     Debug(msg)
     pchtrakt.logger.info(msg)
     
-    if ignored_repertory[0] != '':
+    ignored = isKeywordIgnored(myMedia.oStatus.fileName)
+    
+    if not ignored and ignored_repertory[0] != '':
         for el in myMedia.oStatus.fullPath.split('/'):
             if el <> '' and el in ignored_repertory:
                 msg = 'This video is in a ignored repertory: {0}'.format(el)
@@ -277,6 +279,16 @@ def isIgnored(myMedia):
             ignored = isGenreIgnored(genres)
     return ignored
 
+def isKeywordIgnored(title):
+    if ignored_keywords[0] != '':
+        for keyword in ignored_keywords:
+            if keyword in title:
+                msg = u'This file contains a ignored keyword'
+                Debug(msg)
+                pchtrakt.logger.info(msg)
+                return True
+    return False
+    
 def isGenreIgnored(genres):
     txt = 'The ignored genres are :{0}'.format(YamjIgnoredCategory)
     Debug(txt)
