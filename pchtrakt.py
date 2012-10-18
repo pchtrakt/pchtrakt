@@ -26,7 +26,7 @@
 
 import sys
 import getopt
-reload(sys) #usefull to reload because I just imported it ^^'
+reload(sys)
 sys.setdefaultencoding("utf8")
 import pchtrakt
 import os
@@ -58,6 +58,9 @@ tvdb = tvdb_api.Tvdb()
 pchtrakt.oPchRequestor = PchRequestor()
 pchtrakt.mediaparser = mp.MediaParser()
 class media(): 
+    def __init__(self):
+        self.parsedInfo = None
+        self.Ignored = False
     def __str__(self):
         if isinstance(self.parsedInfo, mp.MediaParserResultTVShow):
             msg = u'TV Show : {0} - Season:{1} - Episode:{2} ' \
@@ -152,46 +155,57 @@ def daemonize():
 
 def doWork():
     myMedia.ScrobResult = 0
-    myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 5)
+    myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 10)
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
+        # pchtrakt.lastPath = myMedia.oStatus.fullPath
         myMedia.parsedInfo = None
-    if YamjWatched == True:
-        try:
-            watchedFileCreation(myMedia)
-        except BaseException as e:
-            Debug('::: {0} :::'.format(pchtrakt.lastPath))
-            Debug('::: {0} :::'.format(e))
-            pchtrakt.logger.error(e)
-    if not pchtrakt.StopTrying:
-        if myMedia.oStatus.status not in   [EnumStatus.NOPLAY, 
-                                            EnumStatus.UNKNOWN,
-                                            EnumStatus.PAUSE]:
-            pchtrakt.allowedPauseTime = TraktMaxPauseTime
-            if myMedia.oStatus.status != EnumStatus.LOAD:
-                if myMedia.parsedInfo == None:
-                    myMedia.parsedInfo = pchtrakt.mediaparser.parse(
-                                            myMedia.oStatus.fileName)
+        myMedia.Ignored = False
+        
+    if not myMedia.Ignored:
+        if myMedia.parsedInfo == None and myMedia.oStatus.fullPath != '':
+            myMedia.parsedInfo = pchtrakt.mediaparser.parse(myMedia.oStatus.fileName)
+            myMedia.Ignored = isIgnored(myMedia)
+            if myMedia.Ignored :
+                return
+
+        if YamjWatched == True:
+            try:
+                watchedFileCreation(myMedia)
+            except BaseException as e:
+                Debug('::: {0} :::'.format(pchtrakt.lastPath))
+                Debug('::: {0} :::'.format(e))
+                pchtrakt.logger.error(e)
+
+        if not pchtrakt.StopTrying:
+            if myMedia.oStatus.status not in   [EnumStatus.NOPLAY, 
+                                                EnumStatus.UNKNOWN,
+                                                EnumStatus.PAUSE]:
+                pchtrakt.allowedPauseTime = TraktMaxPauseTime
+                if myMedia.oStatus.status != EnumStatus.LOAD:
+                    if myMedia.parsedInfo == None:
+                        myMedia.parsedInfo = pchtrakt.mediaparser.parse(
+                                                myMedia.oStatus.fileName)
+                    Debug(myMedia.__str__())
+                    videoStatusHandle(myMedia)
+            elif (myMedia.oStatus.status == EnumStatus.PAUSE 
+                and pchtrakt.allowedPauseTime > 0):
+                pchtrakt.allowedPauseTime -= sleepTime
                 Debug(myMedia.__str__())
-                videoStatusHandle(myMedia)
-        elif (myMedia.oStatus.status == EnumStatus.PAUSE 
-            and pchtrakt.allowedPauseTime > 0):
-            pchtrakt.allowedPauseTime -= sleepTime
-            Debug(myMedia.__str__())
-        else:
-            if pchtrakt.lastPath != '':
-                if not pchtrakt.watched:
-                    videoStopped()
-                if pchtrakt.allowedPauseTime <= 0:
-                    pchtrakt.logger.info('It seems you paused ' \
-                                         'the video for more than {0} minutes: ' \
-                                         'I say to trakt you stopped watching ' \
-                                         'your video'.format(TraktMaxPauseTime/60))
-                pchtrakt.watched = 0
-                pchtrakt.lastPath = ''
-                pchtrakt.isMovie = 0
-                pchtrakt.isTvShow = 0
-            Debug("PCH status = {0}".format(myMedia.oStatus.status))
+            else:
+                if pchtrakt.lastPath != '':
+                    if not pchtrakt.watched:
+                        videoStopped()
+                    if pchtrakt.allowedPauseTime <= 0:
+                        pchtrakt.logger.info('It seems you paused ' \
+                                             'the video for more than {0} minutes: ' \
+                                             'I say to trakt you stopped watching ' \
+                                             'your video'.format(TraktMaxPauseTime/60))
+                    pchtrakt.watched = 0
+                    pchtrakt.lastPath = ''
+                    pchtrakt.isMovie = 0
+                    pchtrakt.isTvShow = 0
+                Debug("PCH status = {0}".format(myMedia.oStatus.status))
 
 
 def stopTrying():
