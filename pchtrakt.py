@@ -26,6 +26,8 @@
 
 import sys
 import getopt
+reload(sys) #usefull to reload because I just imported it ^^'
+sys.setdefaultencoding("utf8")
 import pchtrakt
 import os
 import json
