@@ -75,6 +75,12 @@ def newConfig():
         config.set('YAMJ', 'ignored_category', '')
     if not config.has_option('YAMJ','path'):
         config.set('YAMJ', 'path', '')
+    if not config.has_option('YAMJ','update_xml_watched'):
+        config.set('YAMJ', 'update_xml_watched', '')
+    if not config.has_option('YAMJ','tvxml_find'):
+        config.set('YAMJ', 'tvxml_find', 'Other_All,Other_HD,Other_New,Other_Rating,Other_TV,Other_Unwatched,Other_Sets')
+    if not config.has_option('YAMJ','moviexml_find'):
+        config.set('YAMJ', 'moviexml_find', 'Other_All,Other_HD,Other_New,Other_Rating,Other_Movies,Other_Unwatched,Other_Sets')
         
     with open(config_file, 'w') as configfile:
         config.write(configfile)

@@ -1,6 +1,7 @@
 from os.path import isfile
 from os import listdir
 from xml.etree import ElementTree
+# from xml.dom.minidom import parse not sure if used
 
 from lib import utilities
 from lib.utilities import Debug
@@ -11,6 +12,7 @@ from pchtrakt import betaseries as bs
 from pchtrakt.config import *
 from time import sleep
 from pchtrakt.pch import EnumStatus
+import pchtrakt, glob, os, re
 
 
 class EnumScrobbleResult:
@@ -317,15 +319,16 @@ def watchedFileCreation(myMedia):
                 path = '{0}{1}'.format(YamjWatchedPath, path)
         else:
             path = '{0}{1}'.format(YamjWatchedPath, path)
-        path = '{0}.watched'.format(path)
-        if not isfile(path):
-            f = open(path, 'w')
+        watchedPath = '{0}.watched'.format(path)
+        if not isfile(watchedPath):
+            f = open(watchedPath, 'w')
             f.close()
-            msg = 'I have created the file {0}'.format(path)
+            msg = 'I have created the file {0}'.format(watchedPath)
             Debug(msg)
             pchtrakt.logger.info(msg)
             if  updatexmlwatched !="":
                 msg = 'Starting xml update in '+updatexmlwatched
+                Debug(msg)
                 pchtrakt.logger.info(msg)
                 if pchtrakt.isMovie:
                     previous = None
@@ -354,7 +357,7 @@ def watchedFileCreation(myMedia):
                         a = re.split("(?P<season_num>\d+)[. _-]*", myMedia.oStatus.fileName)
                     ep_name = a[2][:-4].replace(".", " ").replace("- ", "")
                     season_xml = a[0][:-3].replace(".", " ").replace(" - ", "")
-                    f_size = str(os.path.getsize(myMedia.oStatus.fullPath))
+                    # f_size = str(os.path.getsize(myMedia.oStatus.fullPath))
                     ep_no = '01'
                     fileinfo = updatexmlwatched + "Set_" + season_xml + "*.xml"
                     for name in glob.glob(fileinfo):
@@ -376,7 +379,7 @@ def watchedFileCreation(myMedia):
                             if myMedia.oStatus.fileName in open(name).read():
                                 tree = ElementTree.parse(name)
                                 for movie in tree.findall('*/movie/files/file'):
-                                    if movie.get('size') == f_size and movie.get('firstPart') == epno and movie.get('season') == str(myMedia.parsedInfo.season_number):
+                                    if movie.get('firstPart') == epno and movie.get('season') == str(myMedia.parsedInfo.season_number):
                                         movie.set('watched', 'true')
                                         bak_name = name[:-4]+'.bak'
                                         tree.write(bak_name)

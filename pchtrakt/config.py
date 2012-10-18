@@ -68,3 +68,8 @@ if not YamjPath.endswith('/'):
 YamJWatchedVithVideo = config.getboolean('YAMJ', 'watched_with_video')
 YamjWatched = config.getboolean('YAMJ', 'watched')
 YamjIgnoredCategory = [x.strip().lower() for x in config.get('YAMJ', 'ignored_category').split(',')]
+updatexmlwatched = config.get('YAMJ', 'update_xml_watched')
+if not updatexmlwatched.endswith('/'):
+    updatexmlwatched += '/'
+tvxmlfind = [x.strip() for x in config.get('YAMJ', 'tvxml_find').split(',')]
+moviexmlfind = [x.strip() for x in config.get('YAMJ', 'moviexml_find').split(',')]
