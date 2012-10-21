@@ -156,9 +156,10 @@ def daemonize():
 def doWork():
     myMedia.ScrobResult = 0
     myMedia.oStatus = pchtrakt.oPchRequestor.getStatus(ipPch, 10)
+    
     if pchtrakt.lastPath != myMedia.oStatus.fullPath:
         pchtrakt.StopTrying = 0
-        # pchtrakt.lastPath = myMedia.oStatus.fullPath
+        # pchtrakt.lastPath = myMedia.oStatus.fullPath # I check this later so I still need it !=
         myMedia.parsedInfo = None
         myMedia.Ignored = False
         
