@@ -15,16 +15,19 @@ Example usage:
 u'Cabin Fever'
 """
 __author__ = "dbr/Ben"
-__version__ = "1.6.1"
+__version__ = "1.8.1"
 
 import os
+import time
 import urllib
 import urllib2
+import getpass
 import StringIO
 import tempfile
 import warnings
 import logging
 import datetime
+import zipfile
 
 try:
     import xml.etree.cElementTree as ElementTree
@@ -52,7 +55,27 @@ def log():
 class ShowContainer(dict):
     """Simple dict that holds a series of Show instances
     """
-    pass
+
+    def __init__(self):
+        self._stack = []
+        self._lastgc = time.time()
+
+    def __setitem__(self, key, value):
+        self._stack.append(key)
+
+        #keep only the 100th latest results
+        if time.time() - self._lastgc > 20:
+            tbd = self._stack[:-100]
+            i = 0
+            for o in tbd:
+                del self[o]
+                del self._stack[i]
+                i += 1
+
+            _lastgc = time.time()
+            del tbd
+                    
+        super(ShowContainer, self).__setitem__(key, value)
 
 
 class Show(dict):
@@ -284,7 +307,8 @@ class Tvdb:
                 language = None,
                 search_all_languages = False,
                 apikey = None,
-                forceConnect=False):
+                forceConnect=False,
+                useZip=False):
 
         """interactive (True/False):
             When True, uses built-in console UI is used to select the correct show.
@@ -350,7 +374,12 @@ class Tvdb:
             If true it will always try to connect to theTVDB.com even if we
             recently timed out. By default it will wait one minute before
             trying again, and any requests within that one minute window will
-            return an exception immediately. 
+            return an exception immediately.
+
+        useZip (bool):
+            Download the zip archive where possibale, instead of the xml.
+            This is only used when all episodes are pulled.
+            And only the main language xml is used, the actor and banner xml are lost.
         """
         
         global lastTimeout
@@ -378,6 +407,8 @@ class Tvdb:
         self.config['select_first'] = select_first
 
         self.config['search_all_languages'] = search_all_languages
+
+        self.config['useZip'] = useZip
 
 
         if cache is True:
@@ -435,7 +466,7 @@ class Tvdb:
         'hu': 19, 'ja': 25, 'he': 24, 'ko': 32, 'sv': 8, 'sl': 30}
 
         if language is None:
-            self.config['language'] = None
+            self.config['language'] = 'en'
         else:
             if language not in self.config['valid_languages']:
                 raise ValueError("Invalid language %s, options are: %s" % (
@@ -454,6 +485,7 @@ class Tvdb:
             self.config['url_getSeries'] = u"%(base_url)s/api/GetSeries.php?seriesname=%%s&language=%(language)s" % self.config
 
         self.config['url_epInfo'] = u"%(base_url)s/api/%(apikey)s/series/%%s/all/%%s.xml" % self.config
+        self.config['url_epInfo_zip'] = u"%(base_url)s/api/%(apikey)s/series/%%s/all/%%s.zip" % self.config
 
         self.config['url_seriesInfo'] = u"%(base_url)s/api/%(apikey)s/series/%%s/%%s.xml" % self.config
         self.config['url_actorsInfo'] = u"%(base_url)s/api/%(apikey)s/series/%%s/actors.xml" % self.config
@@ -464,11 +496,19 @@ class Tvdb:
     #end __init__
 
     def _getTempDir(self):
-        """Returns the [system temp dir]/tvdb_api
+        """Returns the [system temp dir]/tvdb_api-u501 (or
+        tvdb_api-myuser)
         """
-        return os.path.join(tempfile.gettempdir(), "tvdb_api")
+        if hasattr(os, 'getuid'):
+            uid = "u%d" % (os.getuid())
+        else:
+            # For Windows
+            import getpass
+            uid = getpass.getpass()
 
-    def _loadUrl(self, url, recache = False):
+        return os.path.join(tempfile.gettempdir(), "tvdb_api-%s" % (uid))
+
+    def _loadUrl(self, url, recache = False, language=None):
         global lastTimeout
         try:
             log().debug("Retrieving URL %s" % url)
@@ -494,21 +534,34 @@ class Tvdb:
                 stream = StringIO.StringIO(resp.read())
                 gz = gzip.GzipFile(fileobj=stream)
                 return gz.read()
-            
+
             raise tvdb_error("Received gzip data from thetvdb.com, but could not correctly handle it")
-        
+
+        if 'application/zip' in resp.headers.get("Content-Type", ''):
+            try:
+                # TODO: The zip contains actors.xml and banners.xml, which are currently ignored [GH-20]
+                log().debug("We recived a zip file unpacking now ...")
+                zipdata = StringIO.StringIO()
+                zipdata.write(resp.read())
+                myzipfile = zipfile.ZipFile(zipdata)
+                return myzipfile.read('%s.xml' % language)
+            except zipfile.BadZipfile:
+                if 'x-local-cache' in resp.headers:
+                    resp.delete_cache()
+                raise tvdb_error("Bad zip file received from thetvdb.com, could not read it")
+
         return resp.read()
 
-    def _getetsrc(self, url):
+    def _getetsrc(self, url, language=None):
         """Loads a URL using caching, returns an ElementTree of the source
         """
-        src = self._loadUrl(url)
+        src = self._loadUrl(url, language=language)
         try:
             # TVDB doesn't sanitize \r (CR) from user input in some fields,
             # remove it to avoid errors. Change from SickBeard, from will14m
             return ElementTree.fromstring(src.rstrip("\r"))
         except SyntaxError:
-            src = self._loadUrl(url, recache=True)
+            src = self._loadUrl(url, recache=True, language=language)
             try:
                 return ElementTree.fromstring(src.rstrip("\r"))
             except SyntaxError, exceptionmsg:
@@ -710,6 +763,8 @@ class Tvdb:
 
         if self.config['language'] is None:
             log().debug('Config language is none, using show language')
+            if language is None:
+                raise tvdb_error("config['language'] was None, this should not happen")
             getShowInLanguage = language
         else:
             log().debug(
@@ -748,7 +803,13 @@ class Tvdb:
 
         # Parse episode data
         log().debug('Getting all episodes of %s' % (sid))
-        epsEt = self._getetsrc( self.config['url_epInfo'] % (sid, language) )
+
+        if self.config['useZip']:
+            url = self.config['url_epInfo_zip'] % (sid, language)
+        else:
+            url = self.config['url_epInfo'] % (sid, language)
+
+        epsEt = self._getetsrc( url, language=language)
 
         for cur_ep in epsEt.findall("Episode"):
             seas_no = int(cur_ep.find('SeasonNumber').text)
