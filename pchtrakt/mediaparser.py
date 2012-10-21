@@ -61,7 +61,7 @@ class MediaParserResultMovie(MediaParserResult):
         self.name = name
         self.year = year
         
-        ImdbAPIurl = ('http://www.imdbapi.com/?t={0}&y={1}'.format(
+        ImdbAPIurl = ('http://www.omdbapi.com/?t={0}&y={1}'.format(
                                         quote_plus(self.name),
                                         self.year))
 
