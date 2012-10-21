@@ -1,3 +1,4 @@
+from sys import version_info
 from os.path import isfile
 from os import listdir
 from xml.etree import ElementTree
@@ -326,6 +327,8 @@ def watchedFileCreation(myMedia):
                 Debug(msg)
                 pchtrakt.logger.info(msg)
                 if pchtrakt.isMovie:
+                    if version_info >= (2,7):
+                        pass #todo
                     previous = None
                     for xmlword in moviexmlfind:
                         fileinfo = updatexmlwatched + xmlword + "*.xml"
@@ -347,6 +350,11 @@ def watchedFileCreation(myMedia):
                                 break
                 elif pchtrakt.isTvShow:
                     epno = str(myMedia.parsedInfo.episode_numbers).replace('[', '').replace(']', '')
+                    if version_info >= (2,7): #[@...=...] only available with python >= 2.7 
+                        xpath = "*/movie/files/file[@firstPart='{0}'][@season='{1}']".format(
+                                                    ep_no,str(myMedia.parsedInfo.season_number))
+                    else:
+                        xpath = "*/movie/files/file"
                     a = re.split("([-|.]*[Ss]\\d\\d[Ee]\\d\\d.)", myMedia.oStatus.fileName)
                     if len(a) == 1:
                         a = re.split("(?P<season_num>\d+)[. _-]*", myMedia.oStatus.fileName)
@@ -355,10 +363,13 @@ def watchedFileCreation(myMedia):
                     # f_size = str(os.path.getsize(myMedia.oStatus.fullPath))
                     ep_no = '01'
                     fileinfo = updatexmlwatched + "Set_" + season_xml + "*.xml"
+                    Debug(fileinfo)
                     for name in glob.glob(fileinfo):
+                        Debug(name)
                         if myMedia.oStatus.fileName in open(name).read():
                             tree = ElementTree.parse(name)
-                            for movie in tree.findall('*/movie/files/file'):
+                            for movie in tree.findall(xpath):
+                                Debug(movie.get('firstPart'))
                                 if movie.get('firstPart') == epno and movie.get('season') == str(myMedia.parsedInfo.season_number):
                                     movie.set('watched', 'true')
                                     bak_name = name[:-4]+'.bak'
@@ -369,11 +380,13 @@ def watchedFileCreation(myMedia):
                                     break
                     previous = None
                     for xmlword in tvxmlfind:
+                        Debug(xmlword)
                         fileinfo = updatexmlwatched + xmlword + "*.xml"
                         for name in glob.glob(fileinfo):
+                            Debug(name)
                             if myMedia.oStatus.fileName in open(name).read():
                                 tree = ElementTree.parse(name)
-                                for movie in tree.findall('*/movie/files/file'):
+                                for movie in tree.findall(xpath):
                                     if movie.get('firstPart') == epno and movie.get('season') == str(myMedia.parsedInfo.season_number):
                                         movie.set('watched', 'true')
                                         bak_name = name[:-4]+'.bak'
