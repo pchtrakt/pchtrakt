@@ -221,7 +221,7 @@ if __name__ == '__main__':
     getParams()
     if pchtrakt.DAEMON:
         daemonize()
-    pchtrakt.logger.info('Pchtrakt START')
+    pchtrakt.logger.info('Pchtrakt START ' + PchTraktVersion)
     while not pchtrakt.stop:
         try:
             try:

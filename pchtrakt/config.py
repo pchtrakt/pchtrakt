@@ -20,6 +20,7 @@ import ConfigParser
 import pchtrakt
 import json
 from os.path import isfile
+from commands import getoutput
 import socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("gmail.com",80))
@@ -31,11 +32,20 @@ config = ConfigParser.RawConfigParser()
 class cacheSerie: #Errkk... need to change this
     pass
 
+cacheSerie.dictSerie = {}
+if isfile('appinfo.json'):
+    PchTraktVersion = getoutput('cat appinfo.json |grep version')
+else:
+    PchTraktVersion = getoutput('cat scripts_install/appinfo.json |grep version')
+
+PchTraktVersion = PchTraktVersion.strip().replace(',','') 
+ 
 if isfile('cache.json'):
     with open('cache.json','r+') as f:
-        cacheSerie.dictSerie = json.load(f)
-else:
-    cacheSerie.dictSerie = {}    
+	try:
+            cacheSerie.dictSerie = json.load(f)
+	except:
+            pass
 
 #PchTrakt
 config.read(pchtrakt.config_file)
